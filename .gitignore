@@ -87,3 +87,4 @@ venv
 venv/
 env
 env/
+db.sqlite3
