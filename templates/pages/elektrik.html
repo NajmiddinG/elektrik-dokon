@@ -1,0 +1,134 @@
+{% load static %}
+<!--<!DOCTYPE html>-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrik va Santexnik</title>
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ishchilar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/media.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="navigation">
+        <ul>
+            <li class="active">
+                <a href="#home">
+                    <span class="icon">
+                        <i class='bx bx-home'></i>
+                    </span>
+                    <span class="text">Asosiy</span>
+                </a>
+            </li>
+            <li>
+                <a href="#contact">
+                    <span class="icon">
+                        <i class='bx bx-phone-call'></i>
+                    </span>
+                    <span class="text">Kontaktlar</span>
+                </a>
+            </li>
+            <li>
+                <a href="#profile">
+                    <span class="icon">
+                        <i class='bx bx-user'></i>
+                    </span>
+                    <span class="text">Profile</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="wrapper">
+        <div class="page" id="home">
+            <div class="pay">
+                <div class="name">Shuhrat</div>
+                <div class="money">Oylik: <p>1 500 000</p></div>
+            </div>
+            <h2>Proyektlar:</h2>
+            <ul class="loyihalar">
+            {% for zakaz in zakaz_list %}
+                <li class="{{ zakaz.status }}">
+                    <div class="names_status">
+                        <h3 class="name">{{ zakaz.obyekt_nomi|capfirst }}</h3>
+                        <small class="user_status">
+                            <i class='bx bx-chevron-down'></i>
+                        </small>
+                    </div>
+                    <div class="sms">
+                        <div class="prorap-name">
+                            <p>Prorap: </p>{{ zakaz.ism|capfirst }}
+                        </div>
+                        <div class="manzil">
+                            <p>Manzil: </p>{{ zakaz.obyekt_manzil }}
+                        </div>
+                        <div class="document">
+                            <p>Document: </p><a href="#">{{ zakaz.obyekt_fayli }}</a>
+                        </div>
+                        <div class="description">
+                            <p>Tavsif: </p>{{ zakaz.tavsif }}
+                        </div>
+                        <button class="start">Boshlash</button>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="page" id="contact">
+            <h2>Kontaktlar</h2>
+            <ul>
+            {% for contact in ishchilar_list %}
+                <li>
+                    <span class="name">{{ contact.ism|capfirst }}</span>
+                    <a href="tel:+998{{ contact.tel }}" class="number">+998{{ contact.tel }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="page" id="profile">
+            <h2>Profile:</h2>
+            <div class="box">
+                <div class="name"><p>Isim: </p>Shuhrat</div>
+                <div class="phone"><p>Telefon raqam: </p><a href="tel:+998907777777">+998907777777</a></div>
+                <div class="adress"><p>Manzil: </p>Farg`ona, Kirgili</div>
+                <div class="birth_day"><p>Tug`ilgan sana: </p>25-07-2004</div>
+                <div class="login"><p>Login: </p>shuhrat25072004</div>
+                <a href="#call" class="call"><p>Bog`lanish: </p><i class='bx bx-chevron-right'></i></a>
+                <div class="mode">
+                    <p>Mode: </p>
+                    <input type="checkbox" id="theme-toggle" hidden>
+                    <label for="theme-toggle" class="theme-toggle"></label>
+                </div>
+            </div>
+            <div class="btns">
+                <a href="./login.html">Chiqish</a>
+                <!-- <a href="#">O`zgartirish</a> -->
+            </div>
+        </div>
+        <div class="page" id="call">
+            <h2>Telefon raqam:</h2>
+            <div class="box">
+                <a href="tel:+998905338628">+998905338628</a>
+                <a href="tel:+998996328899">+998996328899</a>
+            </div>
+            <h2>Dasturdan yozish:</h2>
+            <form action="#" class="box" method="post">{% csrf_token %}
+                <input hidden type="text" name="ism" value="Shuhrat">
+                <input hidden type="text" name="titul" value="Elektrik">
+                <textarea name="text" placeholder="Shu yerga yozing..."></textarea>
+                <button type="submit">Jo`natish</button>
+            </form>
+        </div>
+    </div>
+
+    <script defer src="{% static 'js/ishchilar.js' %}"></script>
+    <script defer src="{% static 'js/animate.js' %}"></script>
+</body>
+
+</html>

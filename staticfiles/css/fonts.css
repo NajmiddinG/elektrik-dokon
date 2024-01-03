@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    list-style: none;
+}
+
+:root {
+    --light: #f6f6f9;
+    --primary: #1976D2;
+    --light-primary: #CFE8FF;
+    --grey: #eee;
+    --dark-grey: #AAAAAA;
+    --dark: #363949;
+    --danger: #D32F2F;
+    --light-danger: #FECDD3;
+    --warning: #FBC02D;
+    --light-warning: #FFF2C6;
+    --success: #388E3C;
+    --light-success: #BBF7D0;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body.dark {
+    --light: #181a1e;
+    --grey: #25252c;
+    --dark: #fbfbfb;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--grey);
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+    scroll-behavior: smooth;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    /* Firefox */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox, Opera */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.dg{
+    background: var(--danger);
+}
+
+.pr{
+    background: var(--primary);
+}
+
+table tbody tr.pr > *,
+table tbody tr.dg > *{
+    color: var(--light);
+}
+
+table thead > *{
+    color: var(--dark);
+}
+table tbody tr:first-child{
+    border-radius: 10px 10px 0 0;
+}
+table tbody tr:last-child{
+    border-radius: 0 0 10px 10px;
+}
+
+
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 20px;
+    background-color: var(--light);
+    border: 1px solid var(--grey);
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    color: var(--dark);
+    transition: all .3s ease-in-out;
+}
+
+.popup.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+body.dark .popup {
+    box-shadow: 0 0 10px rgba(225, 225, 225, 0.5);
+}
+
+.popup button {
+    color: var(--light);
+    width: 45%;
+    margin: 15px 5px;
+    padding: 5px;
+    font-size: 18px;
+    text-align: center;
+    background: var(--primary);
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.popup button:last-child {
+    background: var(--danger);
+}
+
+.popup table {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: none;
+}
+
+.popup table td {
+    padding: 5px 10px 5px 5px;
+    font-size: 18px;
+    text-align: left;
+    border: none;
+}

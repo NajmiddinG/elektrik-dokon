@@ -1,0 +1,834 @@
+{% load static %}
+<!--<!DOCTYPE html>-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asil Elektro City</title>
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet"
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+    integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/media.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+</head>
+
+<body>
+    <div id="popup" class="popup"></div>
+    <div class="sidebar">
+        <a href="#" class="logo">
+            <i class='bx bxs-zap'></i>
+            <div class="logo-name"><span>Asil</span>Elektro</div>
+        </a>
+        <ul class="side-menu side-menu-1">
+            <li data-name="zakazlar"><a href="#"><i class='bx bx-group'></i>Zakazchilar</a></li>
+            <li data-name="ishchi"><a href="#"><i class='bx bx-male-female'></i>Ishchilar</a></li>
+            <li data-name="dokon" class="active"><a href="#"><i class='bx bx-store-alt'></i>Do`kon</a></li>
+            <li data-name="pishiriq"><a href="#"><i class='bx bx-cake'></i>Pishiriq</a></li>
+            <li data-name="chevar"><a href="#"><i class='bx bx-cut'></i>Chevarchilik</a></li>
+            <li data-name="prays"><a href="#"><i class='bx bx-spreadsheet'></i>Prays</a></li>
+            <li data-name="etirozlar"><a href="#"><i class='bx bx-message-square-dots'></i>Etirozlar</a></li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="{% url 'logout' %}" class="logout">
+                    <i class='bx bx-log-out-circle'></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- End of Sidebar -->
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navbar -->
+        <nav>
+            <i class='bx bx-menu'></i>
+            <form action="#"></form>
+            <input type="checkbox" id="theme-toggle" hidden>
+            <label for="theme-toggle" class="theme-toggle"></label>
+            <a href="#" class="profile">
+                <img src="{% static 'images/logo.png' %}">
+            </a>
+        </nav>
+
+        <!-- End of Navbar -->
+
+        <main data-name="zakazlar" class="hide">
+            <!-- Insights -->
+            <ul class="insights">
+                <li>
+                    <i class='bx bx-calendar-check'></i>
+                    <span class="info">
+                        <h3 class="zakaz_soni">
+                            1074
+                        </h3>
+                        <p>Zakazlar Soni</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bx-dollar-circle'></i>
+                    <span class="info">
+                        <h3>
+                            $6,742
+                        </h3>
+                        <p>Foyda</p>
+                    </span>
+                </li>
+            </ul>
+            <!-- End of Insights -->
+
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>Zakazlar</h3>
+                        <p data-label="zakaz" class="add-button big">+ Zakaz qo`shish</p>
+                        <p data-label="zakaz" class="add-button small">+</p>
+                    </div>
+                    <table id="myTable1">
+                        <thead>
+                            <tr>
+                                <th>Isim</th>
+                                <th>Manzil</th>
+                                <th>Telefon</th>
+                                <th>Dagovor summa</th>
+                                <th>Olingan summa</th>
+                                <th>Bajarilgan summa</th>
+                                <th>Qoldiq</th>
+                                <th>Ustavka</th>
+                                <th hidden>Ish turi</th>
+                                <th hidden>Tavsif</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for zakaz in zakaz_list %}
+                            <tr data-profile="{{ zakaz.ism|lower }}" class="{{ zakaz.status }}">
+                                <td data-name="{{ zakaz.ism|lower }}">{{ zakaz.ism|capfirst }}</td>
+                                <td>{{ zakaz.obyekt_nomi|capfirst }}</td>
+                                <td>+998{{ zakaz.tel }}</td>
+                                <td>{{ zakaz.kelishilgan_summa }}</td>
+                                <td>{{ zakaz.olingan_summa }}</td>
+                                <td>{{ zakaz.bajarilgan_summa }}</td>
+                                <td>{{ zakaz.qoldiq }}</td>
+                                <td>{{ zakaz.ustavka }}</td>
+                                <td hidden>{{ zakaz.ish_turi }}</td>
+                                <td hidden>{{ zakaz.tavsif }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <main data-name="ishchi" class="hide ishchi">
+            <!-- Insights -->
+            <ul class="insights">
+                <li data-name="elektrik">
+                    <i class='bx bxs-zap'></i>
+                    <span class="info">
+                        <h3>
+                            42
+                        </h3>
+                        <p>Elektriklar</p>
+                    </span>
+                </li>
+                <li data-name="santexnik">
+                    <i class='bx bxs-shower'></i>
+                    <span class="info">
+                        <h3>
+                            42
+                        </h3>
+                        <p>Santexnik</p>
+                    </span>
+                </li>
+                <li data-name="tikuvchi">
+                    <i class='bx bx-cut'></i>
+                    <span class="info">
+                        <h3>
+                            42
+                        </h3>
+                        <p>Tikuvchilar</p>
+                    </span>
+                </li>
+                <li data-name="konditer">
+                    <i class='bx bx-cake'></i>
+                    <span class="info">
+                        <h3>
+                            42
+                        </h3>
+                        <p>Konditer</p>
+                    </span>
+                </li>
+                <li data-name="chiqmagan" class="chiqmagan">
+                    <i class='bx bxs-calendar-x'></i>
+                    <span class="info">
+                        <h3>
+                            34
+                        </h3>
+                        <p>Ishga chiqmaganlar</p>
+                    </span>
+                </li>
+            </ul>
+            <p data-label="ishchi" class="add-button big">+ Ishchi qo`shish</p>
+            <p data-label="ishchi" class="add-button small">+</p>
+
+        </main>
+
+        <main data-name="dokon">
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>Maxsulotlar</h3>
+                        <p data-label="maxsulot" class="add-button add-btn big">+ Maxsulot qo`shish</p>
+                        <!-- <p class="add-button minus-btn big">- Maxsulot ayirish</p> -->
+                        <p data-label="maxsulot" class="add-button add-btn small">+</p>
+                        <!-- <p class="add-button minus-btn small">-</p> -->
+                    </div>
+                    <table id="myTable3">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Asil narxi (dona/metr)</th>
+                                <th>Ustama %</th>
+                                <th>Sotuvdagi narxi (dona/metr)</th>
+                                <th>Soni / o`lchami</th>
+                                <th>Summa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for maxsulot in maxsulot_list %}
+                            <tr>
+                                <td>{{ maxsulot.maxsulot_nomi|capfirst }}</td>
+                                <td>{{ maxsulot.narxi }}so`m</td>
+                                <td>{{ maxsulot.foiz }}%</td>
+                                <td data-active="foiz-narxi">{{ maxsulot.foiz_narxi }}</td>
+                                <td data-active="soni">{{ maxsulot.soni }}ta</td>
+                                <td data-active="summa"></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <main data-name="pishiriq" class="hide">
+            <!-- Insights -->
+            <ul class="insights">
+                <li>
+                    <i class='bx bx-package'></i>
+                    <span class="info">
+                        <h3>
+                            55 xil
+                        </h3>
+                        <p>Maxsulot turi</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bx-box'></i>
+                    <span class="info">
+                        <h3>
+                            6,742
+                        </h3>
+                        <p>maxsulotlar soni</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bx-dollar-circle'></i>
+                    <span class="info">
+                        <h3>
+                            $6,742
+                        </h3>
+                        <p>Narxi</p>
+                    </span>
+                </li>
+            </ul>
+            <!-- End of Insights -->
+
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>Maxsulotlar</h3>
+                        <p data-label="cake" class="add-button add-btn big">+ Maxsulot qo`shish</p>
+                        <!-- <p class="add-button minus-btn big">- Maxsulot ayirish</p> -->
+                        <p data-label="cake" class="add-button add-btn small">+</p>
+                        <!-- <p class="add-button minus-btn small">-</p> -->
+                    </div>
+                    <table id="myTable4">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Narxi (dona/kg)</th>
+                                <th>Soni / vazni</th>
+                                <th>Summa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Shakar</td>
+                                <td>3 000 so`m</td>
+                                <td>500 kg</td>
+                                <td>1 500 000 so`m</td>
+                            </tr>
+                            <tr>
+                                <td>Un</td>
+                                <td>5 000 so`m</td>
+                                <td>1 000 kg</td>
+                                <td>5 000 000 so`m</td>
+                            </tr>
+                            <tr>
+                                <td>Plitka</td>
+                                <td>20 000 so`m</td>
+                                <td>500 ta</td>
+                                <td>10 000 000 so`m</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <main data-name="chevar" class="hide">
+            <!-- Insights -->
+            <ul class="insights">
+                <li>
+                    <i class='bx bx-package'></i>
+                    <span class="info">
+                        <h3>
+                            55 xil
+                        </h3>
+                        <p>Maxsulot turi</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bx-box'></i>
+                    <span class="info">
+                        <h3>
+                            6,742
+                        </h3>
+                        <p>maxsulotlar soni</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bx-dollar-circle'></i>
+                    <span class="info">
+                        <h3>
+                            $6,742
+                        </h3>
+                        <p>Narxi</p>
+                    </span>
+                </li>
+            </ul>
+            <!-- End of Insights -->
+
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>Maxsulotlar</h3>
+                        <p data-label="cut" class="add-button add-btn big">+ Maxsulot qo`shish</p>
+                        <!-- <p class="add-button minus-btn big">- Maxsulot ayirish</p> -->
+                        <p data-label="cut" class="add-button add-btn small">+</p>
+                        <!-- <p class="add-button minus-btn small">-</p> -->
+                    </div>
+                    <table id="myTable5">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Narxi (dona/metr)</th>
+                                <th>Soni / o`lchami</th>
+                                <th>Summa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Igna</td>
+                                <td>3 000 so`m</td>
+                                <td>500 ta</td>
+                                <td>1 500 000 so`m</td>
+                            </tr>
+                            <tr>
+                                <td>Material (adras)</td>
+                                <td>5 000 so`m</td>
+                                <td>1 000 metr</td>
+                                <td>5 000 000 so`m</td>
+                            </tr>
+                            <tr>
+                                <td>Ip</td>
+                                <td>20 000 so`m</td>
+                                <td>500 ta</td>
+                                <td>10 000 000 so`m</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <main data-name="prays" class="hide">
+            <div class="bottom-data">
+                <div class="orders">
+                    <div class="header">
+                        <i class='bx bx-receipt'></i>
+                        <h3>Prays</h3>
+                        <p data-label="prays" class="add-button add-btn big">+ Prays qo`shish</p>
+                        <!-- <p class="add-button minus-btn big">- Maxsulot ayirish</p> -->
+                        <p data-label="prays" class="add-button add-btn small">+</p>
+                        <!-- <p class="add-button minus-btn small">-</p> -->
+                    </div>
+                    <ul class="box_prays">
+                        <li data-name="zakazchi" class="zakazchi active"><p>Zakazchilar</p></li>
+                        <li data-name="ishchi" class="ishchi"><p>Ishchilar</p></li>
+                    </ul>
+                    <div class="table_box">
+                        <div data-name="zakazchi" class="table table_1 show">
+                            <table id="myTable6">
+                                <thead>
+                                    <tr>
+                                        <th>Nomi</th>
+                                        <th>Narxi (bittasiga)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for prays in prayszakaz_list %}
+                                    <tr>
+                                        <td>{{ prays.ish_turi|capfirst }}</td>
+                                        <td>{{ prays.ish_narxi }}so`m</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div data-name="ishchi" class="table table_2">
+                            <table id="myTable7">
+                                <thead>
+                                    <tr>
+                                        <th>Nomi</th>
+                                        <th>Narxi (bittasiga)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for prays in praysishchi_list %}
+                                    <tr>
+                                        <td>{{ prays.ish_turi|capfirst }}</td>
+                                        <td>{{ prays.ish_narxi }}so`m</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <main data-name="etirozlar" class="hide etirozlar">
+            <ul class="etiroz">
+            {% for etirozlar in etirozlar_list|slice:"::-1" %}
+                <li>
+                    <div class="names_status">
+                        <h3 class="name">{{ etirozlar.ism|capfirst }}</h3>
+                        <small class="user_status">
+                            <p class="titul">{{ etirozlar.titul|capfirst }}</p>
+                            <p class="data">{{ etirozlar.publish_time }}</p>
+                            <i class='bx bx-chevron-down'></i>
+                        </small>
+                    </div>
+                    <div class="sms">{{ etirozlar.text|capfirst }}</div>
+                </li>
+            {% endfor %}
+            </ul>
+        </main>
+
+    </div>
+
+    <div class="person_box_container">
+        <div class="person_box" data-name="elektrik">
+            <div class="title">
+                <i class='bx bxs-zap'></i>
+                <h2>Elektriklar</h2>
+            </div>
+            <ul class="info">
+                {% for ishchi in ishchilar_list %}
+                {% if ishchi.kasb|lower == 'elektrik' %}
+                <li>
+                    <div class="name">{{ ishchi.ism|capfirst }}</div>
+                    <a href="tel:+998{{ ishchi.tel }}" class="number">+998{{ ishchi.tel }}</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="person_box" data-name="santexnik">
+            <div class="title">
+                <i class='bx bxs-shower'></i>
+                <h2>Santexnik</h2>
+            </div>
+            <ul class="info">
+                {% for ishchi in ishchilar_list %}
+                {% if ishchi.kasb|lower == 'santexnik' %}
+                <li>
+                    <div class="name">{{ ishchi.ism|capfirst }}</div>
+                    <a href="tel:+998{{ ishchi.tel }}" class="number">+998{{ ishchi.tel }}</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="person_box" data-name="tikuvchi">
+            <div class="title">
+                <i class='bx bx-cut'></i>
+                <h2>Tikuvchilar</h2>
+            </div>
+            <ul class="info">
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="person_box" data-name="konditer">
+            <div class="title">
+                <i class='bx bx-cake'></i>
+                <h2>Konditerlar</h2>
+            </div>
+            <ul class="info">
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="delete_update_btn">
+                        <i class='bx bx-edit-alt'></i>
+                        <i class='bx bxs-trash'></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="person_box" data-name="chiqmagan">
+            <div class="title">
+                <i class='bx bxs-calendar-x'></i>
+                <h2>Ishga chiqmaganlar</h2>
+            </div>
+            <ul class="info">
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="start_btn">
+                        <i class='bx bx-play'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="start_btn">
+                        <i class='bx bx-play'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="start_btn">
+                        <i class='bx bx-play'></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="name">Shuhrat</div>
+                    <a href="tel:+998907779244" class="number">+998907779244</a>
+                    <div class="start_btn">
+                        <i class='bx bx-play'></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="add_box_container">
+        <div class="add_box" data-label="zakaz">
+            <div class="title">
+                <i class='bx bx-group'></i>
+                <h2>Zakaz qo`shish</h2>
+            </div>
+            <form action="#" class="info" method="post">{% csrf_token %}
+                <div class="box-wrapper">
+                    <div class="input-box">
+                        <label for="ism">Isimni kiritng:</label>
+                        <input type="text" id="ism">
+                    </div>
+                    <div class="input-box">
+                        <label for="phone">Telefon kiritng:</label>
+                        <input type="text" id="phone">
+                    </div>
+                    <div class="input-box">
+                        <label for="firma">Tashkilot nomini kiritng:</label>
+                        <input type="text" id="firma">
+                    </div>
+                    <div class="input-box">
+                        <label for="job">Ish turini kiritng:</label>
+                        <select name="Tanlang" id="job" multiple>
+                            <option>Elektrik</option>
+                            <option>Santexnik</option>
+                        </select>
+                    </div>
+                    <div class="input-box">
+                        <label for="adres">Manzilni kiritng:</label>
+                        <input type="text" id="adres">
+                    </div>
+                    <div class="input-box">
+                        <label for="full_summ">Dogovor summani kiritng:</label>
+                        <input type="text" id="full_summ">
+                    </div>
+                    <div class="input-box">
+                        <label for="first_summ">Olingan summani kiritng:</label>
+                        <input type="text" id="first_summ">
+                    </div>
+                    <div class="input-box">
+                        <label for="ustavka">Ustavkani kiritng:</label>
+                        <input type="text" id="ustavka">
+                    </div>
+                    <div class="input-box">
+                        <label for="tavsif">Tavsifni kiritng:</label>
+                        <textarea id="tavsif"></textarea>
+                    </div>
+                </div>
+                <button class="save">Saqlash</button>
+            </form>
+        </div>
+        <div class="add_box" data-label="ishchi">
+            <div class="title">
+                <i class='bx bx-group'></i>
+                <h2>Ishchi qo`shish</h2>
+            </div>
+            <form action="#" class="info">
+                <div class="box-wrapper">
+                    <div class="input-box">
+                        <label for="name">Isimni kiritng:</label>
+                        <input type="text" id="name">
+                    </div>
+                    <div class="input-box">
+                        <label for="phone">Telefon kiritng:</label>
+                        <input type="text" id="phone">
+                    </div>
+                    <div class="input-box">
+                        <label for="adress">Manzilni kiritng:</label>
+                        <input type="text" id="adress">
+                    </div>
+                    <div class="input-box">
+                        <label for="job">Ish turini kiritng:</label>
+                        <select name="Tanlang" id="job">
+                            <option>Elektrik</option>
+                            <option>Santexnik</option>
+                            <option>Tikuvchi</option>
+                            <option>Konditer</option>
+                        </select>
+                    </div>
+                    <div class="input-box">
+                        <label for="week">Dam olish kunini kiritng:</label>
+                        <select name="Tanlang" id="week">
+                            <option>Dushanba</option>
+                            <option>Seshanba</option>
+                            <option>Chorshanba</option>
+                            <option>Payshanba</option>
+                            <option>Juma</option>
+                            <option>Shanba</option>
+                            <option>Yakshanba</option>
+                        </select>
+                    </div>
+                    <div class="input-box">
+                        <label for="old">Yoshini kiritng:</label>
+                        <input type="date" id="old">
+                    </div>
+                    <div class="input-box">
+                        <label for="old-job">Mutaxasisligini kiritng:</label>
+                        <input type="text" id="old-job">
+                    </div>
+                </div>
+                <button class="save">Saqlash</button>
+            </form>
+        </div>
+        <div class="add_box" data-label="maxsulot">
+            <div class="title">
+                <i class='bx bx-group'></i>
+                <h2>Maxsulot qo`shish</h2>
+            </div>
+            <form action="#" class="info" method="post">{% csrf_token %}
+                <div class="box-wrapper">
+                    <div class="input-box">
+                        <label for="maxsulot_nomi">Nomini kiritng:</label>
+                        <input type="text" id="maxsulot_nomi" name="maxsulot_nomi">
+                    </div>
+                    <div class="input-box">
+                        <label for="narxi">(dona/metr/kg)narxini kiritng:</label>
+                        <input type="text" id="narxi" name="narxi">
+                    </div>
+                    <div class="input-box">
+                        <label for="foiz">% kiritng:</label>
+                        <input type="text" id="foiz" name="foiz">
+                    </div>
+                    <div class="input-box">
+                        <label for="foiz_narxi">% narxini kiritng:</label>
+                        <input type="text" id="foiz_narxi" name="foiz_narxi">
+                    </div>
+                    <div class="input-box">
+                        <label for="how">Sonini kiritng:</label>
+                        <input type="number" id="how" name="soni">
+                    </div>
+                </div>
+                <button type="submit" class="save">Saqlash</button>
+            </form>
+        </div>
+        <div class="add_box active" data-label="prays">
+            <div class="title">
+                <i class='bx bx-group'></i>
+                <h2>Prays qo`shish</h2>
+            </div>
+            <form action="#" class="info" method="post">{% csrf_token %}
+                <div class="box-wrapper">
+                    <div class="input-box">
+                        <label for="{{ formCombinate.ish_turi.id_for_label }}">Nomini kiritng:</label>
+                        {{ formCombinate.ish_turi }}
+                    </div>
+                    <div class="input-box">
+                        <label for="{{ formCombinate.ish_narxi.id_for_label }}">Narxini kiritng:</label>
+                        {{ formCombinate.ish_narxi }}
+                    </div>
+                    <div class="input-box">
+                        <label for="{{ formCombinate.tanlang.id_for_label }}">Kimligini kiritng:</label>
+                        {{ formCombinate.tanlang }}
+                    </div>
+                </div>
+                <button type="submit" class="save">Saqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<!--    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"
+        integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/library.js' %}"></script>
+    <script>
+        TP.setup("myTable1", "popup");
+        TP.sort("myTable1", 0);
+
+        document.addEventListener('DOMContentLoaded', function () {
+        // Находим элементы таблицы
+        var table = document.getElementById('myTable3');
+        var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        // Проходим по каждой строке таблицы
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+
+            // Получаем значения foiz-narxi и soni
+            var foizNarxi = parseFloat(row.querySelector('[data-active="foiz-narxi"]').innerText.replace('so`m', '').trim());
+            var soni = parseFloat(row.querySelector('[data-active="soni"]').innerText.replace('ta', '').trim());
+
+            // Вычисляем summa
+            var summa = foizNarxi * soni;
+
+            // Вставляем результат в data-active="summa"
+            row.querySelector('[data-active="summa"]').innerText = summa + 'so`m';
+        }
+
+        var narxiInput = document.getElementById('narxi');
+        var foizInput = document.getElementById('foiz');
+        var foizNarxiInput = document.getElementById('foiz_narxi');
+
+        // Обработчик события ввода для полей narxi и foiz
+        narxiInput.addEventListener('input', updateFoizNarxi);
+        foizInput.addEventListener('input', updateFoizNarxi);
+
+        function updateFoizNarxi() {
+            // Получаем значения narxi и foiz
+            var narxiValue = parseFloat(narxiInput.value) || 0;
+            var foizValue = parseFloat(foizInput.value) || 0;
+
+            // Вычисляем новое значение foiz_narxi
+            var foizNarxiValue = narxiValue * ((100 + foizValue) / 100);
+
+            // Устанавливаем новое значение в поле foiz_narxi
+            foizNarxiInput.value = foizNarxiValue.toFixed(2);
+        }
+    });
+    </script>
+    <script src="{% static 'js/variables.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script defer src="{% static 'js/animate.js' %}"></script>
+</body>
+
+</html>

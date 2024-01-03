@@ -1,0 +1,92 @@
+@media (hover: hover){
+    .content main .bottom-data .orders table tbody tr:hover{
+        background: var(--grey);
+    }
+    
+    .person_box ul li:hover{
+        background: var(--grey);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar{
+        width: 200px;
+    }
+
+    .content{
+        width: calc(100% - 60px);
+        left: 200px;
+    }
+
+}
+
+@media screen and (max-width: 576px) {
+    
+    .content nav form .form-input input{
+        display: none;
+    }
+
+    .content nav form .form-input button{
+        width: auto;
+        height: auto;
+        background: transparent;
+        color: var(--dark);
+        border-radius: none;
+    }
+
+    .content nav form.show .form-input input{
+        display: block;
+        width: 100%;
+    }
+
+    .content nav form.show .form-input button{
+        width: 36px;
+        height: 100%;
+        color: var(--light);
+        background: var(--danger);
+        border-radius: 0 36px 36px 0;
+    }
+
+    .content nav form.show~.notif, .content nav form.show~.profile{
+        display: none;
+    }
+
+    .content main .insights {
+        grid-template-columns: 1fr;
+    }
+
+    .content main .bottom-data .header{
+        min-width: 340px;
+    }
+
+    .content main .bottom-data .orders table{
+        min-width: 340px;
+    }
+
+    .content main .bottom-data .orders table td,
+    .content main .bottom-data .orders table th{
+        padding: 16px 10px;
+    }
+
+    .content main .bottom-data .reminders .task-list{
+        min-width: 340px;
+    }
+
+    .add-button.big{
+        display: none;
+    }
+    
+    .add-button.small{
+        display: inline-block;
+    }
+
+    .navigation ul{
+        width: 87%;
+    }
+
+    .add_box .info .box-wrapper {
+        display: grid;
+        grid-template-columns: auto;
+    }
+
+}

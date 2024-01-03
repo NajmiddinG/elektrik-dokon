@@ -1,0 +1,314 @@
+<!-- mahsulot.html -->
+{% extends 'dokon/base.html' %}
+
+{% block title %}Mahsulotlar{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+    #productTypeSelect,
+    #product_type {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f5f5f5;
+        color: #333;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    #productTypeSelect:hover,
+    #product_type:hover {
+        border-color: #aaa;
+    }
+
+    #productTypeSelect:focus,
+    #product_type:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+    }
+    .add-form-container {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 300px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .add-form-container .title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .add-form-container .title i {
+        font-size: 24px;
+        margin-right: 10px;
+        color: #3498db; /* Blue color, change as needed */
+    }
+
+    .add-form-container .title h2 {
+        font-size: 18px;
+        margin: 0;
+        color: #333; /* Dark text color, change as needed */
+    }
+
+    .add-form-container .box-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .add-form-container .input-box {
+        margin-bottom: 15px;
+    }
+
+    .add-form-container label {
+        display: block;
+        font-size: 14px;
+        color: #666; /* Gray text color, change as needed */
+        margin-bottom: 5px;
+    }
+
+    .add-form-container input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc; /* Light border color, change as needed */
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .add-form-container .save {
+        background-color: #38903c; /* Green color, change as needed */
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    
+}
+
+/* Additional styling as needed */
+
+</style>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<main data-name="mahsulot">
+    <div class="bottom-data">
+        <div class="orders">
+            <div class="header">
+                <i class='bx bx-receipt'></i>
+                <h3>Mahsulotlar</h3>
+                <!-- <label for="productTypeSelect">Select Product Type:</label> -->
+                <select id="productTypeSelect" title="Mahsulot turi bo'yicha saralash">
+                    <option value="0" {% if request.COOKIES.product_type == 0 %}selected {% endif %}>Hamma mahsulotlar</option>
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}" {% if request.COOKIES.product_type == product_type.id|stringformat:"s" %}selected {% endif %}>{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
+                <p data-label="mahsulot_turi" title="+ Mahsulot turi qo'shish" class="add-button add-btn big" onclick="toggleForm('productTypeFormContainer')">+ Mahsulot turi</p>
+                <p data-label="mahsulot_turi" title="+ Mahsulot turi qo'shish" class="add-button add-btn small" onclick="toggleForm('productTypeFormContainer')">+ Mahsulot turi</p>
+                <p data-label="mahsulot" title="+ Mahsulot qo'shish" class="add-button add-btn big" onclick="toggleForm('productFormContainer')">+ Mahsulot</p>
+                <p data-label="mahsulot" title="+ Mahsulot qo'shish" class="add-button add-btn small" onclick="toggleForm('productFormContainer')">+ Mahsulot</p>
+                <!-- <p class="add-button minus-btn big">- Mahsulot ayirish</p> -->
+                <!-- <p class="add-button minus-btn small">-</p> -->
+            </div>
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th>Turi</th>
+                    <th>Nomi</th>
+                    <th>Tan narx</th>
+                    <th>Ustama %</th>
+                    <th>Sotuvdagi narxi</th>
+                    <th>Soni / o'lchami</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.type.name|capfirst }}</td>
+                    <td>{{ product.name|capfirst }}</td>
+                    <td>{{ product.price|spacecomma }} so'm</td>
+                    <td>{{ product.profit_percentage }}%</td>
+                    <td>{{ product.price|real_money:product.profit_percentage }} so'm</td>
+                    <td>{{ product.remain|spacecomma }}</td>
+                    <!-- <td></td> -->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<div id="productTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulot turi qo'shish</h2>
+    </div>
+    <form action="{% url 'dokon_app:create_product_type' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomini kiritng:</label>
+                <input type="text" id="name" name="name">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<div id="productFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulot qo'shish</h2>
+    </div>
+    <form action="{% url 'dokon_app:create_product' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="product_type">Mahsulot turi:</label>
+                <select id="product_type" name="product_type">
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}">{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="name">Mahsulot nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-box">
+                <label for="price">Narxi:</label>
+                <input type="number" id="price" name="price">
+            </div>
+            <div class="input-box">
+                <label for="profit_percentage">Ustama%:</label>
+                <input type="number" id="profit_percentage" name="profit_percentage">
+            </div>
+            <div class="input-box">
+                <label for="remain">Qoldiq:</label>
+                <input type="number" id="remain" name="remain">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+<!-- 
+<div class="add_box_container for_product_type">
+    <div class="add_box" data-label="mahsulot_turi">
+        <div class="title">
+            <i class='bx bx-group'></i>
+            <h2>Mahsulot turi qo'shish</h2>
+        </div>
+        <form action="#" class="info" method="post">{% csrf_token %}
+            <div class="box-wrapper">
+                <div class="input-box">
+                    <label for="name">Nomini kiritng:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="input-box">
+                    <label for="narxi">(dona/metr/kg)narxini kiritng:</label>
+                    <input type="text" id="narxi" name="narxi">
+                </div>
+                <div class="input-box">
+                    <label for="foiz">% kiritng:</label>
+                    <input type="text" id="foiz" name="foiz">
+                </div>
+                <div class="input-box">
+                    <label for="foiz_narxi">% narxini kiritng:</label>
+                    <input type="text" id="foiz_narxi" name="foiz_narxi">
+                </div>
+                <div class="input-box">
+                    <label for="how">Sonini kiritng:</label>
+                    <input type="number" id="how" name="soni">
+                </div>
+            </div>
+            <button type="submit" class="save">Saqlash</button>
+        </form>
+    </div>
+</div>
+
+<div class="add_box_container for_product">
+    <div class="add_box" data-label="mahsulot">
+        <div class="title">
+            <i class='bx bx-group'></i>
+            <h2>Mahsulot qo'shish</h2>
+        </div>
+        <form action="#" class="info" method="post">{% csrf_token %}
+            <div class="box-wrapper">
+                <div class="input-box">
+                    <label for="name">Nomini kiriting:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="input-box">
+                    <label for="narxi">(dona/metr/kg)narxini kiritng:</label>
+                    <input type="text" id="narxi" name="narxi">
+                </div>
+                <div class="input-box">
+                    <label for="foiz">% kiritng:</label>
+                    <input type="text" id="foiz" name="foiz">
+                </div>
+                <div class="input-box">
+                    <label for="foiz_narxi">% narxini kiritng:</label>
+                    <input type="text" id="foiz_narxi" name="foiz_narxi">
+                </div>
+                <div class="input-box">
+                    <label for="how">Sonini kiritng:</label>
+                    <input type="number" id="how" name="soni">
+                </div>
+            </div>
+            <button type="submit" class="save">Saqlash</button>
+        </form>
+    </div>
+</div> -->
+
+<script>
+    document.getElementById('productTypeSelect').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'dokon_app:set_product_type_cookie' 0 %}".replace('0', selectedValue);
+    });
+    function toggleForm(formId) {
+        var formContainer = document.getElementById(formId);
+        var currentDisplay = window.getComputedStyle(formContainer).display;
+
+        formContainer.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+    }
+</script>
+
+</script>
+
+<!-- <script>
+    function fetchProducts() {
+        var selectedProductTypeId = document.getElementById('productTypeSelect').value;
+
+        // Make an AJAX request to fetch products based on the selected product type
+        // You can use a library like Fetch or jQuery.ajax for this purpose
+        // Example using Fetch:
+        fetch('/get_products/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                product_type_id: selectedProductTypeId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the products table with the fetched data
+            document.getElementById('productsTableContainer').innerHTML = data.products_html;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script> -->
+{% endblock %}

@@ -1,0 +1,84 @@
+<!-- dokon.html -->
+{% extends 'dokon/base.html' %}
+
+{% block title %}Do'kon{% endblock %}
+
+{% block styles %}
+<style>
+    .custom-button {
+        background-color: #388e3c; /* Green */
+        color: white;
+        padding: 7px 20px; /* Adjust the padding for better appearance */
+        margin-top: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px; /* Add rounded corners */
+        border: none; /* Remove default button border */
+    }
+
+    .custom-button:hover {
+        background-color: #45a049; /* Darker green on hover */
+    }
+    /* Add these styles to your CSS or within a style tag in your HTML */
+    .product_search {
+        padding: 10px;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-right: 10px; /* Adjust the margin for better spacing */
+    }
+
+    /* Add additional styles for better focus appearance if needed */
+    .product_search:focus {
+        border-color: #4CAF50; /* Change border color on focus */
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7); /* Add a subtle shadow on focus */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main data-name="dokon">
+    <div class="bottom-data">
+        <div class="orders">
+            <div class="header">
+                <i class='bx bx-receipt'></i>
+                <h3>Mahsulotlar sotish</h3>
+                <input type="text" class="product_search" placeholder="Qidirish">
+            </div>
+            <form action="" method="post" enctype="multipart/form-data" class="form">
+                {% csrf_token %}
+                <table id="myTable1">
+                    <thead>
+                    <tr>
+                        <th>Nomi</th>
+                        <th>Narxi (dona/metr)</th>
+                        <th>Soni</th>
+                        <th>Jami</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for mahsulot in mahsulot_list %}
+                    <tr data-name="{{ mahsulot.mahsulot_nomi|lower }}">
+                        <td>{{ mahsulot.mahsulot_nomi|capfirst }}</td>
+                        <td>{{ mahsulot.foiz_narxi }}</td>
+                        <td>
+                            <input type="number" data-product="{{mahsulot.id}}" name="soni_{{ mahsulot.id }}"
+                                   min="1">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    <button type="submit" class="custom-button">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
