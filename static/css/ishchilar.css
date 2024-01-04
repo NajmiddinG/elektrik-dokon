@@ -397,7 +397,7 @@ body.dark .add_box_container{
 }
 
 .add_box .info::-webkit-scrollbar {
-    width: 0;
+    width: 5px;
 }
 
 .add_box .info label {

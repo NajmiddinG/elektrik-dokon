@@ -42,13 +42,32 @@
             background-color: #e74c3c; /* Red color for error messages */
             color: #fff;
         }
+        .scrollable-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scrollbar-width: thin; /* For Firefox */
+        }
 
-        /* Add more styles for other message types if needed */
+        .scrollable-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
 
     </style>
 </head>
 
-<body>
+<body class="scrollable-container">
     <div id="popup" class="popup"></div>
     <div class="sidebar">
         <!-- Sidebar content -->

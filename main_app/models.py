@@ -1,17 +1,40 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.hashers import make_password
 
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, tel_number='', address='', password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field must be set')
+        user = self.model(username=username, tel_number=tel_number, address=address, **extra_fields)
+        print(password)
+        user.set_password(make_password(password))
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, tel_number='', address='', password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, tel_number, address, password, **extra_fields)
 
 class User(AbstractUser):
-    tel_number = models.CharField(max_length=20)
-    address = models.CharField(max_length=255)
+    tel_number = models.CharField(max_length=20, default='')
+    address = models.CharField(max_length=255, default='')
     date = models.DateTimeField(auto_now_add=True)
+
+    objects = CustomUserManager()
 
     def __str__(self) -> str:
         return self.username
 
     def has_workers(self):
         return self.workers.exists()
+    
+    def save(self, *args, **kwargs):
+        if len(self.password)<30: self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
 class Worker(models.Model):
     user = models.ManyToManyField(User, related_name='workers')

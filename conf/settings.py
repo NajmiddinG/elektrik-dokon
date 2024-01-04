@@ -14,7 +14,8 @@ SECRET_KEY = 'django-insecure-97_@uleh+xi3meyl5ivo=-l9th(mz^at5idz208(t0(+#np)wa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['asl-electro-city.uz', 'www.asl-electro-city.uz', '127.0.0.1']
+# ALLOWED_HOSTS = ['asl-electro-city.uz', 'www.asl-electro-city.uz', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

@@ -4,8 +4,10 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse
 from main_app.views import has_some_error
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 
 from .models import Product, ProductType
+from main_app.models import Worker, User
 # Create your views here.
 
 def dashboard(request):
@@ -25,6 +27,7 @@ def mahsulot(request):
     cookies = request.COOKIES
     user_id = cookies.get('user', None)
     worker_id = cookies.get('worker', None)
+    admin = bool(User.objects.get(id=user_id).workers.filter(name__iexact='admin').first())
     selected_product_type = int(cookies.get('product_type', 0))
     if selected_product_type:
         products = Product.objects.filter(type=selected_product_type).order_by('type', '-date')
@@ -34,6 +37,7 @@ def mahsulot(request):
         'active': '2',
         "product_types": ProductType.objects.all().order_by('-date'),
         "products": products,
+        'admin': admin
     }
     response = render(request, 'dokon/mahsulot.html', context=context)
     if selected_product_type==0:
@@ -61,7 +65,6 @@ def create_product(request):
         price = request.POST.get('price')
         profit_percentage = request.POST.get('profit_percentage')
         remain = request.POST.get('remain')
-        print(request.POST)
         if Product.objects.filter(type__id=product_type_id, name=name).exists():
             messages.error(request, 'Bu nomli mahsulot turi mavjud.')
         else:
@@ -79,22 +82,54 @@ def create_product(request):
 
     return redirect('dokon_app:mahsulot')
 
+def edit_product_type(request, product_type_id):
+    if has_some_error(request): return redirect('/login/')
+    
+    if request.method == 'POST':
+        try:
+            name = str(request.POST['name']).capitalize()
+            product_type = ProductType.objects.get(id=product_type_id)
+            product_type.name = name
+            product_type.save()
+            messages.success(request, f'{name} mahsulot turi muvaffaqiyatli o\'zgartirildi.')
+        except ProductType.DoesNotExist:
+            messages.error(request, 'Bunday id ga ega mahsulot turi mavjud emas.')
+    return redirect('dokon_app:mahsulot')
+
+def edit_product(request, product_id):
+    if has_some_error(request): return redirect('/login/')
+    
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(id=product_id)
+            product.name = str(request.POST['name']).capitalize()
+            product.type = ProductType.objects.get(id=request.POST.get('product_type'))
+            product.price = request.POST.get('price')
+            product.profit_percentage = request.POST.get('profit_percentage')
+            if bool(request.user.workers.filter(name__iexact='admin').first()):
+                remain = request.POST.get('remain')
+            product.save()
+            messages.success(request, f'{product.name} mahsulot turi muvaffaqiyatli o\'zgartirildi.')
+        except ProductType.DoesNotExist:
+            messages.error(request, 'Bunday id ga ega mahsulot turi mavjud emas.')
+    return redirect('dokon_app:mahsulot')
+
 def set_product_type_cookie(request, product_type_id):
     response = redirect('dokon_app:mahsulot')
     response.set_cookie('product_type', str(product_type_id))
     return response
 
 
-def get_products(request):
-    if request.method == 'POST' and request.is_ajax():
-        product_type_id = request.POST.get('product_type_id')
-        # Fetch products based on the selected product type
-        products = Product.objects.filter(type_id=product_type_id)
-        # Render the products into HTML
-        products_html = render_to_string('products_table.html', {'products': products})
-        return JsonResponse({'products_html': products_html})
-    else:
-        return JsonResponse({'error': 'Invalid request'})
+# def get_products(request):
+#     if request.method == 'POST' and request.is_ajax():
+#         product_type_id = request.POST.get('product_type_id')
+#         # Fetch products based on the selected product type
+#         products = Product.objects.filter(type_id=product_type_id)
+#         # Render the products into HTML
+#         products_html = render_to_string('products_table.html', {'products': products})
+#         return JsonResponse({'products_html': products_html})
+#     else:
+#         return JsonResponse({'error': 'Invalid request'})
 # def zakaz(request):
 #     if has_some_error(request): return redirect('/login/')
 
