@@ -373,7 +373,7 @@ td {
             nameInput.value = productName;
             priceInput.value = parseFloat(productPrice.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number
             profitPercentageInput.value = parseFloat(productProfitPercentage.replace('%', '')); // Convert profit percentage to number
-            remainInput.value = parseFloat(productRemain.replace(',', '')); // Convert remain to number
+            remainInput.value = parseFloat(productRemain.replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert remain to number
 
             // Update the form action URL with the product ID
             editForm.action = '/dokon/edit_product/' + productId + '/';
