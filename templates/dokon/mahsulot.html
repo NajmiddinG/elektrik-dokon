@@ -255,12 +255,10 @@ td {
                 <label for="profit_percentage">Ustama%:</label>
                 <input type="number" id="profit_percentage" name="profit_percentage">
             </div>
-            {% if admin %}
             <div class="input-box">
                 <label for="remain">Qoldiq:</label>
                 <input type="number" id="remain" name="remain">
             </div>
-            {% endif %}
         </div>
         <button type="submit" class="save">Saqlash</button>
     </form>
@@ -373,7 +371,7 @@ td {
 
             productTypeInput.value = productType;
             nameInput.value = productName;
-            priceInput.value = parseFloat(productPrice.replace(' so\'m', '').replace(',', '')); // Convert price to number
+            priceInput.value = parseFloat(productPrice.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number
             profitPercentageInput.value = parseFloat(productProfitPercentage.replace('%', '')); // Convert profit percentage to number
             remainInput.value = parseFloat(productRemain.replace(',', '')); // Convert remain to number
 

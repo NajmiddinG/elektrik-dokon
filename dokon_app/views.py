@@ -27,7 +27,6 @@ def mahsulot(request):
     cookies = request.COOKIES
     user_id = cookies.get('user', None)
     worker_id = cookies.get('worker', None)
-    admin = bool(User.objects.get(id=user_id).workers.filter(name__iexact='admin').first())
     selected_product_type = int(cookies.get('product_type', 0))
     if selected_product_type:
         products = Product.objects.filter(type=selected_product_type).order_by('type', '-date')
@@ -37,7 +36,6 @@ def mahsulot(request):
         'active': '2',
         "product_types": ProductType.objects.all().order_by('-date'),
         "products": products,
-        'admin': admin
     }
     response = render(request, 'dokon/mahsulot.html', context=context)
     if selected_product_type==0:
