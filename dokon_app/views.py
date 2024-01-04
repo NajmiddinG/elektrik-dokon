@@ -105,7 +105,7 @@ def edit_product(request, product_id):
             product.price = request.POST.get('price')
             product.profit_percentage = request.POST.get('profit_percentage')
             if bool(request.user.workers.filter(name__iexact='admin').first()):
-                remain = request.POST.get('remain')
+                product.remain = request.POST.get('remain')
             product.save()
             messages.success(request, f'{product.name} mahsulot turi muvaffaqiyatli o\'zgartirildi.')
         except ProductType.DoesNotExist:

@@ -20,25 +20,29 @@ def check_user(request):
         return True
 
     except Exception as e:
-        print(e)
+        print(2, e)
         return False
 
 def check_user_type(request):
     user = request.user
     try:
+        admin = user.workers.filter(name__iexact='admin').first()
         dokon_worker = user.workers.filter(Q(name__iexact='dokon')).first()
-        if dokon_worker:
+        if dokon_worker or admin:
             response = redirect('dokon_app:dashboard')
             response.set_cookie('user', str(user.id))
-            response.set_cookie('worker', str(dokon_worker.id))
+            response.set_cookie('worker', str(admin.id) if admin else str(dokon_worker.id))
             return response
         logout(request)
         return redirect(user_login)
     except Exception as e:
-        print(e)
+        print(1, e)
         return HttpResponse('Tizimda xatolik')
 
 def has_some_error(request):
+    try:
+        if request.user.workers.filter(name__iexact='admin').first(): return False
+    except: pass
     return bool(not request.user.is_authenticated or not check_user(request))
 
 def user_login(request):
