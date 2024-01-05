@@ -73,6 +73,10 @@ def user_login(request):
         }
     return render(request, 'registration/login.html', context)
 
+def logout_user(request):
+    logout(request)
+    return redirect('/login/')
+
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
     

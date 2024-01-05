@@ -9,7 +9,6 @@ class CustomUserManager(BaseUserManager):
         if not username:
             raise ValueError('The Username field must be set')
         user = self.model(username=username, tel_number=tel_number, address=address, **extra_fields)
-        print(password)
         user.set_password(make_password(password))
         user.save(using=self._db)
         return user

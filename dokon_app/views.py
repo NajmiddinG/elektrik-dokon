@@ -6,20 +6,86 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .models import Product, ProductType
+from .models import Product, ProductType, ProductHistorySoldOut, HistorySoldOut
 from main_app.models import Worker, User
 # Create your views here.
+
+# def make_array()
 
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    print(user_id, worker_id)
+    products = Product.objects.all().values('id', 'type', 'name', 'price', 'profit_percentage', 'remain')
+    product_types = ProductType.objects.all().values('id', 'name')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': '1',
+        'products': products,
+        'product_types': product_types,
+        'worker_type': worker_type
     }
     return render(request, 'dokon/dokon.html', context=context)
+
+def sell_product(request):
+    if has_some_error(request): return redirect('/login/')
+    try:
+        total_money = 0
+        sold_out_products = []
+        history_sold_outs = [request.user, 0, 0, 0]
+
+        for key, number in request.POST.items():
+            if key.startswith('quantity;'):
+                number = int(number)
+                product_id = int(key.split(';')[1])
+                product = Product.objects.get(id=product_id)
+                price = int(product.price*(100+product.profit_percentage)/100)
+                if number>product.remain:
+                    messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
+                    return redirect('dokon_app:dashboard')
+                
+                total_money += price*number
+                
+                product_details = {
+                    'product_id': product_id,
+                    'quantity': number,
+                    'total_amount': price * number,
+                    'profit': (price - product.price) * number,
+                }
+                history_sold_outs[1]+=number
+                history_sold_outs[2]+=price*number
+                history_sold_outs[3]+=(price - product.price) * number
+                sold_out_products.append(product_details)
+
+                product.remain-=number
+                product.save()
+
+        # Create a HistorySoldOut object
+        history_sold_out = HistorySoldOut.objects.create(
+            responsible=history_sold_outs[0],
+            total_number_sold_out=history_sold_outs[1],
+            total_amount=history_sold_outs[2],
+            profit=history_sold_outs[3],
+        )
+
+        # Create instances in ProductHistorySoldOut
+        for product_details in sold_out_products:
+            product_history = ProductHistorySoldOut.objects.create(
+                type_id=product_details['product_id'],
+                number=product_details['quantity'],
+                total_amount=product_details['total_amount'],
+                profit=product_details['profit'],
+                date=history_sold_out.date
+            )
+            
+            # Add the created ProductHistorySoldOut instance to history_sold_out's history_products
+            history_sold_out.history_products.add(product_history)
+
+    except Exception as e:
+        messages.error(request, "Xatolik ro'y berdi!")
+
+    return redirect('dokon_app:dashboard')
 
 def mahsulot(request):
     if has_some_error(request): return redirect('/login/')
@@ -32,10 +98,12 @@ def mahsulot(request):
         products = Product.objects.filter(type=selected_product_type).order_by('type', '-date')
     else:
         products = Product.objects.all().order_by('type', '-date')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': '2',
         "product_types": ProductType.objects.all().order_by('-date'),
         "products": products,
+        'worker_type': worker_type
     }
     response = render(request, 'dokon/mahsulot.html', context=context)
     if selected_product_type==0:

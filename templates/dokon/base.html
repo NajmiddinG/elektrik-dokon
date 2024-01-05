@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/animate.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     {% block styles %}{% endblock %}
     <style>
         #messages-container {
@@ -63,6 +64,28 @@
         .scrollable-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        #productTypeSelect,
+        #product_type {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #productTypeSelect:hover,
+        #product_type:hover {
+            border-color: #aaa;
+        }
+
+        #productTypeSelect:focus,
+        #product_type:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+        }
 
     </style>
 </head>
@@ -83,7 +106,7 @@
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="{% url 'user_login' %}" class="logout">
+                <a href="{% url 'logout_user' %}" class="logout">
                     <i class='bx bx-log-out-circle'></i>
                     Logout
                 </a>
@@ -97,9 +120,10 @@
             <form action="#"></form>
             <input type="checkbox" id="theme-toggle" hidden>
             <label for="theme-toggle" class="theme-toggle"></label>
-            <a href="#" class="profile">
+            <label for="imglogo" style="color: green;">{{ request.user.first_name }} - {{ worker_type }}</label>
+            <!-- <a href="#" class="profile" id="imglogo">
                 <img src="{% static 'images/logo.png' %}">
-            </a>
+            </a> -->
         </nav>
         {% if messages %}
             <div id="messages-container">
