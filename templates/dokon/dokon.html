@@ -46,7 +46,8 @@
   cursor: pointer;
 }
 
-#myInput {
+#myInput,
+#myInput2 {
   box-sizing: border-box;
   background-image: url('searchicon.png');
   background-position: 14px 12px;
@@ -58,7 +59,8 @@
   width: 100%;
 }
 
-#myInput:focus {
+#myInput:focus,
+#myInput2:focus {
   outline: 3px solid #ddd;
 }
 
@@ -179,6 +181,8 @@ td {
                   <i class='bx bx-store-alt'></i>
                   <h3>Mahsulotlar sotish</h3>
                   <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->
+                  <input type="text" placeholder="Mahsulot nomi.." id="myInput2" onkeyup="filterFunction2()" style="max-width: 400px;">
+
                   <div class="dropdown">
                       <button onclick="myFunction()" class="dropbtn add-button add-btn" style="display: none;">Qidirish</button>
                       <div id="myDropdown" class="dropdown-content">  
@@ -192,7 +196,7 @@ td {
                               <th><center style="font-size: 18px !important;">Narxi</center></th>
                             </tr>
                           </thead>
-                          <tbody>
+                          <tbody id="myDropdown">
                             {% for product in products %}
                               <tr style="color: green;" style="margin-left: 10px;" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-profit="{{ product.profit_percentage }}" data-product-type="{{ product.type.name }}" data-product-remain="{{ product.remain }}">
                                 <td>{{ forloop.counter }}</td>
@@ -214,18 +218,18 @@ td {
                         <tr>
                             <th><center style="font-size: 18px !important;">Turi</center></th>
                             <th><center style="font-size: 18px !important;">Nomi</center></th>
-                            <th><center style="font-size: 18px !important;">Narxi(so'm)</center></th>
-                            <th><center style="font-size: 18px !important;">Soni</center></th>
+                            <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Narxi(so'm)</center></th>
+                            <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Soni</center></th>
                             <th><center style="font-size: 18px !important;">Jami</center></th>
                         </tr>
                     </thead>
-                    <tbody id="selectedProductsTable">
+                    <tbody id="myDropdown2">
                       {% for product in products %}
                       <tr>
                         <td><center>{{ product.type.name }}</center></td>
                         <td data-product-real-price='{{ product.price|real_money:product.profit_percentage }}'><center>{{ product.name }}</center></td>
-                        <td><center>{{ product.price|real_money:product.profit_percentage }}</center></td>
-                        <td><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="{{ product.remain }}" class="product_search" onchange="calculateTotal"></center></td>
+                        <td style="max-width: 75px !important;"><center>{{ product.price|real_money:product.profit_percentage }}</center></td>
+                        <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="{{ product.remain }}" class="product_search" onchange="calculateTotal"></center></td>
                         <td><center>{{ product.remain|spacecomma }}</center></td>
                       </tr>
                       {% endfor %}
@@ -276,6 +280,23 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
   }
   calculateTotal();
   }
+  function filterFunction2() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput2");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("myDropdown2");
+    a = div.getElementsByTagName("tr");
+    for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      console.log(txtValue.toUpperCase().indexOf(filter) > -1)
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+      } else {
+      a[i].style.display = "none";
+      }
+  }
+  calculateTotal();
+  }
 
 // Add a click event listener to each product link
   document.querySelectorAll('.dropdown-content tr').forEach(function(link) {
@@ -300,8 +321,8 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
             <td><center><input type="number" name="quantity;${productId}" id="${productId}" value="1" min="1" max="${productRemain}" class="product_search"></center></td>
             <td><center>${productRemain}</center></td>
             `;
-            var firstRow = document.getElementById('selectedProductsTable').querySelector('tr');
-            document.getElementById('selectedProductsTable').insertBefore(newRow, firstRow);
+            var firstRow = document.getElementById('myDropdown2').querySelector('tr');
+            document.getElementById('myDropdown2').insertBefore(newRow, firstRow);
           }
           calculateTotal();
           document.getElementById("myDropdown").style.display='none';
@@ -319,7 +340,7 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
 
   function calculateTotal() {
     // Select all input elements with class "product_search" within the table
-    var inputs = document.querySelectorAll('#selectedProductsTable input.product_search');
+    var inputs = document.querySelectorAll('#myDropdown2 input.product_search');
 
     var totalAmount = 0;
 
