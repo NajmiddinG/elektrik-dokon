@@ -146,14 +146,10 @@ td {
                     <th><center>№</center></th>
                     <th><center>Turi</center></th>
                     <th><center>Nomi</center></th>
-                    {% if worker_type == 'Admin' %}
                     <th><center>Tan narx</center></th>
                     <th><center>Ustama %</center></th>
-                    {% endif %}
                     <th><center>Sotuvdagi narxi</center></th>
-                    {% if worker_type == 'Admin' %}
-                    <th><center>Qoldiq</center></th>
-                    {% endif %}
+                    <th><center>Soni / o'lchami</center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -162,14 +158,10 @@ td {
                     <td id="{{ product.id }}" class="product-id" data-id="{{ product.id }}">{{ forloop.counter }}</td>
                     <td id="{{ product.id }}type" class="product-type" data-id="{{ product.type.id }}" style="color: green; max-width: 150px;">{{ product.type.name|capfirst }}</td>
                     <td id="{{ product.id }}name">{{ product.name|capfirst }}</td>
-                    {% if worker_type == 'Admin' %}
                     <td id="{{ product.id }}price">{{ product.price|spacecomma }} so'm</td>
                     <td id="{{ product.id }}profit_percentage">{{ product.profit_percentage }}%</td>
-                    {% endif %}
                     <td>{{ product.price|real_money:product.profit_percentage }} so'm</td>
-                    {% if worker_type == 'Admin' %}
                     <td id="{{ product.id }}remain">{{ product.remain|spacecomma }}</td>
-                    {% endif %}
                     <!-- <td></td> -->
                 </tr>
                 {% endfor %}
@@ -352,7 +344,6 @@ td {
             var editForm = document.getElementById('editProductForm');
             var productTypeInput = editForm.querySelector('#product_type');
             var nameInput = editForm.querySelector('#name');
-            
             var priceInput = editForm.querySelector('#price');
             var profitPercentageInput = editForm.querySelector('#profit_percentage');
             var remainInput = editForm.querySelector('#remain');

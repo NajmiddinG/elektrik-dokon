@@ -10,7 +10,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Creating ProductType instances...'))
 
         for i in range(1, 11):
-            product_type_name = f"ProductTypeh128h e128heuwheuqihw iuehqiw {i}"
+            product_type_name = f"ProductType {i}"
             product_type = ProductType.objects.create(name=product_type_name, date=timezone.now())
 
             self.stdout.write(self.style.SUCCESS(f'ProductType created: {product_type_name}'))
@@ -18,7 +18,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Creating Product instances...'))
 
             for j in range(1, 21):
-                product_name = f"Productq weqweqwe qweqweqweqw {i}-{j}"
+                product_name = f"Product {j}"
                 price = j * 10  # Adjust as needed
                 profit_percentage = j + 30  # Adjust as needed
                 remain = 100  # Adjust as needed

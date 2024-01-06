@@ -17,7 +17,7 @@ def dashboard(request):
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    products = Product.objects.all().values('id', 'type', 'name', 'price', 'profit_percentage', 'remain')
+    products = Product.objects.all()
     product_types = ProductType.objects.all().values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
@@ -104,7 +104,6 @@ def mahsulot(request):
         "products": products,
         'worker_type': worker_type
     }
-    print(worker_type)
     response = render(request, 'dokon/mahsulot.html', context=context)
     if selected_product_type==0:
         response.set_cookie('product_type', '0')
