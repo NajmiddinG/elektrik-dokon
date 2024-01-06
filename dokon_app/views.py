@@ -34,7 +34,6 @@ def sell_product(request):
         total_money = 0
         sold_out_products = []
         history_sold_outs = [request.user, 0, 0, 0]
-
         for key, number in request.POST.items():
             if key.startswith('quantity;'):
                 number = int(number)
@@ -105,6 +104,7 @@ def mahsulot(request):
         "products": products,
         'worker_type': worker_type
     }
+    print(worker_type)
     response = render(request, 'dokon/mahsulot.html', context=context)
     if selected_product_type==0:
         response.set_cookie('product_type', '0')
