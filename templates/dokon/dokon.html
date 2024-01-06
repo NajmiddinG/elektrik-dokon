@@ -180,7 +180,7 @@ td {
                   <h3>Mahsulotlar sotish</h3>
                   <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->
                   <div class="dropdown">
-                      <button onclick="myFunction()" class="dropbtn add-button add-btn">Qidirish</button>
+                      <button onclick="myFunction()" class="dropbtn add-button add-btn" style="display: none;">Qidirish</button>
                       <div id="myDropdown" class="dropdown-content">  
                         <input type="text" placeholder="Mahsulot nomi.." id="myInput" onkeyup="filterFunction()">
                         <table>
@@ -212,15 +212,23 @@ td {
                 <table id="myTable1">
                     <thead>
                         <tr>
-                            <th><center style="font-size: 18px !important;">Mahsulot turi</center></th>
+                            <th><center style="font-size: 18px !important;">Turi</center></th>
                             <th><center style="font-size: 18px !important;">Nomi</center></th>
-                            <!-- <th><center style="font-size: 18px !important;">Narxi(so'm)</center></th> -->
+                            <th><center style="font-size: 18px !important;">Narxi(so'm)</center></th>
                             <th><center style="font-size: 18px !important;">Soni</center></th>
                             <th><center style="font-size: 18px !important;">Jami</center></th>
                         </tr>
                     </thead>
                     <tbody id="selectedProductsTable">
-                        <!-- Display selected products here -->
+                      {% for product in products %}
+                      <tr>
+                        <td><center>{{ product.type.name }}</center></td>
+                        <td data-product-real-price='{{ product.price|real_money:product.profit_percentage }}'><center>{{ product.name }}</center></td>
+                        <td><center>{{ product.price|real_money:product.profit_percentage }}</center></td>
+                        <td><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="{{ product.remain }}" class="product_search" onchange="calculateTotal"></center></td>
+                        <td><center>{{ product.remain|spacecomma }}</center></td>
+                      </tr>
+                      {% endfor %}
                     </tbody>
                 </table>
 

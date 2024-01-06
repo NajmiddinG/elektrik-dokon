@@ -17,7 +17,7 @@ def dashboard(request):
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('-type__date')
     product_types = ProductType.objects.all().values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
@@ -35,7 +35,7 @@ def sell_product(request):
         sold_out_products = []
         history_sold_outs = [request.user, 0, 0, 0]
         for key, number in request.POST.items():
-            if key.startswith('quantity;'):
+            if key.startswith('quantity;') and number!='0':
                 number = int(number)
                 product_id = int(key.split(';')[1])
                 product = Product.objects.get(id=product_id)
