@@ -178,8 +178,8 @@ td {
     <div class="bottom-data">
         <div class="orders">
               <div class="header">
-                  <i class='bx bx-euro'></i>
-                  <h3>Mahsulotlar sotish</h3>
+                  <i class='bx bx-cart-add'></i>
+                  <h3>Yangi mahsulotlar</h3>
                   <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->
                   <input type="text" placeholder="Mahsulot nomi.." id="myInput2" onkeyup="filterFunction2()" style="max-width: 400px;">
 
@@ -210,7 +210,7 @@ td {
                       </div>
                     </div>
                 </div>
-            <form action="{% url 'dokon_app:sell_product' %}" method="post" enctype="multipart/form-data" class="form" id="productForm">
+            <form action="{% url 'dokon_app:insert_new_porduct' %}" method="post" enctype="multipart/form-data" class="form" id="productForm">
                 {% csrf_token %}
                 
                 <table id="myTable1">
@@ -220,26 +220,25 @@ td {
                             <th><center style="font-size: 18px !important;">Nomi</center></th>
                             <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Narxi(so'm)</center></th>
                             <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Soni</center></th>
-                            <th><center style="font-size: 18px !important;">Jami</center></th>
+                            <!-- <th><center style="font-size: 18px !important;">Jami</center></th> -->
                         </tr>
                     </thead>
                     <tbody id="myDropdown2">
                       {% for product in products %}
                       <tr>
-                        <tr>
-                          <td><center>{{ product.type.name }}</center></td>
-                          <td data-product-real-price='{{ product.price|real_money:product.profit_percentage }}'><center>{{ product.name }}</center></td>
-                          <td style="max-width: 75px !important;"><center>{{ product.price|real_money:product.profit_percentage }}</center></td>
-                          <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="{{ product.remain }}" class="product_search" onchange="calculateTotal"></center></td>
-                          <td><center>{{ product.remain|spacecomma }}</center></td>
-                        </tr>
+                        <td><center>{{ product.type.name }}</center></td>
+                        <td><center>{{ product.name }}</center></td>
+                        <td style="max-width: 75px !important;"><center><input type="number" name="price;{{ product.id }}" id="price;{{ product.id }}" value="{{ product.price }}" min="0" class="product_search" onchange="calculateTotal"></center></td>
+                        <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="1000000000" class="product_search product_search2" onchange="calculateTotal"></center></td>
+                      </tr>
+                      
                       {% endfor %}
                     </tbody>
                 </table>
 
                 <div class="footer">
                     <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">0</span> so'm</p>
-                    <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Sotish</button>
+                    <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Qo'shish</button>
                 </div>
                 <!-- Hidden input fields to store selected product data -->
                 <input type="hidden" name="selected_products" id="selectedProducts" value="">
@@ -318,7 +317,7 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
             var newRow = document.createElement('tr');
             newRow.innerHTML = `
             <td><center>${productType}</center></td>
-            <td data-product-real-price='${realPrice}'><center>${productName}</center></td>
+            <td><center>${productName}</center></td>
             <td><center><input type="number" name="quantity;${productId}" id="${productId}" value="1" min="1" max="${productRemain}" class="product_search"></center></td>
             <td><center>${productRemain}</center></td>
             `;
@@ -341,16 +340,15 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
 
   function calculateTotal() {
     // Select all input elements with class "product_search" within the table
-    var inputs = document.querySelectorAll('#myDropdown2 input.product_search');
+    var inputs = document.querySelectorAll('#myDropdown2 input.product_search2');
 
     var totalAmount = 0;
 
     // Iterate through each input and calculate the total amount
     inputs.forEach(function(input) {
         var quantity = parseInt(input.value);
-        var price = parseInt(input.closest('tr').querySelector('td:nth-child(2)').getAttribute('data-product-real-price'));
-        // Check if the quantity and price are valid numbers
-        if (!isNaN(quantity) && !isNaN(price)) {
+        var price = parseInt(input.closest('tr').querySelector('td:nth-child(3) input').value);
+        if (!isNaN(quantity) && !isNaN(price) && quantity*price) {
             totalAmount += quantity * price;
         }
     });

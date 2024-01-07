@@ -1,11 +1,12 @@
 from django.urls import path
 # from django.contrib.auth.views import LoginView, LogoutView
-from .views import dashboard, mahsulot, set_product_type_cookie, create_product_type, create_product, edit_product, edit_product_type, sell_product
+from .views import dashboard, mahsulot, set_product_type_cookie, create_product_type, create_product, edit_product, edit_product_type, sell_product, newproduct, insert_new_porduct
 
 app_name = 'dokon_app'
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
+    path('yangi_tovarlar/', newproduct, name='newproduct'),
     path('mahsulot/', mahsulot, name='mahsulot'),
     path('set_product_type_cookie/<int:product_type_id>/', set_product_type_cookie, name='set_product_type_cookie'),
     path('create_product_type/', create_product_type, name='create_product_type'),
@@ -13,6 +14,7 @@ urlpatterns = [
     path('edit_product_type/<int:product_type_id>/', edit_product_type, name='edit_product_type'),
     path('edit_product/<int:product_id>/', edit_product, name='edit_product'),
     path('sell_product/', sell_product, name='sell_product'),
+    path('insert_new_porduct/', insert_new_porduct, name='insert_new_porduct'),
     # path('get_products/', get_products, name='get_products'),
     # path('', dashboard, name='dashboard'),
     # path('', dashboard, name='dashboard'),

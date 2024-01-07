@@ -6,7 +6,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .models import Product, ProductType, ProductHistorySoldOut, HistorySoldOut
+from .models import Product, ProductType, ProductHistorySoldOut, HistorySoldOut, ProductHistoryCame, HistoryCame
 from main_app.models import Worker, User
 # Create your views here.
 
@@ -59,27 +59,30 @@ def sell_product(request):
 
                 product.remain-=number
                 product.save()
-
-        # Create a HistorySoldOut object
-        history_sold_out = HistorySoldOut.objects.create(
-            responsible=history_sold_outs[0],
-            total_number_sold_out=history_sold_outs[1],
-            total_amount=history_sold_outs[2],
-            profit=history_sold_outs[3],
-        )
-
-        # Create instances in ProductHistorySoldOut
-        for product_details in sold_out_products:
-            product_history = ProductHistorySoldOut.objects.create(
-                type_id=product_details['product_id'],
-                number=product_details['quantity'],
-                total_amount=product_details['total_amount'],
-                profit=product_details['profit'],
-                date=history_sold_out.date
+        if total_money==0:
+            messages.error(request, "Xatolik ro'y berdi!")
+        else:
+            # Create a HistorySoldOut object
+            history_sold_out = HistorySoldOut.objects.create(
+                responsible=history_sold_outs[0],
+                total_number_sold_out=history_sold_outs[1],
+                total_amount=history_sold_outs[2],
+                profit=history_sold_outs[3],
             )
-            
-            # Add the created ProductHistorySoldOut instance to history_sold_out's history_products
-            history_sold_out.history_products.add(product_history)
+
+            # Create instances in ProductHistorySoldOut
+            for product_details in sold_out_products:
+                product_history = ProductHistorySoldOut.objects.create(
+                    type_id=product_details['product_id'],
+                    number=product_details['quantity'],
+                    total_amount=product_details['total_amount'],
+                    profit=product_details['profit'],
+                    date=history_sold_out.date
+                )
+                
+                # Add the created ProductHistorySoldOut instance to history_sold_out's history_products
+                history_sold_out.history_products.add(product_history)
+            messages.success(request, "Sotish muvaffaqiyatli amalga oshirildi!")
 
     except Exception as e:
         messages.error(request, "Xatolik ro'y berdi!")
@@ -184,6 +187,70 @@ def set_product_type_cookie(request, product_type_id):
     response.set_cookie('product_type', str(product_type_id))
     return response
 
+def newproduct(request):
+    if has_some_error(request): return redirect('/login/')
+
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    products = Product.objects.all().order_by('-type__date')
+    product_types = ProductType.objects.all().values('id', 'name')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': '5',
+        'products': products,
+        'product_types': product_types,
+        'worker_type': worker_type
+    }
+    return render(request, 'dokon/yangitovar.html', context=context)
+
+def insert_new_porduct(request):
+    if has_some_error(request): return redirect('/login/')
+    try:
+        sold_out_products = []
+        history_came = [request.user, 0, 0] # responsible, total_number_sold_out, total_amount
+        for key, number in request.POST.items():
+            if key.startswith('quantity;') and number!='0':
+                number = int(number)
+                product_id = int(key.split(';')[1])
+                price = int(request.POST[f'price;{product_id}'])
+                if price==0: continue
+                product_details = {
+                    'product_id': product_id,
+                    'number': number,
+                    'total_amount': price * number,
+                    'price': price,
+                }
+                history_came[1]+=number
+                history_came[2]+=price*number
+                sold_out_products.append(product_details)
+                product = Product.objects.get(id=product_id)
+                product.price=price
+                product.remain+=number
+                product.save()
+        if history_came[1]==0:
+            messages.error(request, "Xatolik ro'y berdi!")
+        else:
+            history_came = HistoryCame.objects.create(
+                responsible=history_came[0],
+                total_number_sold_out=history_came[1],
+                total_amount=history_came[2],
+            )
+            for product_details in sold_out_products:
+                product_history = ProductHistoryCame.objects.create(
+                    type_id=product_details['product_id'],
+                    number=product_details['number'],
+                    total_amount=product_details['total_amount'],
+                    price=product_details['price'],
+                    date=history_came.date
+                )
+                
+                # Add the created ProductHistoryCame instance to history_came's history_products
+                history_came.history_products.add(product_history)
+            messages.success(request, "Yangi mahsulotlar muvaffaqiyatli qo'shildi!")
+    except Exception as e:
+        messages.error(request, "Xatolik ro'y berdi!")
+
+    return redirect('dokon_app:newproduct')
 
 # def get_products(request):
 #     if request.method == 'POST' and request.is_ajax():
