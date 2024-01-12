@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main_app',
     'dokon_app',
+    'ishchi_app',
+    'obyekt_app',
 ]
 
 MIDDLEWARE = [

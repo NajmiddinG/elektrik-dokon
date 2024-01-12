@@ -1,8 +1,17 @@
 from django.contrib import admin
 from .models import User, Worker
 
-admin.site.register(User)
-admin.site.register(Worker)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username', 'tel_number', 'address', 'date')
+    search_fields = ['username', 'tel_number']
+
+class WorkerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'date')
+
+# Register models
+admin.site.register(User, UserAdmin)
+admin.site.register(Worker, WorkerAdmin)
+
 
 # from .models import Zakazlar, Kasb_turi, PraysZakaz, PraysIshchi, Maxsulot, Xodimlar, Etirozlar
 # from .models import *
