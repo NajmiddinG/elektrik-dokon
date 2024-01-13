@@ -1,0 +1,374 @@
+<!-- mahsulot.html -->
+{% extends 'dokon/base.html' %}
+
+{% block title %}Mahsulotlar{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+    
+    .add-form-container {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 300px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .add-form-container .title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .add-form-container .title i {
+        font-size: 24px;
+        margin-right: 10px;
+        color: #3498db; /* Blue color, change as needed */
+    }
+
+    .add-form-container .title h2 {
+        font-size: 18px;
+        margin: 0;
+        color: #333; /* Dark text color, change as needed */
+    }
+
+    .add-form-container .box-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .add-form-container .input-box {
+        margin-bottom: 15px;
+    }
+
+    .add-form-container label {
+        display: block;
+        font-size: 14px;
+        color: #666; /* Gray text color, change as needed */
+        margin-bottom: 5px;
+    }
+
+    .add-form-container input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc; /* Light border color, change as needed */
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .add-form-container .save {
+        background-color: #38903c; /* Green color, change as needed */
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .table-container {
+        max-height: 300px; /* Adjust the height as needed */
+        overflow: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr, th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    tr, td {
+        text-align: center;
+        padding:8px;
+        border: 1px solid #dddddd;
+    }
+    td:first-child {
+        color: green;
+    }
+    .add-button .add-btn {
+        width: 150px !important;
+    }
+    .add-button {
+    border: none;
+    padding: 7px 10px;
+    background: var(--primary);
+    color: var(--light);
+    border-radius: 5px;
+    overflow-x: visible;
+    white-space: nowrap;
+    cursor: pointer;
+}
+td {
+    max-width: 200px; /* Set a maximum width for the cell */
+    overflow: hidden; /* Hide any content that exceeds the width */
+    text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
+</style>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<main data-name="mahsulot">
+    <div class="bottom-data">
+        <div class="orders">
+            <div class="header">
+                
+                <h3><i class='bx bx-receipt'></i> Mahsulotlar</h3>
+                <!-- <label for="productTypeSelect">Select Product Type:</label> -->
+                <select id="productTypeSelect" title="Mahsulot turi bo'yicha saralash" style="width: 210px;">
+                    <option value="0" {% if request.COOKIES.product_type == 0 %}selected {% endif %}>Hamma mahsulotlar</option>
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}" {% if request.COOKIES.product_type == product_type.id|stringformat:"s" %}selected {% endif %}>{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
+                <p data-label="mahsulot_turi" title="+ Mahsulot turi qo'shish" class="add-button add-btn" onclick="toggleForm('productTypeFormContainer')">+ Mahsulot turi</p>
+                <!-- <p data-label="mahsulot_turi" title="+ Mahsulot turi qo'shish" class="add-button add-btn small" onclick="toggleForm('productTypeFormContainer')">+</p> -->
+                <p data-label="mahsulot" title="+ Mahsulot qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Mahsulot</p>
+                <!-- <p data-label="mahsulot" title="+ Mahsulot qo'shish" class="add-button add-btn small" onclick="toggleForm('productFormContainer')">+</p> -->
+                <!-- <p class="add-button minus-btn big">- Mahsulot ayirish</p> -->
+                <!-- <p class="add-button minus-btn small">-</p> -->
+            </div>
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Turi</center></th>
+                    <th><center>Nomi</center></th>
+                    <th><center>Tan narx</center></th>
+                    <th><center>Ustama %</center></th>
+                    <th><center>Sotuvdagi narxi</center></th>
+                    <th><center>Soni / o'lchami</center></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                <tr class="edit-product" data-id="{{ product.id }}">
+                    <td id="{{ product.id }}" class="product-id" data-id="{{ product.id }}">{{ forloop.counter }}</td>
+                    <td id="{{ product.id }}type" class="product-type" data-id="{{ product.type.id }}" style="color: green; max-width: 150px;">{{ product.type.name|capfirst }}</td>
+                    <td id="{{ product.id }}name">{{ product.name|capfirst }}</td>
+                    <td id="{{ product.id }}price">{{ product.price|spacecomma }} so'm</td>
+                    <td id="{{ product.id }}profit_percentage">{{ product.profit_percentage }}%</td>
+                    <td>{{ product.price|real_money:product.profit_percentage }} so'm</td>
+                    <td id="{{ product.id }}remain">{{ product.remain|spacecomma }}</td>
+                    <!-- <td></td> -->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- create -->
+<div id="productTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulot turi qo'shish</h2>
+    </div>
+    <form action="{% url 'dokon_app:create_product_type_santexnika' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomini kiritng:</label>
+                <input type="text" id="name" name="name">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+<!-- edit -->
+<div id="editproductTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulot turini o'zgartirish</h2>
+    </div>
+    <form action="{% url 'dokon_app:edit_product_type_santexnika' 0 %}" class="info" method="post" id="editProductTypeForm">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomi:</label>
+                <input type="text" id="name" name="name" value="{id}">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<!-- create -->
+<div id="productFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulot qo'shish</h2>
+    </div>
+    <form action="{% url 'dokon_app:create_product_santexnika' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="product_type">Mahsulot turi:</label>
+                <select id="product_type" name="product_type">
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}">{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="name">Mahsulot nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-box">
+                <label for="price">Narxi:</label>
+                <input type="number" id="price" name="price">
+            </div>
+            <div class="input-box">
+                <label for="profit_percentage">Ustama%:</label>
+                <input type="number" id="profit_percentage" name="profit_percentage">
+            </div>
+            <div class="input-box">
+                <label for="remain">Qoldiq:</label>
+                <input type="number" id="remain" name="remain">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<!-- edit -->
+<div id="editproductFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulotni o'zgartirish</h2>
+    </div>
+    <form action="{% url 'dokon_app:edit_product_santexnika' 0 %}" class="info" method="post" id="editProductForm">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="product_type">Mahsulot turi:</label>
+                <select id="product_type" name="product_type" style="width: 250px;">
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}">{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="name">Mahsulot nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-box">
+                <label for="price">Narxi:</label>
+                <input type="number" id="price" name="price">
+            </div>
+            <div class="input-box">
+                <label for="profit_percentage">Ustama%:</label>
+                <input type="number" id="profit_percentage" name="profit_percentage">
+            </div>
+            <div class="input-box">
+                <label for="remain">Qoldiq:</label>
+                <input type="number" id="remain" name="remain">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('productTypeSelect').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'dokon_app:set_product_type_cookie_santexnika' 0 %}".replace('0', selectedValue);
+    });
+    
+    function toggleForm(formId) {
+        var formContainer = document.getElementById(formId);
+        var currentDisplay = window.getComputedStyle(formContainer).display;
+
+        formContainer.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find all elements with class 'product-type'
+        var productTypeCells = document.querySelectorAll('.product-type');
+
+        // Attach a click event listener to each 'product-type' cell
+        productTypeCells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                // Get the product type name and id from the clicked cell
+                var productTypeName = cell.textContent.trim();
+                var productTypeId = cell.getAttribute('data-id');
+
+                // Populate the input fields in the edit form
+                var editForm = document.getElementById('editProductTypeForm');
+                var nameInput = editForm.querySelector('#name');
+
+                nameInput.value = productTypeName;
+
+                // Update the form action URL with the product type ID
+                editForm.action = '/dokon/edit_product_type_santexnika/' + productTypeId + '/';
+
+                // Show or toggle the edit form as needed
+                toggleForm('editproductTypeFormContainer');
+                document.getElementById('name').focus();
+            });
+        });
+    // Find all elements with class 'product-id'
+    var productIdCells = document.querySelectorAll('.product-id');
+
+    // Attach a click event listener to each 'product-id' cell
+    productIdCells.forEach(function (cell) {
+        cell.addEventListener('click', function () {
+            // Get the product ID from the clicked cell's ID attribute
+            var productId = cell.getAttribute('id');
+
+            // Use the product ID to construct the IDs of other related elements
+            var productTypeId = productId + 'type';
+            var productNameId = productId + 'name';
+            var productPriceId = productId + 'price';
+            var productProfitPercentageId = productId + 'profit_percentage';
+            var productRemainId = productId + 'remain';
+
+            // Retrieve values from other related elements
+            var productType = document.getElementById(productTypeId).textContent.trim();
+            var productName = document.getElementById(productNameId).textContent.trim();
+            var productPrice = document.getElementById(productPriceId).textContent.trim();
+            var productProfitPercentage = document.getElementById(productProfitPercentageId).textContent.trim();
+            var productRemain = document.getElementById(productRemainId).textContent.trim();
+
+            // Populate the input fields in the edit form
+            var editForm = document.getElementById('editProductForm');
+            var productTypeInput = editForm.querySelector('#product_type');
+            var nameInput = editForm.querySelector('#name');
+            var priceInput = editForm.querySelector('#price');
+            var profitPercentageInput = editForm.querySelector('#profit_percentage');
+            var remainInput = editForm.querySelector('#remain');
+
+            productTypeInput.value = productType;
+            nameInput.value = productName;
+            priceInput.value = parseFloat(productPrice.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number
+            profitPercentageInput.value = parseFloat(productProfitPercentage.replace('%', '')); // Convert profit percentage to number
+            remainInput.value = parseFloat(productRemain.replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert remain to number
+
+            // Update the form action URL with the product ID
+            editForm.action = '/dokon/edit_product_santexnika/' + productId + '/';
+
+            // Show or toggle the edit form as needed
+            toggleForm('editproductFormContainer');
+            var productTypeOptions = productTypeInput.options;
+            for (var i = 0; i < productTypeOptions.length; i++) {
+                if (productTypeOptions[i].textContent.trim() === productType) {
+                    productTypeOptions[i].selected = true;
+                    break;
+                }
+            }
+        });
+    })
+    });
+
+</script>
+{% endblock %}

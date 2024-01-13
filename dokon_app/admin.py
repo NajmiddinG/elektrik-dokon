@@ -14,7 +14,7 @@ from .models import (
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'date')
+    list_display = ('id', 'first_type', 'name', 'date')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -27,6 +27,7 @@ class ProductHistorySoldOutAdmin(admin.ModelAdmin):
 @admin.register(HistorySoldOut)
 class HistorySoldOutAdmin(admin.ModelAdmin):
     list_display = ('id', 'responsible', 'total_number_sold_out', 'total_amount', 'profit', 'date')
+    filter_horizontal = ('history_products', )
 
 @admin.register(ProductHistoryCame)
 class ProductHistoryCameAdmin(admin.ModelAdmin):
@@ -35,6 +36,7 @@ class ProductHistoryCameAdmin(admin.ModelAdmin):
 @admin.register(HistoryCame)
 class HistoryCameAdmin(admin.ModelAdmin):
     list_display = ('id', 'responsible', 'total_number_sold_out', 'total_amount', 'date')
+    filter_horizontal = ('history_products',)
 
 @admin.register(ProductHistoryObject)
 class ProductHistoryObjectAdmin(admin.ModelAdmin):
@@ -43,6 +45,7 @@ class ProductHistoryObjectAdmin(admin.ModelAdmin):
 @admin.register(HistoryObject)
 class HistoryObjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'responsible', 'history_object', 'total_number_given', 'total_amount', 'total_given_amount', 'remain_amount', 'profit', 'completed', 'date')
+    filter_horizontal = ('history_products', )
 
 @admin.register(ObjectPayment)
 class ObjectPaymentAdmin(admin.ModelAdmin):

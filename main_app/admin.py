@@ -7,6 +7,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'date')
+    filter_horizontal = ('user', )
 
 # Register models
 admin.site.register(User, UserAdmin)

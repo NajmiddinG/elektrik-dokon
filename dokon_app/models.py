@@ -4,6 +4,11 @@ from obyekt_app.models import Obyekt
 
 
 class ProductType(models.Model):
+    CATEGORY_CHOICES = [
+        ('elektr', 'Elektga oid'),
+        ('santexnika', 'Santexnikaga oid'),
+    ]
+    first_type = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='elektr', blank=True, null=True)
     name = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
 

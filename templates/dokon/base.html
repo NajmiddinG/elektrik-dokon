@@ -100,11 +100,21 @@
         </a>
         <ul class="side-menu side-menu-1"> 
             <!-- bx-calendar-check -->
-            <li class="{% if active == '1' %}active{% endif %}" data-name="Sotish"><a href="{% if active != '1' %}{% url 'dokon_app:dashboard' %}{% else %}#{% endif %}"><i class='bx bx-euro'></i>Sotish</a></li>
-            <li class="{% if active == '2' %}active{% endif %}" data-name="mahsulot"><a href="{% if active != '2' %}{% url 'dokon_app:mahsulot' %}{% else %}#{% endif %}"><i class='bx bx-package'></i>Mahsulotlar</a></li>
-            <li class="{% if active == '5' %}active{% endif %}" data-name="income"><a href="{% if active != '5' %}{% url 'dokon_app:newproduct' %}{% else %}#{% endif %}"><i class='bx bx-cart-add'></i>Yangi tovarlar</a></li>
-            <li class="{% if active == '3' %}active{% endif %}" data-name="zakazlar"><a href="#"><i class='bx bx-group'></i>Zakazlar</a></li>
-            <li class="{% if active == '4' %}active{% endif %}" data-name="etirozlar"><a href="#"><i class='bx bx-message-square-dots'></i>Etiroz</a></li>
+            <li data-name="sotish"><a href="{% url 'dokon_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bxs-zap'></i>Elektr bo'lim</a></li>
+            <li class="{% if active == '1' %}active{% endif %}" data-name="sotish"><a href="{% url 'dokon_app:dashboard' %}"><i class='bx bx-euro'></i>Mahsulot sotish</a></li>
+            <li class="{% if active == '6' %}active{% endif %}" data-name="obyekt"><a href="{% url 'dokon_app:obyekt_dashboard' %}"><i class='bx bx-euro'></i>Obyektga berish</a></li>
+            <li class="{% if active == '2' %}active{% endif %}" data-name="mahsulot"><a href="{% url 'dokon_app:mahsulot' %}"><i class='bx bx-package'></i>Mahsulotlar</a></li>
+            <li class="{% if active == '5' %}active{% endif %}" data-name="income"><a href="{% url 'dokon_app:newproduct' %}"><i class='bx bx-cart-add'></i>Yangi tovarlar</a></li>
+            <!-- <li class="{% if active == '3' %}active{% endif %}" data-name="zakazlar"><a href="#"><i class='bx bx-group'></i>Zakazlar</a></li> -->
+            <!-- <li class="{% if active == '4' %}active{% endif %}" data-name="etirozlar"><a href="#"><i class='bx bx-message-square-dots'></i>Etiroz</a></li> -->
+
+            <li data-name="sotish"><a href="{% url 'dokon_app:dashboard_santexnika' %}" style="font-weight: 600; color: blue;"><i class='bx bx-shower'></i>Santexnika bo'lim</a></li>
+            <li class="{% if active == '1_santexnika' %}active{% endif %}" data-name="sotish"><a href="{% url 'dokon_app:dashboard_santexnika' %}"><i class='bx bx-euro'></i>Mahsulot sotish</a></li>
+            <li class="{% if active == '6_santexnika' %}active{% endif %}" data-name="obyekt"><a href="{% url 'dokon_app:obyekt_dashboard_santexnika' %}"><i class='bx bx-euro'></i>Obyektga berish</a></li>
+            <li class="{% if active == '2_santexnika' %}active{% endif %}" data-name="mahsulot"><a href="{% url 'dokon_app:mahsulot_santexnika' %}"><i class='bx bx-package'></i>Mahsulotlar</a></li>
+            <li class="{% if active == '5_santexnika' %}active{% endif %}" data-name="income"><a href="{% url 'dokon_app:newproduct_santexnika' %}"><i class='bx bx-cart-add'></i>Yangi tovarlar</a></li>
+            <!-- <li class="{% if active == '3_santexnika' %}active{% endif %}" data-name="zakazlar"><a href="#"><i class='bx bx-group'></i>Zakazlar</a></li>
+            <li class="{% if active == '4_santexnika' %}active{% endif %}" data-name="etirozlar"><a href="#"><i class='bx bx-message-square-dots'></i>Etiroz</a></li> -->
         </ul>
         <ul class="side-menu">
             <li>

@@ -22,4 +22,5 @@ class Obyekt(models.Model):
     max_dept = models.IntegerField(default=100000000, blank=True, null=True)
     document = models.FileField(upload_to='documents/')
     contract = models.FileField(upload_to='contracts/')
+    completed = models.BooleanField(default=False, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)

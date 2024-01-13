@@ -1,0 +1,371 @@
+<!-- dokon.html -->
+{% extends 'dokon/base.html' %}
+
+{% block title %}Do'kon{% endblock %}
+
+{% block styles %}
+<style>
+    .custom-button {
+        background-color: #388e3c; /* Green */
+        color: white;
+        padding: 7px 20px; /* Adjust the padding for better appearance */
+        margin-top: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px; /* Add rounded corners */
+        border: none; /* Remove default button border */
+    }
+
+    .custom-button:hover {
+        background-color: #45a049; /* Darker green on hover */
+    }
+    /* Add these styles to your CSS or within a style tag in your HTML */
+    .product_search {
+        padding: 10px;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-right: 10px; /* Adjust the margin for better spacing */
+    }
+
+    /* Add additional styles for better focus appearance if needed */
+    .product_search:focus {
+        border-color: #4CAF50; /* Change border color on focus */
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7); /* Add a subtle shadow on focus */
+    }
+    .dropbtn {
+  background-color: green;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+#myInput,
+#myInput2 {
+  box-sizing: border-box;
+  background-image: url('searchicon.png');
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+}
+
+#myInput:focus,
+#myInput2:focus {
+  outline: 3px solid #ddd;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  height: 800px; /* Set a fixed height for the dropdown content */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+  right: 0;
+  top: 100%; /* Position below the dropbtn */
+}
+
+.show {
+  display: block;
+}
+
+#myDropdown {
+  position: fixed;
+  top: 150px; /* Adjust as needed */
+  right: 35px; /* Adjust as needed */
+  background-color: #f6f6f6;
+  border: 1px solid #ddd;
+  z-index: 1000; /* Set a high z-index to ensure it appears above other elements */
+  width: 35%; /* Set the width as needed */
+  max-width: 700px;
+  height: 70%; /* Set the height as needed */
+  overflow-y: auto;
+  border-radius: 10px;
+}
+
+.add-button .add-btn {
+  width: 150px !important;
+}
+
+.add-button {
+  border: none;
+  padding: 7px 10px;
+  background: var(--primary);
+  color: var(--light);
+  border-radius: 5px;
+  overflow-x: visible;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.product_search {
+        padding: 10px;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-right: 10px; /* Adjust the margin for better spacing */
+    }
+
+    /* Add additional styles for better focus appearance if needed */
+    .product_search:focus {
+        border-color: #4CAF50; /* Change border color on focus */
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7); /* Add a subtle shadow on focus */
+    }
+.table-container {
+        max-height: 300px; /* Adjust the height as needed */
+        overflow: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr, th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    tr, td {
+        text-align: center;
+        padding:8px;
+        border: 1px solid #dddddd;
+    }
+    td:nth-child(1),
+    td:nth-child(2) {
+        color: green;
+    }
+    .add-button .add-btn {
+        width: 150px !important;
+    }
+    .add-button {
+    border: none;
+    padding: 7px 10px;
+    background: var(--primary);
+    color: var(--light);
+    border-radius: 5px;
+    overflow-x: visible;
+    white-space: nowrap;
+    cursor: pointer;
+}
+td {
+    max-width: 200px; /* Set a maximum width for the cell */
+    overflow: hidden; /* Hide any content that exceeds the width */
+    text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+</style>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<main data-name="dokon">
+    <div class="bottom-data">
+        <div class="orders">
+              <div class="header">
+                  <i class='bx bx-cart-add'></i>
+                  <h3>Yangi mahsulotlar</h3>
+                  <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->
+                  <input type="text" placeholder="Mahsulot nomi.." id="myInput2" onkeyup="filterFunction2()" style="max-width: 400px;">
+
+                  <div class="dropdown">
+                      <button onclick="myFunction()" class="dropbtn add-button add-btn" style="display: none;">Qidirish</button>
+                      <div id="myDropdown" class="dropdown-content">  
+                        <input type="text" placeholder="Mahsulot nomi.." id="myInput" onkeyup="filterFunction()">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th><center style="font-size: 18px !important;">№</center></th>
+                              <th><center style="font-size: 18px !important;">Mahsulot turi</center></th>
+                              <th><center style="font-size: 18px !important;">Nomi</center></th>
+                              <th><center style="font-size: 18px !important;">Narxi</center></th>
+                            </tr>
+                          </thead>
+                          <tbody id="myDropdown">
+                            {% for product in products %}
+                              <tr style="color: green;" style="margin-left: 10px;" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-profit="{{ product.profit_percentage }}" data-product-type="{{ product.type.name }}" data-product-remain="{{ product.remain }}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ product.type.name|capfirst }}</td>
+                                <td>{{ product.name|capfirst }}</td>
+                                <td>{{ product.price|real_money:product.profit_percentage }} so'm</td>
+                            </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
+                      </div>
+                    </div>
+                </div>
+            <form action="{% url 'dokon_app:insert_new_porduct_santexnika' %}" method="post" enctype="multipart/form-data" class="form" id="productForm">
+                {% csrf_token %}
+                
+                <table id="myTable1">
+                    <thead>
+                        <tr>
+                            <th><center style="font-size: 18px !important;">Turi</center></th>
+                            <th><center style="font-size: 18px !important;">Nomi</center></th>
+                            <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Narxi(so'm)</center></th>
+                            <th style="max-width: 75px !important;"><center style="font-size: 18px !important;">Soni</center></th>
+                            <!-- <th><center style="font-size: 18px !important;">Jami</center></th> -->
+                        </tr>
+                    </thead>
+                    <tbody id="myDropdown2">
+                      {% for product in products %}
+                      <tr>
+                        <td><center>{{ product.type.name }}</center></td>
+                        <td><center>{{ product.name }}</center></td>
+                        <td style="max-width: 75px !important;"><center><input type="number" name="price;{{ product.id }}" id="price;{{ product.id }}" value="{{ product.price }}" min="0" class="product_search" onchange="calculateTotal"></center></td>
+                        <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="1000000000" class="product_search product_search2" onchange="calculateTotal"></center></td>
+                      </tr>
+                      
+                      {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">0</span> so'm</p>
+                    <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Qo'shish</button>
+                </div>
+                <!-- Hidden input fields to store selected product data -->
+                <input type="hidden" name="selected_products" id="selectedProducts" value="">
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+  function myFunction() {
+    if(document.getElementById("myDropdown").style.display=='block') {
+      document.getElementById("myDropdown").style.display='none';
+    }
+    else{
+      document.getElementById("myDropdown").style.display='block';
+
+    }
+  document.getElementById("myDropdown").classList.toggle("show");
+  var button = document.querySelector(".dropbtn");
+
+if (dropdown.style.display === "none" || dropdown.style.display === "") {
+  dropdown.style.top = button.offsetTop + button.offsetHeight + "px";
+}
+  }
+
+  function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("tr");
+  for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+      } else {
+      a[i].style.display = "none";
+      }
+  }
+  calculateTotal();
+  }
+  function filterFunction2() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput2");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("myDropdown2");
+    a = div.getElementsByTagName("tr");
+    for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      console.log(txtValue.toUpperCase().indexOf(filter) > -1)
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+      } else {
+      a[i].style.display = "none";
+      }
+  }
+  calculateTotal();
+  }
+
+// Add a click event listener to each product link
+  document.querySelectorAll('.dropdown-content tr').forEach(function(link) {
+      link.addEventListener('click', function(event) {
+          event.preventDefault(); // Prevent the default link behavior
+
+          // Extract data attributes
+          var productId = this.getAttribute('data-product-id');
+          var productName = this.getAttribute('data-product-name');
+          var productPrice = this.getAttribute('data-product-price');
+          var productProfit = parseFloat(this.getAttribute('data-product-profit'));
+          var productType = this.getAttribute('data-product-type');
+          var productRemain = this.getAttribute('data-product-remain');
+          var inputNameToCheck = 'quantity;' + productId;
+          var realPrice = parseFloat(productPrice) * (100 + productProfit) / 100;
+
+          if (document.querySelector('input[name="' + inputNameToCheck + '"]') === null) {
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+            <td><center>${productType}</center></td>
+            <td><center>${productName}</center></td>
+            <td><center><input type="number" name="quantity;${productId}" id="${productId}" value="1" min="1" max="${productRemain}" class="product_search"></center></td>
+            <td><center>${productRemain}</center></td>
+            `;
+            var firstRow = document.getElementById('myDropdown2').querySelector('tr');
+            document.getElementById('myDropdown2').insertBefore(newRow, firstRow);
+          }
+          calculateTotal();
+          document.getElementById("myDropdown").style.display='none';
+      });
+
+  });
+  document.getElementById('productForm').addEventListener('keydown', function(event) {
+      // Check if the pressed key is Enter and if the active element is an input
+      if (event.key === 'Enter' && document.activeElement.tagName.toLowerCase() === 'input') {
+          event.preventDefault();
+          // Optionally, you can handle the Enter key press in the input here
+      }
+      calculateTotal();
+  });
+
+  function calculateTotal() {
+    // Select all input elements with class "product_search" within the table
+    var inputs = document.querySelectorAll('#myDropdown2 input.product_search2');
+
+    var totalAmount = 0;
+
+    // Iterate through each input and calculate the total amount
+    inputs.forEach(function(input) {
+        var quantity = parseInt(input.value);
+        var price = parseInt(input.closest('tr').querySelector('td:nth-child(3) input').value);
+        if (!isNaN(quantity) && !isNaN(price) && quantity*price) {
+            totalAmount += quantity * price;
+        }
+    });
+
+    // Update the total amount in the <span> element
+    document.getElementById('totalAmount').innerText = totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+// Add an event listener to the form to recalculate the total on input change
+document.getElementById('productForm').addEventListener('input', function(event) {
+    calculateTotal();
+});
+
+// Call the calculateTotal function initially to set the initial total amount
+calculateTotal();
+
+
+</script>
+
+{% endblock %}

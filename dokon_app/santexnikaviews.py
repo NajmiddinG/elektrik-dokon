@@ -23,23 +23,23 @@ from main_app.models import Worker, User
 
 # def make_array()
 
-def dashboard(request):
+def dashboard_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
-    product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
+    products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
+    product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '1',
+        'active': '1_santexnika',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
     }
-    return render(request, 'dokon/dokon.html', context=context)
+    return render(request, 'dokon/dokon_santexnika.html', context=context)
 
-def sell_product(request):
+def sell_product_santexnika(request):
     if has_some_error(request): return redirect('/login/')
     try:
         total_money = 0
@@ -53,7 +53,7 @@ def sell_product(request):
                 price = int(product.price*(100+product.profit_percentage)/100)
                 if number>product.remain:
                     messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
-                    return redirect('dokon_app:dashboard')
+                    return redirect('dokon_app:dashboard_santexnika')
                 
                 total_money += price*number
                 
@@ -98,25 +98,25 @@ def sell_product(request):
     except Exception as e:
         messages.error(request, "Xatolik ro'y berdi!")
 
-    return redirect('dokon_app:dashboard')
+    return redirect('dokon_app:dashboard_santexnika')
 
-def obyekt_dashboard(request):
+def obyekt_dashboard_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
-    product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
+    products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
+    product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '6',
+        'active': '6_santexnika',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
     }
-    return render(request, 'dokon/obyekt_dashboard.html', context=context)
+    return render(request, 'dokon/obyekt_dashboard_santexnika.html', context=context)
 
-def sell_product_to_obyekt(request):
+def sell_product_to_obyekt_santexnika(request):
     print(request.POST)
     return HttpResponse("Hello")
     if has_some_error(request): return redirect('/login/')
@@ -132,7 +132,7 @@ def sell_product_to_obyekt(request):
                 price = int(product.price*(100+product.profit_percentage)/100)
                 if number>product.remain:
                     messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
-                    return redirect('dokon_app:dashboard')
+                    return redirect('dokon_app:dashboard_santexnika')
                 
                 total_money += price*number
                 
@@ -177,9 +177,9 @@ def sell_product_to_obyekt(request):
     except Exception as e:
         messages.error(request, "Xatolik ro'y berdi!")
 
-    return redirect('dokon_app:dashboard')
+    return redirect('dokon_app:dashboard_santexnika')
 
-def mahsulot(request):
+def mahsulot_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
     cookies = request.COOKIES
@@ -189,33 +189,33 @@ def mahsulot(request):
     if selected_product_type:
         products = Product.objects.filter(type=selected_product_type).order_by('type', '-date')
     else:
-        products = Product.objects.filter(type__first_type='elektr').order_by('type', '-date')
+        products = Product.objects.filter(type__first_type='santexnika').order_by('type', '-date')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '2',
-        "product_types": ProductType.objects.filter(first_type='elektr').order_by('-date'),
+        'active': '2_santexnika',
+        "product_types": ProductType.objects.filter(first_type='santexnika').order_by('-date'),
         "products": products,
         'worker_type': worker_type
     }
-    response = render(request, 'dokon/mahsulot.html', context=context)
+    response = render(request, 'dokon/mahsulot_santexnika.html', context=context)
     if selected_product_type==0:
         response.set_cookie('product_type', '0')
     return response
 
-def create_product_type(request):
+def create_product_type_santexnika(request):
     if has_some_error(request): return redirect('/login/')
     if request.method=='POST':
         name = str(request.POST['name']).capitalize()
         try:
-            existing_product_type = ProductType.objects.get(name=name)
+            existing_product_type = ProductType.objects.get(name=name, first_type='santexnika')
             messages.error(request, 'Bu nomli mahsulot turi mavjud.')
         except ProductType.DoesNotExist:
-            ProductType.objects.create(name=name)
+            ProductType.objects.create(name=name, first_type='santexnika')
             messages.success(request, f'{name} mahsulot turi muvaffaqiyatli yaratildi.')
 
-    return redirect('dokon_app:mahsulot')
+    return redirect('dokon_app:mahsulot_santexnika')
 
-def create_product(request):
+def create_product_santexnika(request):
     if has_some_error(request): return redirect('/login/')
     if request.method=='POST':
         product_type_id = request.POST.get('product_type')
@@ -238,9 +238,9 @@ def create_product(request):
 
             messages.success(request, f'{name} mahsulot muvaffaqiyatli yaratildi.')
 
-    return redirect('dokon_app:mahsulot')
+    return redirect('dokon_app:mahsulot_santexnika')
 
-def edit_product_type(request, product_type_id):
+def edit_product_type_santexnika(request, product_type_id):
     if has_some_error(request): return redirect('/login/')
     
     if request.method == 'POST':
@@ -252,9 +252,9 @@ def edit_product_type(request, product_type_id):
             messages.success(request, f'{name} mahsulot turi muvaffaqiyatli o\'zgartirildi.')
         except ProductType.DoesNotExist:
             messages.error(request, 'Bunday id ga ega mahsulot turi mavjud emas.')
-    return redirect('dokon_app:mahsulot')
+    return redirect('dokon_app:mahsulot_santexnika')
 
-def edit_product(request, product_id):
+def edit_product_santexnika(request, product_id):
     if has_some_error(request): return redirect('/login/')
     
     if request.method == 'POST':
@@ -270,30 +270,30 @@ def edit_product(request, product_id):
             messages.success(request, f'{product.name} mahsulot turi muvaffaqiyatli o\'zgartirildi.')
         except ProductType.DoesNotExist:
             messages.error(request, 'Bunday id ga ega mahsulot turi mavjud emas.')
-    return redirect('dokon_app:mahsulot')
+    return redirect('dokon_app:mahsulot_santexnika')
 
-def set_product_type_cookie(request, product_type_id):
-    response = redirect('dokon_app:mahsulot')
+def set_product_type_cookie_santexnika(request, product_type_id):
+    response = redirect('dokon_app:mahsulot_santexnika')
     response.set_cookie('product_type', str(product_type_id))
     return response
 
-def newproduct(request):
+def newproduct_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
-    product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
+    products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
+    product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '5',
+        'active': '5_santexnika',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
     }
-    return render(request, 'dokon/yangitovar.html', context=context)
+    return render(request, 'dokon/yangitovar_santexnika.html', context=context)
 
-def insert_new_porduct(request):
+def insert_new_porduct_santexnika(request):
     if has_some_error(request): return redirect('/login/')
     try:
         sold_out_products = []
@@ -340,7 +340,7 @@ def insert_new_porduct(request):
     except Exception as e:
         messages.error(request, "Xatolik ro'y berdi!")
 
-    return redirect('dokon_app:newproduct')
+    return redirect('dokon_app:newproduct_santexnika')
 
 
 
@@ -364,7 +364,7 @@ def insert_new_porduct(request):
 #     worker_id = request.COOKIES['worker']
 #     print(user_id, worker_id)
 #     context = {
-#         'active': '3',
+#         'active': '3_santexnika',
 #     }
 #     return render(request, 'dokon/zakaz.html', context=context)
 
@@ -375,6 +375,6 @@ def insert_new_porduct(request):
 #     worker_id = request.COOKIES['worker']
 #     print(user_id, worker_id)
 #     context = {
-#         'active': '4',
+#         'active': '4_santexnika',
 #     }
 #     return render(request, 'dokon/etiroz.html', context=context)
