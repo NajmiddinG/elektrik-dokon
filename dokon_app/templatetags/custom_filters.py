@@ -19,3 +19,7 @@ def real_money(price, percentage):
     #     s_text+=money[3*i:3*i+3]+' '
     # return s_text.strip()[::-1]
 
+@register.filter(name='bool_to_word')
+def bool_to_word(value):
+    if value: return "Ha"
+    return "Yo'q"

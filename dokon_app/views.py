@@ -32,7 +32,7 @@ def dashboard(request):
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '1',
+        'active': 'dokon_1',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
@@ -109,7 +109,7 @@ def obyekt_dashboard(request):
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '6',
+        'active': 'dokon_6',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
@@ -192,7 +192,7 @@ def mahsulot(request):
         products = Product.objects.filter(type__first_type='elektr').order_by('type', '-date')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '2',
+        'active': 'dokon_2',
         "product_types": ProductType.objects.filter(first_type='elektr').order_by('-date'),
         "products": products,
         'worker_type': worker_type
@@ -286,7 +286,7 @@ def newproduct(request):
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '5',
+        'active': 'dokon_5',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
@@ -364,7 +364,7 @@ def insert_new_porduct(request):
 #     worker_id = request.COOKIES['worker']
 #     print(user_id, worker_id)
 #     context = {
-#         'active': '3',
+#         'active': 'dokon_3',
 #     }
 #     return render(request, 'dokon/zakaz.html', context=context)
 
@@ -375,6 +375,6 @@ def insert_new_porduct(request):
 #     worker_id = request.COOKIES['worker']
 #     print(user_id, worker_id)
 #     context = {
-#         'active': '4',
+#         'active': 'dokon_4',
 #     }
 #     return render(request, 'dokon/etiroz.html', context=context)

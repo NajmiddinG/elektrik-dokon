@@ -1,0 +1,344 @@
+<!-- user.html -->
+{% extends 'base.html' %}
+
+{% block title %}Mahsulotlar{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+    
+    .add-form-container {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 300px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .add-form-container .title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .add-form-container .title i {
+        font-size: 24px;
+        margin-right: 10px;
+        color: #3498db; /* Blue color, change as needed */
+    }
+
+    .add-form-container .title h2 {
+        font-size: 18px;
+        margin: 0;
+        color: #333; /* Dark text color, change as needed */
+    }
+
+    .add-form-container .box-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .add-form-container .input-box {
+        margin-bottom: 15px;
+    }
+
+    .add-form-container label {
+        display: block;
+        font-size: 14px;
+        color: #666; /* Gray text color, change as needed */
+        margin-bottom: 5px;
+    }
+
+    .add-form-container input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc; /* Light border color, change as needed */
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .add-form-container .save {
+        background-color: #38903c; /* Green color, change as needed */
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .table-container {
+        max-height: 300px; /* Adjust the height as needed */
+        overflow: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr, th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    tr, td {
+        text-align: center;
+        padding:8px;
+        border: 1px solid #dddddd;
+    }
+    td:first-child {
+        color: green;
+    }
+    .add-button .add-btn {
+        width: 150px !important;
+    }
+    .add-button {
+    border: none;
+    padding: 7px 10px;
+    background: var(--primary);
+    color: var(--light);
+    border-radius: 5px;
+    overflow-x: visible;
+    white-space: nowrap;
+    cursor: pointer;
+}
+td {
+    max-width: 200px; /* Set a maximum width for the cell */
+    overflow: hidden; /* Hide any content that exceeds the width */
+    text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
+</style>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<main data-name="mahsulot">
+    <div class="bottom-data">
+        <div class="orders">
+            <div class="header">
+                
+                <h3><i class='bx bx-user'></i> Foydalanuvchilar</h3>
+                <p data-label="foydalanuvchi" title="+ Foydalanuvchi qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Foydalanuvchi</p>
+            </div>
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Username</center></th>
+                    <th><center>Ism</center></th>
+                    <th><center>Familiya</center></th>
+                    <th><center>Turi</center></th>
+                    <th><center>Tel</center></th>
+                    <th><center>Manzil</center></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for users_with_worker in users_with_workers_info %}
+                <tr class="edit-user" data-id="{{ users_with_worker.id }}">
+                    <td id="{{ users_with_worker.id }}" class="user-id">{{ forloop.counter }}</td>
+                    <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green; max-width: 150px;">{{ users_with_worker.username|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}first_name">{{ users_with_worker.first_name|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}last_name">{{ users_with_worker.last_name|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}workers">{{ users_with_worker.workers__name|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}tel_number">{{ users_with_worker.tel_number|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}address">{{ users_with_worker.address|capfirst }}</td>
+                    <!-- <td></td> -->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- create -->
+<div id="productFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>User qo'shish</h2>
+    </div>
+    <form action="{% url 'main_app:create_user' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="input-box">
+                <label for="first_name">Ism:</label>
+                <input type="text" id="first_name" name="first_name">
+            </div>
+            <div class="input-box">
+                <label for="last_name">Familiya:</label>
+                <input type="text" id="last_name" name="last_name">
+            </div>
+            <div class="input-box">
+                <label for="workers">Ish turi:</label>
+                <select id="workers" name="workers">
+                    <option value="Dokon">Dokon</option>
+                    <option value="Obyekt">Obyekt</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>            
+            <div class="input-box">
+                <label for="tel_number">Tel:</label>
+                <input type="text" id="tel_number" name="tel_number">
+            </div>
+            <div class="input-box">
+                <label for="address">Manzil:</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <div class="input-box">
+                <label for="password">Parol:</label>
+                <input type="text" id="password" name="password">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<!-- edit -->
+<div id="editUserFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-package'></i>
+        <h2>Mahsulotni o'zgartirish</h2>
+    </div>
+    <form action="{% url 'main_app:edit_user' 0 %}" class="info" method="post" id="editUserForm">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="input-box">
+                <label for="first_name">Ism:</label>
+                <input type="text" id="first_name" name="first_name">
+            </div>
+            <div class="input-box">
+                <label for="last_name">Familiya:</label>
+                <input type="text" id="last_name" name="last_name">
+            </div>
+            <div class="input-box">
+                <label for="workers">Ish turi:</label>
+                <select id="workers" name="workers">
+                    <option value="Dokon">Dokon</option>
+                    <option value="Obyekt">Obyekt</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>            
+            <div class="input-box">
+                <label for="tel_number">Tel:</label>
+                <input type="text" id="tel_number" name="tel_number">
+            </div>
+            <div class="input-box">
+                <label for="address">Manzil:</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <div class="input-box">
+                <label for="password">Parol:</label>
+                <input type="text" id="password" name="password">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<script>
+    
+    function toggleForm(formId) {
+        var formContainer = document.getElementById(formId);
+        var currentDisplay = window.getComputedStyle(formContainer).display;
+
+        formContainer.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find all elements with class 'product-type'
+        var productTypeCells = document.querySelectorAll('.product-type');
+
+        // Attach a click event listener to each 'product-type' cell
+        productTypeCells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                // Get the product type name and id from the clicked cell
+                var productTypeName = cell.textContent.trim();
+                var productTypeId = cell.getAttribute('data-id');
+
+                // Populate the input fields in the edit form
+                var editForm = document.getElementById('editProductTypeForm');
+                var nameInput = editForm.querySelector('#name');
+
+                nameInput.value = productTypeName;
+
+                // Update the form action URL with the product type ID
+                editForm.action = '/dokon/edit_product_type/' + productTypeId + '/';
+
+                // Show or toggle the edit form as needed
+                toggleForm('editproductTypeFormContainer');
+                document.getElementById('name').focus();
+            });
+        });
+    // Find all elements with class 'product-id'
+    var userIdCells = document.querySelectorAll('.user-id');
+
+    // Attach a click event listener to each 'product-id' cell
+    userIdCells.forEach(function (cell) {
+        cell.addEventListener('click', function () {
+            // Get the product ID from the clicked cell's ID attribute
+            var userId = cell.getAttribute('id');
+
+            // Use the product ID to construct the IDs of other related elements
+            var username = userId + 'username';
+            var first_name = userId + 'first_name';
+            var last_name = userId + 'last_name';
+            var workers = userId + 'workers';
+            var tel_number = userId + 'tel_number';
+            var address = userId + 'address';
+            // Retrieve values from other related elements
+            var username = document.getElementById(username).textContent.trim();
+            var first_name = document.getElementById(first_name).textContent.trim();
+            var last_name = document.getElementById(last_name).textContent.trim();
+            var workers = document.getElementById(workers).textContent.trim();
+            var tel_number = document.getElementById(tel_number).textContent.trim();
+            var address = document.getElementById(address).textContent.trim();
+            console.log(workers)
+
+            // Populate the input fields in the edit form
+            var editForm = document.getElementById('editUserForm');
+            var usernameInput = editForm.querySelector('#username');
+            var first_nameInput = editForm.querySelector('#first_name');
+            var last_nameInput = editForm.querySelector('#last_name');
+            var workersInput = editForm.querySelector('#workers');
+            var tel_numberInput = editForm.querySelector('#tel_number');
+            var addressInput = editForm.querySelector('#address');
+
+            usernameInput.value = username;
+            first_nameInput.value = first_name;
+            last_nameInput.value = last_name;
+            workersInput.value = workers;
+            tel_numberInput.value = tel_number;
+            addressInput.value = address;
+
+            // Update the form action URL with the product ID
+            editForm.action = '/edit_user/' + userId + '/';
+
+            // Show or toggle the edit form as needed
+            toggleForm('editUserFormContainer');
+            var workerOptions = workersInput.options;
+            for (var i = 0; i < workerOptions.length; i++) {
+                if (workerOptions[i].textContent.trim() === workers) {
+                    workerOptions[i].selected = true;
+                    break;
+                }
+            }
+        });
+    })
+    });
+
+</script>
+{% endblock %}

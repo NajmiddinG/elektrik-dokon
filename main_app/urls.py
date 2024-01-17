@@ -11,11 +11,14 @@
 
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import user_login, dashboard
+from .views import user_login, dashboard, create_user, edit_user
 
 
 app_name = 'main_app'
 
 urlpatterns = [
-    path('', user_login, name="dashboard"),
+    path('', user_login, name="user_login"),
+    path('user/', dashboard, name="dashboard"),
+    path('create_user/', create_user, name="create_user"),
+    path('edit_user/<int:user_id>/', edit_user, name="edit_user"),
 ]

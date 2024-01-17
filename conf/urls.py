@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout_user/', logout_user, name='logout_user'),
     path('', include('main_app.urls'), name='main_app'),
     path('dokon/', include('dokon_app.urls'), name='dokon_app'),
+    path('obyekt/', include('obyekt_app.urls'), name='obyekt_app'),
 ]
 
 if settings.DEBUG:
