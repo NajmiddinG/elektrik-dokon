@@ -8,6 +8,8 @@ from .views import (
     set_obyekt_cookie,
     create_obyekt_ishi,
     edit_obyekt_ishi,
+    create_obyekt_job_type,
+    create_work_amount_job_type,
 )
 app_name = 'obyekt_app'
 
@@ -15,10 +17,13 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('create_obyekt/', create_obyekt, name='create_obyekt'),
     path('edit_obyekt/<int:obyekt_id>/', edit_obyekt, name='edit_obyekt'),
+    path('create_obyekt_job_type/', create_obyekt_job_type, name='create_obyekt_job_type'),
 
     path('obyekt_ishi/', obyekt_ishi, name='obyekt_ishi'),
     path('create_obyekt_ishi/', create_obyekt_ishi, name='create_obyekt_ishi'),
     path('edit_obyekt_ishi/<int:obyekt_id>/', edit_obyekt_ishi, name='edit_obyekt_ishi'),
+    path('create_work_amount_job_type/', create_work_amount_job_type, name='create_work_amount_job_type'),
+
 
     path('set_obyekt_cookie/<int:obyekt_id>/', set_obyekt_cookie, name='set_obyekt_cookie'),
 

@@ -2,6 +2,12 @@ from django.db import models
 from main_app.models import User
 # from dokon_app.models import 
 
+class ObyektJobType(models.Model):
+    name = models.CharField(max_length=255)
+
+
+class WorkAmountJobType(models.Model):
+    name = models.CharField(max_length=255)
 
 class WorkAmount(models.Model):
     job_type = models.CharField(max_length=255)

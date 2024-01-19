@@ -163,7 +163,7 @@ td {
 <!-- create -->
 <div id="productFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-user'></i>
         <h2>User qo'shish</h2>
     </div>
     <form action="{% url 'main_app:create_user' %}" class="info" method="post">{% csrf_token %}
@@ -187,7 +187,7 @@ td {
                     <option value="Obyekt">Obyekt</option>
                     <option value="Admin">Admin</option>
                 </select>
-            </div>            
+            </div>
             <div class="input-box">
                 <label for="tel_number">Tel:</label>
                 <input type="text" id="tel_number" name="tel_number">
@@ -208,7 +208,7 @@ td {
 <!-- edit -->
 <div id="editUserFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-user'></i>
         <h2>Userni ma'lumotlarini o'zgartirish</h2>
     </div>
     <form action="{% url 'main_app:edit_user' 0 %}" class="info" method="post" id="editUserForm">{% csrf_token %}

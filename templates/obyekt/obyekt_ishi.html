@@ -151,6 +151,7 @@ td {
                 {% endfor %}
             </select>
             {% if worker_type == 'Admin' %}
+            <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
             <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
             {% endif %}
         </div>
@@ -187,7 +188,7 @@ td {
 <!-- create -->
 <!-- <div id="productTypeFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-detail'></i>
         <h2>Obyekt turi qo'shish</h2>
     </div>
     <form action="create_product_type' %}" class="info" method="post">{% csrf_token %}
@@ -203,7 +204,7 @@ td {
 <!-- edit -->
 <!-- <div id="editproductTypeFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-detail'></i>
         <h2>Obyekt turini o'zgartirish</h2>
     </div>
     <form action="edit_product_type' 0 %}" class="info" method="post" id="editProductTypeForm">{% csrf_token %}
@@ -220,7 +221,7 @@ td {
 <!-- create -->
 <div id="productFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-detail'></i>
         <h2>Obyekt ishi qo'shish</h2>
     </div>
     <form action="{% url 'obyekt_app:create_obyekt_ishi' %}" class="info" method="post">{% csrf_token %}
@@ -235,7 +236,11 @@ td {
             </div>
             <div class="input-box">
                 <label for="job_type">Ish turi:</label>
-                <input type="text" id="job_type" name="job_type">
+                <select id="job_type" name="job_type" style="width: 250px;">
+                    {% for workeramountjobtype in workeramountjobtypes %}
+                    <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="input-box">
                 <label for="service_price">Xizmat haqqi:</label>
@@ -254,10 +259,26 @@ td {
     </form>
 </div>
 
+<div id="jobTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-briefcase'></i>
+        <h2>Ish turi qo'shish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_work_amount_job_type' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
 <!-- edit -->
 <div id="editObyektFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-package'></i>
+        <i class='bx bx-detail'></i>
         <h2>Obyektni o'zgartirish</h2>
     </div>
     <form action="{% url 'obyekt_app:edit_obyekt_ishi' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
@@ -274,7 +295,11 @@ td {
                 </div>
                 <div class="input-box">
                     <label for="job_type">Ish turi:</label>
-                    <input type="text" id="job_type" name="job_type">
+                    <select id="job_type" name="job_type" style="width: 250px;">
+                        {% for workeramountjobtype in workeramountjobtypes %}
+                        <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="input-box">
                     <label for="service_price">Xizmat haqqi:</label>
