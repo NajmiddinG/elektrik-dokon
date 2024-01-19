@@ -1,7 +1,7 @@
 <!-- user.html -->
 {% extends 'base.html' %}
 
-{% block title %}Mahsulotlar{% endblock %}
+{% block title %}Foydalanuvchilar{% endblock %}
 
 {% block styles %}
 <style>
@@ -120,7 +120,7 @@ td {
 {% endblock %}
 {% load custom_filters %}
 {% block content %}
-<main data-name="mahsulot">
+<main data-name="foydalanuvchi">
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
@@ -209,7 +209,7 @@ td {
 <div id="editUserFormContainer" class="add-form-container">
     <div class="title">
         <i class='bx bx-package'></i>
-        <h2>Mahsulotni o'zgartirish</h2>
+        <h2>Userni ma'lumotlarini o'zgartirish</h2>
     </div>
     <form action="{% url 'main_app:edit_user' 0 %}" class="info" method="post" id="editUserForm">{% csrf_token %}
         <div class="box-wrapper">

@@ -36,7 +36,7 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
 class Worker(models.Model):
-    user = models.ManyToManyField(User, related_name='workers')
+    user = models.ManyToManyField(User, related_name='workers', blank=True)
     name = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
     
