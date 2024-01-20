@@ -68,7 +68,8 @@
         #productTypeSelect,
         #product_type,
         #obyekt_worker,
-        #workers {
+        #workers,
+        .button_cool {
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -83,7 +84,8 @@
         #productTypeSelect:hover,
         #product_type:hover,
         #obyekt_worker:hover,
-        #workers:hover {
+        #workers:hover,
+        .button_cool:hover {
             border-color: #aaa;
         }
 
@@ -91,7 +93,8 @@
         #productTypeSelect:focus,
         #product_type:focus,
         #obyekt_worker:focus,
-        #workers:focus {
+        #workers:focus,
+        .button_cool:focus {
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
         }
@@ -112,6 +115,7 @@
             {% if worker_type == 'Admin' %}
             <li data-name="sotish"><a href="{% url 'main_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-user'></i>Userlar bo'limi</a></li>
             <li class="{% if active == 'main_1' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:dashboard' %}"><i class='bx bx-user'></i>Userlar</a></li>
+            <li class="{% if active == 'main_2' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:ishchilar_holati' %}"><i class='bx bx-user'></i>Ishchilar holati</a></li>
             {% endif %}
             {% if worker_type == 'Admin' or worker_type == 'Dokon' %}
             <li data-name="sotish"><a href="{% url 'dokon_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bxs-zap'></i>Elektr bo'limi</a></li>

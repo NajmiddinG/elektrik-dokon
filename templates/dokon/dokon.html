@@ -178,6 +178,13 @@ td {
     <div class="bottom-data">
         <div class="orders">
               <div class="header">
+                {% if worker_type == 'Dokon' %}
+                  {% if position == 'start' %}
+                    <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
+                  {% else %}
+                  <a href="{% url 'main_app:end_job' %}" class="add-button add-btn">Ishni tugatish</a>
+                  {% endif %}
+                {% endif %}
                   <i class='bx bx-euro'></i>
                   <h3>Mahsulotlar sotish</h3>
                   <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->

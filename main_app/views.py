@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
-from .models import User, Worker
+from .models import User, Worker, WorkDay
 
 def check_user(request):
     try:
@@ -112,6 +113,21 @@ def dashboard(request):
         'address',
         'workers__name'
     )
+    users_with_workers_info = []
+
+    for user_info in User.objects.filter(workers__isnull=False).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'password',
+        'tel_number',
+        'address',
+        'workers__name',
+    ):
+        is_working = WorkDay.objects.filter(responsible_id=user_info['id'], end_date__isnull=True).exists()
+        user_info['is_working'] = is_working
+        users_with_workers_info.append(user_info)
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     worker_type = request.user.workers.values_list('name', flat=True).first()
@@ -193,139 +209,51 @@ def edit_user(request, user_id):
 
     return redirect('main_aoo:dashboard')
 
-# from datetime import datetime
 
-# from django.http import HttpResponse
-# from django.shortcuts import render, get_object_or_404
-# # from .models import Zakazlar, Kasb_turi, PraysZakaz, PraysIshchi, Maxsulot, Xodimlar, Etirozlar
-# # from .forms import ContactForm, MaxsulotForm
-# from .models import *
-# from .forms import *
+def ishchilar_holati(request):
+    if has_some_error(request): return redirect('/login/')
+    users_with_work_status = []
 
-
-# def admin_list(request):
-#     zakaz_list = Zakazlar.objects.all()
-#     ishchilar_list = Xodimlar.objects.all()
-#     maxsulot_list = Maxsulot.objects.all()
-#     prayszakaz_list = PraysZakaz.objects.all()
-#     praysishchi_list = PraysIshchi.objects.all()
-#     kasb_list = Kasb_turi.objects.all()
-#     etirozlar_list = Etirozlar.objects.all()
-
-#     formMaxsulot = MaxsulotForm(request.POST or None)
-#     formXodimlar = XodimlarForm(request.POST or None)
-#     formZakaz = ZakazlarForm(request.POST or None)
-#     formKasb = KasbForm(request.POST or None)
-#     formCombinate = CombinedForm(request.POST or None)
-
-#     if request.method == "POST" and formMaxsulot.is_valid():
-#         formMaxsulot.save()
-#         # return HttpResponse("Yangi maxsulot saqlandi")
-#     if request.method == "POST" and formXodimlar.is_valid():
-#         formXodimlar.save()
-#     if request.method == "POST" and formZakaz.is_valid():
-#         formZakaz.save()
-#     if request.method == "POST" and formKasb.is_valid():
-#         formKasb.save()
-#     if request.method == "POST" and formCombinate.is_valid():
-#         formCombinate.save()
-#     else:
-#         print(formMaxsulot.errors, formXodimlar.errors, formKasb, formZakaz, formCombinate)
-#     context = {
-#         "zakaz_list": zakaz_list,
-#         "ishchilar_list": ishchilar_list,
-#         "maxsulot_list": maxsulot_list,
-#         "prayszakaz_list": prayszakaz_list,
-#         "praysishchi_list": praysishchi_list,
-#         "kasb_list": kasb_list,
-#         "etirozlar_list": etirozlar_list,
-#         "formMaxsulot": formMaxsulot,
-#         "formZakaz": formZakaz,
-#         "formKasb": formKasb,
-#         "formCombinate": formCombinate,
-#     }
-
-#     return render(request, 'pages/admin.html', context)
+    for user_info in User.objects.filter(workers__isnull=False).values(
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'password',
+        'tel_number',
+        'address',
+        'workers__name',
+    ):
+        is_working = WorkDay.objects.filter(responsible_id=user_info['id'], end_date__isnull=True).exists()
+        user_info['is_working'] = is_working
+        print(is_working)
+        users_with_work_status.append(user_info)
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'main_2',
+        'worker_type': worker_type,
+        'users_with_work_status': users_with_work_status
+    }
+    response = render(request, 'main_app/ishchilar_holati.html', context=context)
+    return response
 
 
-# def ishchilar_page(request):
-#     zakaz_list = Zakazlar.objects.filter(status__in=[Zakazlar.Status.primary, Zakazlar.Status.danger])
-#     ishchilar_list = Xodimlar.objects.all()
-#     formContact = ContactForm(request.POST or None)
-#     if request.method == "POST" and formContact.is_valid():
-#         formContact.save()
-#         return HttpResponse("Thank you!!")
-#     else:
-#         print(formContact.errors)
+def start_job(request):
+    if has_some_error(request): return redirect('/login/')
+    referer = request.META.get('HTTP_REFERER')
+    if referer and not WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists():
+        WorkDay.objects.create(responsible=request.user)
+        return redirect(referer)
+    else:
+        return redirect('/')
 
-#     context = {
-#         "zakaz_list": zakaz_list,
-#         "ishchilar_list": ishchilar_list,
-#         "formContact": formContact,
-#     }
-
-#     return render(request, 'pages/elektrik.html', context)
-
-
-# def magazin_page(request):
-#     zakaz_list = Zakazlar.objects.filter(status__in=[Zakazlar.Status.primary, Zakazlar.Status.danger])
-#     maxsulot_list = Maxsulot.objects.all()
-#     formContact = ContactForm(request.POST or None)
-#     formMaxsulot = MaxsulotForm(request.POST or None)
-#     formSavdoTarixi = SavdoTarixiForm(request.POST or None)
-
-#     if request.method == "POST":
-#         if formMaxsulot.is_valid():
-#             maxsulot_instance = formMaxsulot.save(commit=False)
-
-#             # Получить значение soni из формы и сохранить его в SavdoTarixi
-#             soni_value = request.POST.get('soni')
-#             savdo_tarixi_instance = SavdoTarixi(
-#                 maxsulot_nomi=maxsulot_instance.maxsulot_nomi,
-#                 maxsulot_soni=soni_value,
-#                 maxsulot_narxi=maxsulot_instance.foiz_narxi
-#             )
-#             savdo_tarixi_instance.save()
-
-#             # Вычесть значение soni из Maxsulot
-#             maxsulot_instance.soni -= int(soni_value)
-#             maxsulot_instance.save()
-
-#             # Очистить форму после сохранения, если нужно
-#             formMaxsulot = MaxsulotForm()
-#             # return HttpResponse("Yangi maxsulot saqlandi")
-
-#     if request.method == "POST" and formSavdoTarixi.is_valid():
-#         formSavdoTarixi.save()
-
-#     if request.method == "POST" and formContact.is_valid():
-#         formContact.save()
-#         # return HttpResponse("Thank you!!")
-#     else:
-#         print(formMaxsulot.errors, formContact.errors)
-#     context = {
-#         "zakaz_list": zakaz_list,
-#         "maxsulot_list": maxsulot_list,
-#         "formContact": formContact,
-#         "formMaxsulot": formMaxsulot,
-#         "formSavdoTarixi": formSavdoTarixi,
-#     }
-
-#     return render(request, 'pages/do`kon.html', context)
-
-# def zakazchi_page(request):
-#     zakaz_list = Zakazlar.objects.filter(status__in=[Zakazlar.Status.primary, Zakazlar.Status.danger])
-#     formContact = ContactForm(request.POST or None)
-#     if request.method == "POST" and formContact.is_valid():
-#         formContact.save()
-#         return HttpResponse("Thank you!!")
-#     context = {
-#         "zakaz_list": zakaz_list,
-#         "formContact": formContact,
-#     }
-
-#     return render(request, 'pages/zakazchi.html', context)
-
-
-# def login_page(request):
-#     return render(request, 'pages/login.html')
+def end_job(request):
+    if has_some_error(request): return redirect('/login/')
+    referer = request.META.get('HTTP_REFERER')
+    if referer and WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists():
+        WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).update(end_date=timezone.now())
+        return redirect(referer)
+    else:
+        return redirect('/')

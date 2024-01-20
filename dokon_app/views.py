@@ -16,9 +16,8 @@ from .models import (
     ProductHistoryObject,
     HistoryObject,
     ObjectPayment,
-    DokonDay
 )
-from main_app.models import Worker, User
+from main_app.models import Worker, User, WorkDay
 # Create your views here.
 
 # def make_array()
@@ -26,6 +25,7 @@ from main_app.models import Worker, User
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
+    is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
@@ -35,7 +35,8 @@ def dashboard(request):
         'active': 'dokon_1',
         'products': products,
         'product_types': product_types,
-        'worker_type': worker_type
+        'worker_type': worker_type,
+        'position': 'end' if is_working else 'start',
     }
     return render(request, 'dokon/dokon.html', context=context)
 

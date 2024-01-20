@@ -4,7 +4,6 @@ from .models import (
     HistoryCame,
     HistoryObject,
     ObjectPayment,
-    DokonDay,
     Product,
     ProductHistoryCame,
     ProductHistoryObject,
@@ -50,7 +49,3 @@ class HistoryObjectAdmin(admin.ModelAdmin):
 @admin.register(ObjectPayment)
 class ObjectPaymentAdmin(admin.ModelAdmin):
     list_display = ('id', 'responsible', 'history_object', 'given_amount', 'date')
-
-@admin.register(DokonDay)
-class DokonDayAdmin(admin.ModelAdmin):
-    list_display = ('id', 'responsible', 'start_date', 'end_date')

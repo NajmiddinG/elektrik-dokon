@@ -7,12 +7,13 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
 from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType
-from main_app.models import Worker, User
+from main_app.models import Worker, User, WorkDay
 
 
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
+    is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     obyekts = Obyekt.objects.all().order_by('-date')
@@ -27,6 +28,8 @@ def dashboard(request):
         'worker_type': worker_type,
         'obyektjobtypes': obyektjobtypes,
         'workeramountjobtypes': workeramountjobtypes,
+        'position': 'end' if is_working else 'start',
+
     }
     return render(request, 'obyekt/obyekt.html', context=context)
 

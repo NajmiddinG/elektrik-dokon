@@ -44,9 +44,13 @@ class Worker(models.Model):
         return self.name
 
     
+class WorkDay(models.Model):
+    responsible = models.ForeignKey(User, related_name="users", on_delete=models.CASCADE)
+    start_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
 
-
-
+    def has_end_date(self):
+        return bool(self.end_date)
 
 
 # from django.db import models

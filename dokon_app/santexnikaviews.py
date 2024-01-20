@@ -16,7 +16,6 @@ from .models import (
     ProductHistoryObject,
     HistoryObject,
     ObjectPayment,
-    DokonDay
 )
 from main_app.models import Worker, User
 # Create your views here.

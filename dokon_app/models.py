@@ -91,11 +91,3 @@ class ObjectPayment(models.Model):
     history_object = models.ForeignKey(HistoryObject, on_delete=models.CASCADE)
     given_amount = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
-
-class DokonDay(models.Model):
-    responsible = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
-
-    def has_end_date(self):
-        return bool(self.end_date)

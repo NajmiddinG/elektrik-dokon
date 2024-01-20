@@ -124,6 +124,7 @@ td {
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
+                
                 <h3><i class='bx bx-user'></i> Foydalanuvchilar</h3>
                 <p data-label="foydalanuvchi" title="+ Foydalanuvchi qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Foydalanuvchi</p>
             </div>
@@ -135,13 +136,13 @@ td {
                     <th><center>Ism</center></th>
                     <th><center>Familiya</center></th>
                     <th><center>Turi</center></th>
-                    <th><center>Ishchi holati</center></th>
+                    <th><center>Ishchilar holati</center></th>
                     <th><center>Tel</center></th>
                     <th><center>Manzil</center></th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for users_with_worker in users_with_workers_info %}
+                {% for users_with_worker in users_with_work_status %}
                 <tr class="edit-user" data-id="{{ users_with_worker.id }}">
                     <td id="{{ users_with_worker.id }}" class="user-id">{{ forloop.counter }}</td>
                     <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green; max-width: 150px;">{{ users_with_worker.username|capfirst }}</td>

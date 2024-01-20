@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Worker
+from .models import User, Worker, WorkDay
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'username', 'tel_number', 'address', 'date')
@@ -9,7 +9,17 @@ class WorkerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'date')
     filter_horizontal = ('user', )
 
-# Register models
+@admin.register(WorkDay)
+class WorkDayAdmin(admin.ModelAdmin):
+    list_display = ('id', 'responsible', 'start_date', 'end_date', 'has_end_date')
+    list_filter = ('responsible', 'start_date', 'end_date')
+    search_fields = ('responsible__username', 'start_date', 'end_date')
+
+    def has_end_date(self, obj):
+        return bool(obj.end_date)
+    has_end_date.boolean = True
+    has_end_date.short_description = 'Has End Date'
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Worker, WorkerAdmin)
 

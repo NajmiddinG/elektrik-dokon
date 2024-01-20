@@ -124,7 +124,13 @@ td {
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
-                
+                {% if worker_type == 'Obyekt' %}
+                  {% if position == 'start' %}
+                    <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
+                  {% else %}
+                  <a href="{% url 'main_app:end_job' %}" class="add-button add-btn">Ishni tugatish</a>
+                  {% endif %}
+                {% endif %}
                 <h3><i class='bx bx-receipt'></i> Obyektlar</h3>
                 {% if worker_type == 'Admin' %}
                 <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
