@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Work, WorkDay, Money
+from .models import Work, WorkDayMoney, Money
 
 class WorkAdmin(admin.ModelAdmin):
-    list_display = ('id', 'job', 'completed', 'date')
+    list_display = ('id', 'job', 'completed')
 
-class WorkDayAdmin(admin.ModelAdmin):
-    list_display = ('id', 'responsible', 'obyekt', 'start_date', 'end_date', 'earn_amount')
+class WorkDayMoneyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'responsible', 'obyekt', 'earn_amount', 'admin_accepted', 'date')
     filter_horizontal = ('work_amount',)  # This allows a multi-select widget for work_amount
 
 class MoneyAdmin(admin.ModelAdmin):
@@ -13,5 +13,5 @@ class MoneyAdmin(admin.ModelAdmin):
 
 # Register models
 admin.site.register(Work, WorkAdmin)
-admin.site.register(WorkDay, WorkDayAdmin)
+admin.site.register(WorkDayMoney, WorkDayMoneyAdmin)
 admin.site.register(Money, MoneyAdmin)

@@ -16,7 +16,11 @@ def dashboard(request):
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    obyekts = Obyekt.objects.all().order_by('-date')
+
+    if bool(request.user.workers.filter(name__iexact='admin').first()):
+        obyekts = Obyekt.objects.all().order_by('-date')
+    else:
+        obyekts = Obyekt.objects.filter(responsible=request.user).order_by('-date')
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     obyektjobtypes = ObyektJobType.objects.all().order_by('name')
@@ -39,7 +43,7 @@ def create_obyekt(request):
         try:
             name = str(request.POST.get('name')).capitalize()
             obyekt_worker = request.POST.get('obyekt_worker')
-            address = str(request.POST.get('address')).capitalize()
+            address = str(request.POST.get('address'))
             job_type = str(request.POST.get('job_type')).capitalize()
             deal_amount = str(request.POST.get('deal_amount'))
             given_amount = str(request.POST.get('given_amount'))
@@ -89,7 +93,7 @@ def edit_obyekt(request, obyekt_id):
             obyekt.name = str(request.POST.get('name')).capitalize()
             if bool(request.user.workers.filter(name__iexact='admin').first()):
                 obyekt.responsible = User.objects.get(id=request.POST.get('obyekt_worker'))
-                obyekt.address = str(request.POST.get('address')).capitalize()
+                obyekt.address = str(request.POST.get('address'))
                 obyekt.job_type = str(request.POST.get('job_type')).capitalize()
                 obyekt.deal_amount = str(request.POST.get('deal_amount'))
                 obyekt.given_amount = str(request.POST.get('given_amount'))
@@ -113,7 +117,10 @@ def obyekt_ishi(request):
         work_amounts = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    obyekts = Obyekt.objects.all().order_by('-date')
+    if bool(request.user.workers.filter(name__iexact='admin').first()):
+        obyekts = Obyekt.objects.all().order_by('-date')
+    else:
+        obyekts = Obyekt.objects.filter(responsible=request.user).order_by('-date')
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     obyektjobtypes = ObyektJobType.objects.all().order_by('name')

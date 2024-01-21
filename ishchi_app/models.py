@@ -6,18 +6,14 @@ from datetime import date, datetime
 class Work(models.Model):
     job = models.ForeignKey(WorkAmount, on_delete=models.CASCADE)
     completed = models.IntegerField(default=0, blank=True, null=True)
-    date = models.DateTimeField(auto_now_add=True)
 
-class WorkDay(models.Model):
+class WorkDayMoney(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     obyekt = models.ForeignKey(Obyekt, on_delete=models.CASCADE)
-    start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField(auto_now_add=True)
     earn_amount = models.IntegerField(default=0, blank=True, null=True)
     work_amount = models.ManyToManyField(Work)
-
-    def has_end_date(self):
-        return bool(self.end_date)
+    admin_accepted = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
 
 class Money(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)

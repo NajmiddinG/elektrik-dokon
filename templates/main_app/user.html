@@ -144,7 +144,7 @@ td {
                 {% for users_with_worker in users_with_workers_info %}
                 <tr class="edit-user" data-id="{{ users_with_worker.id }}">
                     <td id="{{ users_with_worker.id }}" class="user-id">{{ forloop.counter }}</td>
-                    <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green; max-width: 150px;">{{ users_with_worker.username|capfirst }}</td>
+                    <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green; max-width: 150px;">{{ users_with_worker.username }}</td>
                     <td id="{{ users_with_worker.id }}first_name">{{ users_with_worker.first_name|capfirst }}</td>
                     <td id="{{ users_with_worker.id }}last_name">{{ users_with_worker.last_name|capfirst }}</td>
                     <td id="{{ users_with_worker.id }}workers">{{ users_with_worker.workers__name|capfirst }}</td>
@@ -184,9 +184,9 @@ td {
             <div class="input-box">
                 <label for="workers">Ish turi:</label>
                 <select id="workers" name="workers">
-                    <option value="Dokon">Dokon</option>
-                    <option value="Obyekt">Obyekt</option>
-                    <option value="Admin">Admin</option>
+                    {% for user_type in users_type %}
+                    <option value="{{ user_type.name }}">{{ user_type.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="input-box">
@@ -229,9 +229,9 @@ td {
             <div class="input-box">
                 <label for="workers">Ish turi:</label>
                 <select id="workers" name="workers">
-                    <option value="Dokon">Dokon</option>
-                    <option value="Obyekt">Obyekt</option>
-                    <option value="Admin">Admin</option>
+                    {% for user_type in users_type %}
+                    <option value="{{ user_type.name }}">{{ user_type.name }}</option>
+                    {% endfor %}
                 </select>
             </div>            
             <div class="input-box">

@@ -12,6 +12,7 @@ urlpatterns = [
     path('', include('main_app.urls'), name='main_app'),
     path('dokon/', include('dokon_app.urls'), name='dokon_app'),
     path('obyekt/', include('obyekt_app.urls'), name='obyekt_app'),
+    path('ishchi/', include('ishchi_app.urls'), name='ishchi_app'),
 ]
 
 if settings.DEBUG:

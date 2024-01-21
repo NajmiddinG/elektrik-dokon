@@ -139,6 +139,12 @@
             <li class="{% if active == 'obyekt_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'obyekt_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
             <li class="{% if active == 'obyekt_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'obyekt_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
             {% endif %}
+
+            {% if worker_type == 'Ishchi' %}
+            <li data-name="sotish"><a href="{% url 'ishchi_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-cube'></i>Ishchilar bo'limi</a></li>
+            <li class="{% if active == 'ishchi_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'ishchi_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
+            <li class="{% if active == 'obyekt_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'obyekt_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
+            {% endif %}
         </ul>
         <ul class="side-menu">
             <li>
