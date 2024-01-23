@@ -52,3 +52,37 @@ def dashboard(request):
 
     }
     return render(request, 'ishchi/obyekt.html', context=context)
+
+def obyekt_ishi(request):
+    if has_some_error(request): return redirect('/login/')
+
+    cookies = request.COOKIES
+    selected_obyekt = int(cookies.get('obyekt_id', 0))
+    if selected_obyekt:
+        work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
+    else:
+        work_amounts = []
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    obyekts = Obyekt.objects.all().order_by('-date')
+    obyekt_workers = User.objects.filter(workers__name='Obyekt')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    obyektjobtypes = ObyektJobType.objects.all().order_by('name')
+    workeramountjobtypes = WorkAmountJobType.objects.all().order_by('name')
+    context = {
+        'active': 'main_2',
+        'obyekts': obyekts,
+        'obyekt_workers': obyekt_workers,
+        'worker_type': worker_type,
+        'work_amounts': work_amounts,
+        'obyektjobtypes': obyektjobtypes,
+        'workeramountjobtypes': workeramountjobtypes,
+    }
+    response = render(request, 'ishchi/obyekt_ishi.html', context=context)
+    if selected_obyekt==0:
+        try:
+            latest_obyekt = Obyekt.objects.latest('date').id
+            response.set_cookie('obyekt_id', str(latest_obyekt))
+        except:
+            response.set_cookie('obyekt_id', '0')
+    return response

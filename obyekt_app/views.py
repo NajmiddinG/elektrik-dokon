@@ -152,6 +152,7 @@ def create_obyekt_ishi(request):
             obyekt = Obyekt.objects.get(id=request.POST.get('obyekt_worker'))
             work_amount = WorkAmount(
                 job_type=str(request.POST.get('job_type')).capitalize(),
+                first_price=request.POST.get('first_price'),
                 service_price=request.POST.get('service_price'),
                 total_completed=str(request.POST.get('total_completed')),
                 total=str(request.POST.get('total')),
@@ -181,8 +182,11 @@ def create_work_amount_job_type(request):
                 messages.success(request, f'{name} Ish turi ish turi muvaffaqiyatli yaratildi.')
         except:
             messages.error(request, 'Xatolik yuz berdi.')
-
-    return redirect('obyekt_app:obyekt_ishi')
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('/')
 
 def edit_obyekt_ishi(request, obyekt_id):
     if has_some_error(request): return redirect('/login/')
@@ -193,6 +197,7 @@ def edit_obyekt_ishi(request, obyekt_id):
             if bool(request.user.workers.filter(name__iexact='admin').first()):
                 work_amount = WorkAmount.objects.get(id=obyekt_id)
                 work_amount.job_type = str(request.POST.get('job_type')).capitalize()
+                work_amount.first_price = request.POST.get('first_price')
                 work_amount.service_price = request.POST.get('service_price')
                 work_amount.total_completed = request.POST.get('total_completed')
                 work_amount.total = request.POST.get('total')
@@ -222,4 +227,65 @@ def set_obyekt_cookie(request, obyekt_id):
     response = redirect('obyekt_app:obyekt_ishi')
     response.set_cookie('obyekt_id', str(obyekt_id))
     return response
+
+
+def erkin_ishlar(request):
+    if has_some_error(request): return redirect('/login/')
+
+    work_amounts_without_obyeckt = WorkAmount.objects.exclude(obyekt__isnull=False)
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    workeramountjobtypes = WorkAmountJobType.objects.all().order_by('name')
+    context = {
+        'active': 'obyekt_3',
+        'worker_type': worker_type,
+        'work_amounts': work_amounts_without_obyeckt,
+        'workeramountjobtypes': workeramountjobtypes,
+    }
+    response = render(request, 'obyekt/erkin_ishlar.html', context=context)
+    return response
+
+
+def create_erkin_ishlar(request):
+    if has_some_error(request): return redirect('/login/')
+    if request.method=='POST':
+        try:
+            work_amount = WorkAmount(
+                job_type=str(request.POST.get('job_type')).capitalize(),
+                first_price=request.POST.get('first_price'),
+                service_price=request.POST.get('service_price'),
+                total_completed=str(request.POST.get('total_completed')),
+                total=str(request.POST.get('total')),
+            )
+            work_amount.save()
+            messages.success(request, f'{work_amount.job_type}  muvaffaqiyatli yaratildi.')
+            response = redirect('obyekt_app:erkin_ishlar')
+            return response
+        except:
+            messages.error(request, 'Xatolik yuz berdi.')
+    return redirect('obyekt_app:erkin_ishlar')
+
+def edit_erkin_ishlar(request, obyekt_id):
+    if has_some_error(request): return redirect('/login/')
+    if request.method == 'POST':
+        try:
+            print(request.POST)
+            # 'obyekt_worker': ['2'], 'job_type': ['2'], 'service_price': ['4'], 'total_completed': ['5'], 'total': ['9']
+            if bool(request.user.workers.filter(name__iexact='admin').first()):
+                work_amount = WorkAmount.objects.get(id=obyekt_id)
+                work_amount.job_type = str(request.POST.get('job_type')).capitalize()
+                work_amount.first_price = request.POST.get('first_price')
+                work_amount.service_price = request.POST.get('service_price')
+                work_amount.total_completed = request.POST.get('total_completed')
+                work_amount.total = request.POST.get('total')
+                work_amount.save()
+
+                messages.success(request, f"{work_amount.id} id  ma'lumotlari muvaffaqiyatli o\'zgartirildi.")
+                response = redirect('obyekt_app:erkin_ishlar')
+                return response
+        except User.DoesNotExist:
+            messages.error(request, 'Bunday id ga ega foydalanuvchi mavjud emas.')
+
+    return redirect('obyekt_app:dashboard')
 

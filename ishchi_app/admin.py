@@ -5,7 +5,7 @@ class WorkAdmin(admin.ModelAdmin):
     list_display = ('id', 'job', 'completed')
 
 class WorkDayMoneyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'responsible', 'obyekt', 'earn_amount', 'admin_accepted', 'date')
+    list_display = ('id', 'responsible', 'earn_amount', 'admin_accepted', 'date')
     filter_horizontal = ('work_amount',)  # This allows a multi-select widget for work_amount
 
 class MoneyAdmin(admin.ModelAdmin):

@@ -1,6 +1,6 @@
 from django.db import models
 from main_app.models import User
-from obyekt_app.models import Obyekt, WorkAmount
+from obyekt_app.models import WorkAmount
 from datetime import date, datetime
 
 class Work(models.Model):
@@ -9,7 +9,6 @@ class Work(models.Model):
 
 class WorkDayMoney(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
-    obyekt = models.ForeignKey(Obyekt, on_delete=models.CASCADE)
     earn_amount = models.IntegerField(default=0, blank=True, null=True)
     work_amount = models.ManyToManyField(Work)
     admin_accepted = models.BooleanField(default=False)

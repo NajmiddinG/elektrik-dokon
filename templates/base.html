@@ -138,6 +138,7 @@
             <li data-name="sotish"><a href="{% url 'obyekt_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-cube'></i>Obyektlar bo'limi</a></li>
             <li class="{% if active == 'obyekt_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'obyekt_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
             <li class="{% if active == 'obyekt_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'obyekt_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
+            <li class="{% if active == 'obyekt_3' %}active{% endif %}" data-name="erkin_ishlar"><a href="{% url 'obyekt_app:erkin_ishlar' %}"><i class='bx bx-detail'></i>Erkin ishlar</a></li>
             {% endif %}
 
             {% if worker_type == 'Ishchi' %}
