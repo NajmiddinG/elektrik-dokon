@@ -197,7 +197,7 @@ def edit_obyekt_ishi(request, obyekt_id):
             if bool(request.user.workers.filter(name__iexact='admin').first()):
                 work_amount = WorkAmount.objects.get(id=obyekt_id)
                 work_amount.job_type = str(request.POST.get('job_type')).capitalize()
-                work_amount.visible_obyekt = bool(request.POST.get('visible_obyekt')[0]=='on'),
+                work_amount.visible_obyekt = bool(request.POST.get('visible_obyekt')=='on')
                 work_amount.first_price = request.POST.get('first_price')
                 work_amount.service_price = request.POST.get('service_price')
                 work_amount.total_completed = request.POST.get('total_completed')
