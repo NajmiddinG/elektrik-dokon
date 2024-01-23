@@ -10,9 +10,6 @@ from .views import (
     edit_obyekt_ishi,
     create_obyekt_job_type,
     create_work_amount_job_type,
-    erkin_ishlar,
-    create_erkin_ishlar,
-    edit_erkin_ishlar,
 )
 app_name = 'obyekt_app'
 
@@ -26,10 +23,6 @@ urlpatterns = [
     path('create_obyekt_ishi/', create_obyekt_ishi, name='create_obyekt_ishi'),
     path('edit_obyekt_ishi/<int:obyekt_id>/', edit_obyekt_ishi, name='edit_obyekt_ishi'),
     path('create_work_amount_job_type/', create_work_amount_job_type, name='create_work_amount_job_type'),
-    path('erkin_ishlar/', erkin_ishlar, name='erkin_ishlar'),
-    path('create_erkin_ishlar/', create_erkin_ishlar, name='create_erkin_ishlar'),
-    path('edit_erkin_ishlar/<int:obyekt_id>/', edit_erkin_ishlar, name='edit_erkin_ishlar'),
-
 
     path('set_obyekt_cookie/<int:obyekt_id>/', set_obyekt_cookie, name='set_obyekt_cookie'),
 

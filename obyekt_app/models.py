@@ -11,6 +11,7 @@ class WorkAmountJobType(models.Model):
 
 class WorkAmount(models.Model):
     job_type = models.CharField(max_length=255)
+    visible_obyekt = models.BooleanField(default=True, blank=True, null=True)
     first_price = models.IntegerField(default=0, blank=True, null=True)
     service_price = models.IntegerField(default=0, blank=True, null=True)
     total_completed = models.IntegerField(default=0, blank=True, null=True)
