@@ -156,7 +156,7 @@ td {
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
                     <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}" style="max-width: 150px;">
-                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name }}</a>
+                        <a href="{% url 'ishchi_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name }}</a>
                     </td>
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">{{ obyekt.responsible }}</td>
                     <td id="{{ obyekt.id }}address" title="{{ obyekt.address|capfirst }}">{{ obyekt.address|capfirst }}</td>
