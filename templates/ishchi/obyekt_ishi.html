@@ -160,6 +160,9 @@ td {
                 <tr>
                     <th><center>№</center></th>
                     <th><center>Ish turi</center></th>
+                    {% if worker_type != 'Obyekt' %}
+                    <th><center>Bog'langan</center></th>
+                    {% endif %}
                     <th><center>Xizmat haqqi</center></th>
                     <th><center>Tugatilganlar soni</center></th>
                     <th><center>Umumiy soni</center></th>
@@ -171,6 +174,9 @@ td {
                 <tr class="edit-work_amount" data-id="{{ work_amount.id }}">
                     <td id="{{ work_amount.id }}" class="work_amount-id" data-id="{{ work_amount.id }}">{{ forloop.counter }}</td>
                     <td id="{{ work_amount.id }}job_type" data-id="{{ work_amount.id }}" title="{{ work_amount.job_type|capfirst }}" style="max-width: 150px;">{{ work_amount.job_type|capfirst }}</td>
+                    {% if worker_type != 'Obyekt' %}
+                    <td id="{{ work_amount.id }}visible_obyekt">{{ work_amount.visible_obyekt|bool_to_word }}</td>
+                    {% endif %}
                     <td id="{{ work_amount.id }}service_price">{{ work_amount.service_price|spacecomma }} so'm</td>
                     <td id="{{ work_amount.id }}total_completed">{{ work_amount.total_completed|spacecomma }}</td>
                     <td id="{{ work_amount.id }}total">{{ work_amount.total|spacecomma }}</td>
@@ -345,7 +351,7 @@ td {
                 nameInput.value = productTypeName;
 
                 // Update the form action URL with the product type ID
-                editForm.action = '/obyekt/edit_product_type/' + productTypeId + '/';
+                editForm.action = '/ishchi/edit_product_type/' + productTypeId + '/';
 
                 // Show or toggle the edit form as needed
                 toggleForm('editproductTypeFormContainer');
@@ -375,7 +381,7 @@ td {
             total_completedInput.value = parseFloat(total_completed.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
             totalInput.value = parseFloat(total.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
 
-            editForm.action = '/obyekt/edit_obyekt_ishi/' + obyektId + '/';
+            editForm.action = '/ishchi/edit_obyekt_ishi/' + obyektId + '/';
             toggleForm('editObyektFormContainer');
         });
     })

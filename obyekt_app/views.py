@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -225,6 +225,8 @@ def edit_obyekt_ishi(request, obyekt_id):
     return redirect('obyekt_app:dashboard')
 
 def set_obyekt_cookie(request, obyekt_id):
-    response = redirect('obyekt_app:obyekt_ishi')
+    referer = request.META.get('HTTP_REFERER')
+    response = HttpResponseRedirect(referer or '/')
     response.set_cookie('obyekt_id', str(obyekt_id))
+    
     return response

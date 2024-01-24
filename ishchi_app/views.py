@@ -70,7 +70,7 @@ def obyekt_ishi(request):
     obyektjobtypes = ObyektJobType.objects.all().order_by('name')
     workeramountjobtypes = WorkAmountJobType.objects.all().order_by('name')
     context = {
-        'active': 'main_2',
+        'active': 'ishchi_2',
         'obyekts': obyekts,
         'obyekt_workers': obyekt_workers,
         'worker_type': worker_type,
