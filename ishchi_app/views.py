@@ -28,6 +28,7 @@ from django.shortcuts import get_object_or_404
 
 from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType
 from main_app.models import Worker, User, WorkDay
+from ishchi_app.models import Work, WorkDayMoney, Money
 
 
 def dashboard(request):
@@ -86,3 +87,47 @@ def obyekt_ishi(request):
         except:
             response.set_cookie('obyekt_id', '0')
     return response
+
+def done_work_post(request):
+    if has_some_error(request): return redirect('/login/')
+
+    if request.method == 'POST':
+        print(request.POST)
+        try:
+            # 'quantity;1': ['0'], 'quantity;2': ['0'],
+            done_works = []
+            history_came = [request.user, 0] # responsible, earn_amount
+            for key, number in request.POST.items():
+                if key.startswith('quantity;') and number!='0':
+                    number = int(number)
+                    product_id = int(key.split(';')[1])
+                    product_details = {
+                        'job_id': product_id,
+                        'completed': number,
+                    }
+                    work_amount = WorkAmount.objects.get(id=product_id)
+                    history_came[1]+=number*work_amount.service_price
+                    done_works.append(product_details)
+            if history_came[1]==0:
+                messages.error(request, "Xatolik ro'y berdi!")
+            else:
+                history_came = WorkDayMoney.objects.create(
+                    responsible=history_came[0],
+                    earn_amount=history_came[1],
+                )
+                for product_details in done_works:
+                    product_history = Work.objects.create(
+                        job_id=product_details['job_id'],
+                        completed=product_details['completed'],
+                    )
+                    
+                    # Add the created ProductHistoryCame instance to history_came's history_products
+                    history_came.work_amount.add(product_history)
+                messages.success(request, "Bajarilgan ishlaringiz muvaffaqqiyatli qo'shildi")
+        except Exception as e:
+            print(e)
+            messages.error(request, "Xatolik ro'y berdi!")
+
+    return redirect("ishchi_app:dashboard")
+    
+

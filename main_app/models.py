@@ -52,6 +52,8 @@ class WorkDay(models.Model):
     def has_end_date(self):
         return bool(self.end_date)
 
+    def __str__(self) -> str:
+        return self.responsible.first_name
 
 # from django.db import models
 # from django.db.models.signals import pre_save

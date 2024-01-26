@@ -134,7 +134,14 @@ td {
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
         }
-
+    .product_search {
+        min-width: 75%;
+    }
+    @media only screen and (max-width: 600px) {
+    .product_search {
+      min-width: 75%;
+    }
+  }
 </style>
 {% endblock %}
 {% load custom_filters %}
@@ -155,6 +162,8 @@ td {
             <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
             {% endif %}
         </div>
+        <form action="{% url 'ishchi_app:done_work_post' %}" method="post" enctype="multipart/form-data" class="form" id="productForm">
+            {% csrf_token %}
             <table id="myTable3">
                 <thead>
                 <tr>
@@ -166,10 +175,11 @@ td {
                     <th><center>Xizmat haqqi</center></th>
                     <th><center>Tugatilganlar soni</center></th>
                     <th><center>Umumiy soni</center></th>
+                    <th><center>Bugun bajarilganlar soni</center></th>
                     <th><center>Vaqt</center></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="myDropdown2">
                 {% for work_amount in work_amounts %}
                 <tr class="edit-work_amount" data-id="{{ work_amount.id }}">
                     <td id="{{ work_amount.id }}" class="work_amount-id" data-id="{{ work_amount.id }}">{{ forloop.counter }}</td>
@@ -180,11 +190,23 @@ td {
                     <td id="{{ work_amount.id }}service_price">{{ work_amount.service_price|spacecomma }} so'm</td>
                     <td id="{{ work_amount.id }}total_completed">{{ work_amount.total_completed|spacecomma }}</td>
                     <td id="{{ work_amount.id }}total">{{ work_amount.total|spacecomma }}</td>
+                    <td><center><input class="button_cool product_search" type="number" name="quantity;{{ work_amount.id }}" 
+                        id="{{ work_amount.id }}" value="0" min="0" max='{{ work_amount.total|subtract:work_amount.total_completed }}' 
+                        data-product-real-price="{{ work_amount.service_price }}" 
+                        data-max-quantity="{{ work_amount.total|subtract:work_amount.total_completed }}" 
+                        onchange="calculateTotal()"></center></td>
                     <td id="{{ work_amount.id }}date">{{ work_amount.date|date:"d-m-Y" }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            <div class="footer">
+                <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">0</span> so'm</p>
+                <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Saqlash</button>
+            </div>
+            <!-- Hidden input fields to store selected product data -->
+            <input type="hidden" name="selected_products" id="selectedProducts" value="">
+        </form>
         </div>
     </div>
 
@@ -377,9 +399,9 @@ td {
             var totalInput = editForm.querySelector('#total');
 
             job_typeInput.value = job_type;
-            service_priceInput.value = parseFloat(service_price.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;;
-            total_completedInput.value = parseFloat(total_completed.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
-            totalInput.value = parseFloat(total.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
+            service_priceInput.value = parseFloat(service_price.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
+            total_completedInput.value = parseFloat(total_completed.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            totalInput.value = parseFloat(total.replace(' so\'m', '').replace(',', '').replaceAll(' ', '').replaceAll(' ', '')); // Convert price to number;
 
             editForm.action = '/ishchi/edit_obyekt_ishi/' + obyektId + '/';
             toggleForm('editObyektFormContainer');
@@ -390,6 +412,40 @@ td {
     var selectedValue = this.value;
     window.location.href = "{% url 'obyekt_app:set_obyekt_cookie' 0 %}".replace('0', selectedValue);
     });
+    function calculateTotal() {
+    // Select all input elements with class "product_search" within the table
+    var inputs = document.querySelectorAll('#myDropdown2 input');
+    var totalAmount = 0;
+    
+    // Iterate through each input and calculate the total amount
+    inputs.forEach(function(input) {
+        var quantity = parseInt(input.value);
+        var price = parseInt(input.getAttribute('data-product-real-price'));
+        var maxQuantity = parseInt(input.getAttribute('data-max-quantity'));
+
+        // Check if the quantity and price are valid numbers
+        if (!isNaN(quantity) && !isNaN(price) && quantity >= 0 && quantity <= maxQuantity) {
+            totalAmount += quantity * price;
+        }
+    });
+    console.log(12312223, totalAmount)
+    // Update the total amount in the <span> element
+    document.getElementById('totalAmount').innerText = totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    // Add an event listener to the form to recalculate the total on input change
+    document.getElementById('productForm').addEventListener('input', function(event) {
+        calculateTotal();
+    });
+    document.getElementById('productForm').addEventListener('keydown', function(event) {
+      // Check if the pressed key is Enter and if the active element is an input
+      if (event.key === 'Enter' && document.activeElement.tagName.toLowerCase() === 'input') {
+          event.preventDefault();
+          // Optionally, you can handle the Enter key press in the input here
+      }
+    //   calculateTotal();
+  });
+    // Call the calculateTotal function initially to set the initial total amount
 
 </script>
 {% endblock %}

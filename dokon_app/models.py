@@ -74,6 +74,9 @@ class ProductHistoryObject(models.Model):
     profit = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self) -> str:
+        return self.type.name
+
 class HistoryObject(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     history_object = models.ForeignKey(Obyekt, on_delete=models.CASCADE)
@@ -86,8 +89,14 @@ class HistoryObject(models.Model):
     completed = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self) -> str:
+        return self.history_object.name
+
 class ObjectPayment(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     history_object = models.ForeignKey(HistoryObject, on_delete=models.CASCADE)
     given_amount = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.responsible.first_name

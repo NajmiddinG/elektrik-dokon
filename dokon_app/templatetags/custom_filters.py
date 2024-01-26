@@ -23,3 +23,10 @@ def real_money(price, percentage):
 def bool_to_word(value):
     if value: return "Ha"
     return "Yo'q"
+
+@register.filter(name='subtract')
+def subtract(value, arg):
+    try:
+        return int(value) - int(arg)
+    except (ValueError, TypeError):
+        return ""

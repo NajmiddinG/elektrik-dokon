@@ -7,12 +7,18 @@ class Work(models.Model):
     job = models.ForeignKey(WorkAmount, on_delete=models.CASCADE)
     completed = models.IntegerField(default=0, blank=True, null=True)
 
+    def __str__(self) -> str:
+        return self.job.job_type
+
 class WorkDayMoney(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     earn_amount = models.IntegerField(default=0, blank=True, null=True)
-    work_amount = models.ManyToManyField(Work)
+    work_amount = models.ManyToManyField(Work, blank=True)
     admin_accepted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.responsible.first_name
 
 class Money(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,3 +28,6 @@ class Money(models.Model):
     year = models.IntegerField(default=2023)
     month = models.IntegerField(default=datetime.now().month)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.responsible.first_name

@@ -5,9 +5,15 @@ from main_app.models import User
 class ObyektJobType(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class WorkAmountJobType(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.name
 
 class WorkAmount(models.Model):
     job_type = models.CharField(max_length=255)
@@ -17,6 +23,9 @@ class WorkAmount(models.Model):
     total_completed = models.IntegerField(default=0, blank=True, null=True)
     total = models.IntegerField(default=1, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.job_type
 
 class Obyekt(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -32,3 +41,6 @@ class Obyekt(models.Model):
     contract = models.FileField(upload_to='contracts/', blank=True, null=True)
     completed = models.BooleanField(default=False, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.name
