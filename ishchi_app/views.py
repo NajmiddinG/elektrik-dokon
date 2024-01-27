@@ -92,7 +92,6 @@ def done_work_post(request):
     if has_some_error(request): return redirect('/login/')
 
     if request.method == 'POST':
-        print(request.POST)
         try:
             # 'quantity;1': ['0'], 'quantity;2': ['0'],
             done_works = []
@@ -131,3 +130,47 @@ def done_work_post(request):
     return redirect("ishchi_app:dashboard")
     
 
+def done_work_list(request):
+    if has_some_error(request): return redirect('/login/')
+
+    is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'ishchi_3',
+        'workdaymoneys': workdaymoneys,
+        'worker_type': worker_type,
+        'position': 'end' if is_working else 'start',
+
+    }
+    return render(request, 'ishchi/done_work_list.html', context=context)
+
+def done_work_detail(request):
+    if has_some_error(request): return redirect('/login/')
+
+    cookies = request.COOKIES
+    selected_obyekt = int(cookies.get('workdaymoney_id', 0))
+    if selected_obyekt:
+        work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
+    else:
+        work_amounts = []
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'ishchi_4',
+        'workdaymoneys': workdaymoneys,
+        'worker_type': worker_type,
+        'work_amounts': work_amounts,
+    }
+    response = render(request, 'ishchi/done_work_detail.html', context=context)
+    if selected_obyekt==0:
+        try:
+            latest_obyekt = WorkDayMoney.objects.filter(responsible=request.user).latest('date').id
+            response.set_cookie('workdaymoney_id', str(latest_obyekt))
+        except:
+            response.set_cookie('workdaymoney_id', '0')
+    return response

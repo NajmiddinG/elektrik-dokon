@@ -230,3 +230,11 @@ def set_obyekt_cookie(request, obyekt_id):
     response.set_cookie('obyekt_id', str(obyekt_id))
     
     return response
+
+
+def set_obyekt_cookie2(request, obyekt_id):
+    referer = request.META.get('HTTP_REFERER')
+    response = HttpResponseRedirect(referer or '/')
+    response.set_cookie('workdaymoney_id', str(obyekt_id))
+    
+    return response

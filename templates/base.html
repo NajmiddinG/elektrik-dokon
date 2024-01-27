@@ -143,6 +143,8 @@
             <li data-name="sotish"><a href="{% url 'ishchi_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-cube'></i>Ishchilar bo'limi</a></li>
             <li class="{% if active == 'ishchi_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'ishchi_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
             <li class="{% if active == 'ishchi_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'ishchi_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
+            <li class="{% if active == 'ishchi_3' %}active{% endif %}" data-name="done_work_list"><a href="{% url 'ishchi_app:done_work_list' %}"><i class='bx bx-package'></i>Bajarilgan ish</a></li>
+            <li class="{% if active == 'ishchi_4' %}active{% endif %}" data-name="done_work_detail"><a href="{% url 'ishchi_app:done_work_detail' %}"><i class='bx bx-detail'></i>Bajarilgan ishlar</a></li>
             {% endif %}
         </ul>
         <ul class="side-menu">
