@@ -156,7 +156,7 @@ td {
                 {% for obyekt in obyekts %}
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
-                    <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}" style="max-width: 150px;">
+                    <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}">
                         <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name }}</a>
                     </td>
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">{{ obyekt.responsible }}</td>
@@ -387,8 +387,8 @@ td {
             nameInput.value = nameId;
             addressInput.value = addressId;
             job_typeInput.value = job_typeId;
-            deal_amountInput.value = parseFloat(deal_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
-            given_amountInput.value = parseFloat(given_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
+            deal_amountInput.value = parseFloat(deal_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            given_amountInput.value = parseFloat(given_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
             max_deptInput.value = max_deptId;
             obyekt_workerInput.value = obyekt_workerId;
 

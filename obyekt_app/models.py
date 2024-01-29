@@ -44,3 +44,10 @@ class Obyekt(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+class Given_money(models.Model):
+    obyekt = models.ForeignKey(Obyekt, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.IntegerField(default=0, blank=True, null=True)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)

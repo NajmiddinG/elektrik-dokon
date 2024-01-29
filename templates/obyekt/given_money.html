@@ -151,8 +151,6 @@ td {
                 {% endfor %}
             </select>
             {% if worker_type == 'Admin' %}
-            <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
-            <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
             <p data-label="given_money" title="+ Olingan summa qo'shish" class="add-button add-btn" onclick="toggleForm('given_moneyFormContainer')">+ Olingan summa</p>
             {% endif %}
         </div>
@@ -160,19 +158,9 @@ td {
                 <thead>
                 <tr>
                     <th><center>№</center></th>
-                    <th><center>Ish turi</center></th>
-                    {% if worker_type != 'Obyekt' %}
-                    <th><center>Bog'langan</center></th>
-                    {% endif %}
-                    {% if worker_type == 'Admin' %}
-                    <th><center>Admin narx</center></th>
-                    <th><center>Xizmat haqqi</center></th>
-                    {% endif %}
-                    {% if worker_type == 'Obyekt' %}
-                    <th><center>Xizmat haqqi</center></th>
-                    {% endif %}
-                    <th><center>Tugatilganlar soni</center></th>
-                    <th><center>Umumiy soni</center></th>
+                    <th><center>Masul</center></th>
+                    <th><center>Olingan summa</center></th>
+                    <th><center>Izoh</center></th>
                     <th><center>Vaqt</center></th>
                 </tr>
                 </thead>
@@ -180,19 +168,9 @@ td {
                 {% for work_amount in work_amounts %}
                 <tr class="edit-work_amount" data-id="{{ work_amount.id }}">
                     <td id="{{ work_amount.id }}" class="work_amount-id" data-id="{{ work_amount.id }}">{{ forloop.counter }}</td>
-                    <td id="{{ work_amount.id }}job_type" data-id="{{ work_amount.id }}" title="{{ work_amount.job_type|capfirst }}">{{ work_amount.job_type|capfirst }}</td>
-                    {% if worker_type != 'Obyekt' %}
-                    <td id="{{ work_amount.id }}visible_obyekt">{{ work_amount.visible_obyekt|bool_to_word }}</td>
-                    {% endif %}
-                    {% if worker_type == 'Admin' %}
-                    <td id="{{ work_amount.id }}first_price">{{ work_amount.first_price|spacecomma }} so'm</td>
-                    <td id="{{ work_amount.id }}service_price">{{ work_amount.service_price|spacecomma }} so'm</td>
-                    {% endif %}
-                    {% if worker_type == 'Obyekt' %}
-                    <td id="{{ work_amount.id }}service_price">{{ work_amount.first_price|spacecomma }} so'm</td>
-                    {% endif %}
-                    <td id="{{ work_amount.id }}total_completed">{{ work_amount.total_completed|spacecomma }}</td>
-                    <td id="{{ work_amount.id }}total">{{ work_amount.total|spacecomma }}</td>
+                    <td id="{{ work_amount.id }}responsible" data-id="{{ work_amount.id }}" title="{{ work_amount.responsible|capfirst }}" >{{ work_amount.responsible.first_name|capfirst }}</td>
+                    <td id="{{ work_amount.id }}amount">{{ work_amount.amount|spacecomma }} so'm</td>
+                    <td id="{{ work_amount.id }}comment">{{ work_amount.comment }}</td>
                     <td id="{{ work_amount.id }}date">{{ work_amount.date|date:"d-m-Y" }}</td>
                 </tr>
                 {% endfor %}
@@ -238,54 +216,6 @@ td {
 </div> -->
 
 <!-- create -->
-<div id="productFormContainer" class="add-form-container">
-    <div class="title">
-        <i class='bx bx-detail'></i>
-        <h2>Obyekt ishi qo'shish</h2>
-    </div>
-    <form action="{% url 'obyekt_app:create_obyekt_ishi' %}" class="info" method="post">{% csrf_token %}
-        <div class="box-wrapper">
-            <div class="input-box">
-                <label for="obyekt_worker">Obyekt nomi:</label>
-                <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
-                    {% for obyekt in obyekts %}
-                        <option value="{{ obyekt.id }}" {% if request.COOKIES.obyekt_id|default:"-1"|add:0 == obyekt.id %} selected {% endif %}>{{ obyekt.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="job_type">Ish turi:</label>
-                <select id="job_type" name="job_type" style="width: 250px;">
-                    {% for workeramountjobtype in workeramountjobtypes %}
-                    <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="visible_obyekt">Bog'langan:</label>
-                <input type="checkbox" id="visible_obyekt" name="visible_obyekt" checked>
-            </div>
-            <div class="input-box">
-                <label for="first_price">Admin narx:</label>
-                <input type="text" value="0" min="0" id="first_price" name="first_price">
-            </div>
-            <div class="input-box">
-                <label for="service_price">Xizmat haqqi:</label>
-                <input type="text" value="0" min="0" id="service_price" name="service_price">
-            </div>
-            <div class="input-box">
-                <label for="total_completed">Tugatilganlar soni:</label>
-                <input type="text" value="0" min="0" id="total_completed" name="total_completed">
-            </div>
-            <div class="input-box">
-                <label for="total">Umumiy soni:</label>
-                <input type="text" value="1" min="1" id="total" name="total">
-            </div>
-        </div>
-        <button type="submit" class="save">Saqlash</button>
-    </form>
-</div>
-
 <div id="given_moneyFormContainer" class="add-form-container">
     <div class="title">
         <i class='bx bx-money'></i>
@@ -307,72 +237,23 @@ td {
     </form>
 </div>
 
-<div id="jobTypeFormContainer" class="add-form-container">
+<!-- edit -->
+<div id="editgiven_moneyFormContainer" class="add-form-container">
     <div class="title">
-        <i class='bx bx-briefcase'></i>
-        <h2>Ish turi qo'shish</h2>
+        <i class='bx bx-money'></i>
+        <h2>Olingan pullni o'zgartirish</h2>
     </div>
-    <form action="{% url 'obyekt_app:create_work_amount_job_type' %}" class="info" method="post">{% csrf_token %}
+    <form action="{% url 'obyekt_app:edit_obyekt_given_amount' %}" class="info" id="editObyektForm" method="post">{% csrf_token %}
+        <input type="number" value="" id="given_money_id" name="given_money_id" hidden>
         <div class="box-wrapper">
             <div class="input-box">
-                <label for="name">Nomi:</label>
-                <input type="text" id="name" name="name">
+                <label for="amount">Summa:</label>
+                <input type="text" id="amount" name="amount">
             </div>
-        </div>
-        <button type="submit" class="save">Saqlash</button>
-    </form>
-</div>
-
-<!-- edit -->
-<div id="editObyektFormContainer" class="add-form-container">
-    <div class="title">
-        <i class='bx bx-detail'></i>
-        <h2>Obyektni o'zgartirish</h2>
-    </div>
-    <form action="{% url 'obyekt_app:edit_obyekt_ishi' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
-        <div class="box-wrapper">
-            {% if worker_type == 'Admin' %}
-            <div class="box-wrapper">
-                <div class="input-box">
-                    <label for="obyekt_worker">Obyekt nomi:</label>
-                    <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
-                        {% for obyekt in obyekts %}
-                            <option value="{{ obyekt.id }}" {% if request.COOKIES.obyekt_id|default:"-1"|add:0 == obyekt.id %} selected {% endif %}>{{ obyekt.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-box">
-                    <label for="job_type">Ish turi:</label>
-                    <select id="job_type" name="job_type" style="width: 250px;">
-                        {% for workeramountjobtype in workeramountjobtypes %}
-                        <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-box">
-                    <label for="visible_obyekt">Bog'langan:</label>
-                    <input type="checkbox" id="visible_obyekt" name="visible_obyekt" checked>
-                </div>
-                <div class="input-box">
-                    <label for="first_price">Admin narx:</label>
-                    <input type="text" value="0" min="0" id="first_price" name="first_price">
-                </div>
-                <div class="input-box">
-                    <label for="service_price">Xizmat haqqi:</label>
-                    <input type="text" value="0" min="0" id="service_price" name="service_price">
-                </div>
-                <div class="input-box">
-                    <label for="total_completed">Tugatilganlar soni:</label>
-                    <input type="text" value="0" min="0" id="total_completed" name="total_completed">
-                </div>
-                <div class="input-box">
-                    <label for="total">Umumiy soni:</label>
-                    <input type="text" value="1" min="1" id="total" name="total">
-                </div>
+            <div class="input-box">
+                <label for="comment">Izoh:</label>
+                <input type="text" id="comment" name="comment">
             </div>
-            {% else %}
-            <label for="">Admin obyektni o'zgartira oladi xolos</label>
-            {% endif %}
         </div>
         <button type="submit" class="save">Saqlash</button>
     </form>
@@ -413,29 +294,24 @@ td {
     console.log(obyektIdCells);
     obyektIdCells.forEach(function (cell) {
         cell.addEventListener('click', function () {
-            var obyektId = cell.getAttribute('id');
-            var job_type = document.getElementById(obyektId + 'job_type').textContent.trim();
-            var first_price = document.getElementById(obyektId + 'first_price').textContent.trim();
-            var service_price = document.getElementById(obyektId + 'service_price').textContent.trim();
-            var total_completed = document.getElementById(obyektId + 'total_completed').textContent.trim();
-            var total = document.getElementById(obyektId + 'total').textContent.trim();
+            var given_money_id = cell.getAttribute('data-id');
+            console.log(given_money_id);
+            var amount = document.getElementById(given_money_id + 'amount').textContent.trim();
+            var comment = document.getElementById(given_money_id + 'comment').textContent.trim();
             
             // Populate the input fields in the edit form
             var editForm = document.getElementById('editObyektForm');
-            var job_typeInput = editForm.querySelector('#job_type');
-            var first_priceInput = editForm.querySelector('#first_price');
-            var service_priceInput = editForm.querySelector('#service_price');
-            var total_completedInput = editForm.querySelector('#total_completed');
-            var totalInput = editForm.querySelector('#total');
+            var amountInput = editForm.querySelector('#amount');
+            var commentInput = editForm.querySelector('#comment');
+            var commentInput = editForm.querySelector('#comment');
+            var given_money_idInput = editForm.querySelector('#given_money_id');
+            
 
-            job_typeInput.value = job_type;
-            first_priceInput.value = parseFloat(first_price.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
-            service_priceInput.value = parseFloat(service_price.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
-            total_completedInput.value = parseFloat(total_completed.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
-            totalInput.value = parseFloat(total.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            commentInput.value = comment;
+            given_money_idInput.value = given_money_id;
+            amountInput.value = parseFloat(amount.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
 
-            editForm.action = '/obyekt/edit_obyekt_ishi/' + obyektId + '/';
-            toggleForm('editObyektFormContainer');
+            toggleForm('editgiven_moneyFormContainer');
         });
     })
     });

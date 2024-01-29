@@ -137,6 +137,9 @@
             <li data-name="sotish"><a href="{% url 'obyekt_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-cube'></i>Obyektlar bo'limi</a></li>
             <li class="{% if active == 'obyekt_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'obyekt_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
             <li class="{% if active == 'obyekt_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'obyekt_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
+            {% if worker_type == 'Admin' %}
+            <li class="{% if active == 'obyekt_3' %}active{% endif %}" data-name="given_money"><a href="{% url 'obyekt_app:given_money_views' %}"><i class='bx bx-money'></i>Olingan summa</a></li>
+            {% endif %}
             {% endif %}
 
             {% if worker_type == 'Ishchi' %}
@@ -198,7 +201,7 @@
                     setTimeout(function() {
                         message.style.display = 'none';
                     }, 100);
-                }, 1000);
+                }, 5000);
             });
         });
 

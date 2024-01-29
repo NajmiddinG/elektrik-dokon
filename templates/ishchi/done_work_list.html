@@ -349,8 +349,8 @@ td {
             nameInput.value = nameId;
             addressInput.value = addressId;
             job_typeInput.value = job_typeId;
-            deal_amountInput.value = parseFloat(deal_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
-            given_amountInput.value = parseFloat(given_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
+            deal_amountInput.value = parseFloat(deal_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            given_amountInput.value = parseFloat(given_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
             max_deptInput.value = max_deptId;
             obyekt_workerInput.value = obyekt_workerId;
 

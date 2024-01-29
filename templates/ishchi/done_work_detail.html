@@ -180,7 +180,7 @@ td {
                 {% for work_amount in work_amounts %}
                 <tr class="edit-work_amount" data-id="{{ work_amount.id }}">
                     <td id="{{ work_amount.id }}" class="work_amount-id" data-id="{{ work_amount.id }}">{{ forloop.counter }}</td>
-                    <td id="{{ work_amount.id }}job_type" data-id="{{ work_amount.id }}" title="{{ work_amount.job|capfirst }}" style="max-width: 150px;">{{ work_amount.job|capfirst }}</td>
+                    <td id="{{ work_amount.id }}job_type" data-id="{{ work_amount.id }}" title="{{ work_amount.job|capfirst }}" style="color: green;">{{ work_amount.job|capfirst }}</td>
                     {% if worker_type != 'Obyekt' %}
                     <td id="{{ work_amount.id }}visible_obyekt">{{ work_amount.job.visible_obyekt|bool_to_word }}</td>
                     {% endif %}

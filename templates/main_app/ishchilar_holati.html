@@ -145,7 +145,7 @@ td {
                 {% for users_with_worker in users_with_work_status %}
                 <tr class="edit-user" data-id="{{ users_with_worker.id }}">
                     <td id="{{ users_with_worker.id }}" class="user-id">{{ forloop.counter }}</td>
-                    <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green; max-width: 150px;">{{ users_with_worker.username }}</td>
+                    <td id="{{ users_with_worker.id }}username" class="user-username" data-id="{{ users_with_worker.id }}" style="color: green;">{{ users_with_worker.username }}</td>
                     <td id="{{ users_with_worker.id }}first_name">{{ users_with_worker.first_name|capfirst }}</td>
                     <td id="{{ users_with_worker.id }}last_name">{{ users_with_worker.last_name|capfirst }}</td>
                     <td id="{{ users_with_worker.id }}workers">{{ users_with_worker.workers__name|capfirst }}</td>

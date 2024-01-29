@@ -6,7 +6,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType
+from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money
 from main_app.models import Worker, User, WorkDay
 
 
@@ -45,9 +45,9 @@ def create_obyekt(request):
             obyekt_worker = request.POST.get('obyekt_worker')
             address = str(request.POST.get('address'))
             job_type = str(request.POST.get('job_type')).capitalize()
-            deal_amount = str(request.POST.get('deal_amount'))
-            given_amount = str(request.POST.get('given_amount'))
-            max_dept = str(request.POST.get('max_dept'))
+            deal_amount = request.POST.get('deal_amount')
+            given_amount = request.POST.get('given_amount')
+            max_dept = request.POST.get('max_dept')
             if Obyekt.objects.filter(name=name).exists():
                 messages.error(request, 'Bu nomli obyekt mavjud.')
             else:
@@ -95,9 +95,9 @@ def edit_obyekt(request, obyekt_id):
                 obyekt.responsible = User.objects.get(id=request.POST.get('obyekt_worker'))
                 obyekt.address = str(request.POST.get('address'))
                 obyekt.job_type = str(request.POST.get('job_type')).capitalize()
-                obyekt.deal_amount = str(request.POST.get('deal_amount'))
-                obyekt.given_amount = str(request.POST.get('given_amount'))
-                obyekt.max_dept = str(request.POST.get('max_dept'))
+                obyekt.deal_amount = request.POST.get('deal_amount')
+                obyekt.given_amount = request.POST.get('given_amount')
+                obyekt.max_dept = request.POST.get('max_dept')
             obyekt.save()
             messages.success(request, f'{obyekt.name} obyekt muvaffaqiyatli o\'zgartirildi.')
         except User.DoesNotExist:
@@ -154,8 +154,8 @@ def create_obyekt_ishi(request):
                 visible_obyekt = bool(request.POST.get('visible_obyekt')=='on'),
                 first_price=request.POST.get('first_price'),
                 service_price=request.POST.get('service_price'),
-                total_completed=str(request.POST.get('total_completed')),
-                total=str(request.POST.get('total')),
+                total_completed=request.POST.get('total_completed'),
+                total=request.POST.get('total'),
             )
             work_amount.save()
             obyekt_id = request.POST.get('obyekt_worker')
@@ -238,3 +238,92 @@ def set_obyekt_cookie2(request, obyekt_id):
     response.set_cookie('workdaymoney_id', str(obyekt_id))
     
     return response
+
+
+def create_obyekt_given_amount(request):
+    if has_some_error(request): return redirect('/login/')
+    if request.method=='POST':
+        try:
+            obyekt_id = str(request.POST.get('obyekt_id'))
+            amount = int(request.POST.get('amount'))
+            comment = str(request.POST.get('comment'))
+            given_money = Given_money.objects.create(
+                obyekt=Obyekt.objects.get(id=obyekt_id),
+                responsible=request.user,
+                amount=amount,
+                comment=comment,
+            )
+            given_money.save()
+            obyekt = Obyekt.objects.get(id=obyekt_id)
+            obyekt.given_amount+=amount
+            obyekt.real_dept+=amount
+            obyekt.save()
+
+            messages.success(request, f"{obyekt.name} Obyektga {amount} miqdorda pull qo'shildi")
+        except Exception as e:
+            print(e)
+            messages.error(request, 'Xatolik yuz berdi.')
+
+    return redirect('obyekt_app:given_money_views')
+
+def given_money_views(request):
+    if has_some_error(request): return redirect('/login/')
+
+    cookies = request.COOKIES
+    selected_obyekt = int(cookies.get('obyekt_id', 0))
+    try:
+        work_amounts = Given_money.objects.filter(obyekt_id=selected_obyekt)
+    except:
+        work_amounts = []
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    if bool(request.user.workers.filter(name__iexact='admin').first()):
+        obyekts = Obyekt.objects.all().order_by('-date')
+    else:
+        return redirect('/login/')
+    obyekt_workers = User.objects.filter(workers__name='Obyekt')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    obyektjobtypes = ObyektJobType.objects.all().order_by('name')
+    workeramountjobtypes = WorkAmountJobType.objects.all().order_by('name')
+    context = {
+        'active': 'obyekt_3',
+        'obyekts': obyekts,
+        'obyekt_workers': obyekt_workers,
+        'worker_type': worker_type,
+        'work_amounts': work_amounts,
+        'obyektjobtypes': obyektjobtypes,
+        'workeramountjobtypes': workeramountjobtypes,
+    }
+    response = render(request, 'obyekt/given_money.html', context=context)
+    if selected_obyekt==0:
+        try:
+            latest_obyekt = Obyekt.objects.latest('date').id
+            response.set_cookie('obyekt_id', str(latest_obyekt))
+        except:
+            response.set_cookie('obyekt_id', '0')
+    return response
+
+def edit_obyekt_given_amount(request):
+    if has_some_error(request): return redirect('/login/')
+    if request.method=='POST':
+        try:
+            given_money_id = str(request.POST.get('given_money_id'))
+            amount = int(request.POST.get('amount'))
+            comment = str(request.POST.get('comment'))
+            given_money = Given_money.objects.get(id=given_money_id)
+            obyekt = Obyekt.objects.get(id=given_money.obyekt.id)
+            obyekt.given_amount = obyekt.given_amount-given_money.amount+amount
+            obyekt.real_dept = obyekt.real_dept-given_money.amount+amount
+            obyekt.save()
+            given_money.amount = amount
+            given_money.responsible=request.user
+            given_money.amount=amount
+            given_money.comment=comment
+            given_money.save()
+
+            messages.success(request, f"{given_money.id}- olingan pull {amount} ga o'zgartirildi!")
+        except Exception as e:
+            print(e)
+            messages.error(request, 'Xatolik yuz berdi.')
+
+    return redirect('obyekt_app:given_money_views')

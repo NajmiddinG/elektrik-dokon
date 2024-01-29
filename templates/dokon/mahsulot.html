@@ -156,7 +156,7 @@ td {
                 {% for product in products %}
                 <tr class="edit-product" data-id="{{ product.id }}">
                     <td id="{{ product.id }}" class="product-id" data-id="{{ product.id }}">{{ forloop.counter }}</td>
-                    <td id="{{ product.id }}type" class="product-type" data-id="{{ product.type.id }}" style="color: green; max-width: 150px;">{{ product.type.name|capfirst }}</td>
+                    <td id="{{ product.id }}type" class="product-type" data-id="{{ product.type.id }}" style="color: green;">{{ product.type.name|capfirst }}</td>
                     <td id="{{ product.id }}name">{{ product.name|capfirst }}</td>
                     <td id="{{ product.id }}price">{{ product.price|spacecomma }} so'm</td>
                     <td id="{{ product.id }}profit_percentage">{{ product.profit_percentage }}%</td>
@@ -350,7 +350,7 @@ td {
 
             productTypeInput.value = productType;
             nameInput.value = productName;
-            priceInput.value = parseFloat(productPrice.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number
+            priceInput.value = parseFloat(productPrice.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number
             profitPercentageInput.value = parseFloat(productProfitPercentage.replace('%', '')); // Convert profit percentage to number
             remainInput.value = parseFloat(productRemain.replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert remain to number
 

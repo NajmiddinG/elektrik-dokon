@@ -11,6 +11,9 @@ from .views import (
     create_obyekt_job_type,
     create_work_amount_job_type,
     set_obyekt_cookie2,
+    create_obyekt_given_amount,
+    edit_obyekt_given_amount,
+    given_money_views,
 )
 app_name = 'obyekt_app'
 
@@ -25,8 +28,14 @@ urlpatterns = [
     path('edit_obyekt_ishi/<int:obyekt_id>/', edit_obyekt_ishi, name='edit_obyekt_ishi'),
     path('create_work_amount_job_type/', create_work_amount_job_type, name='create_work_amount_job_type'),
 
+    path('create_obyekt_given_amount/', create_obyekt_given_amount, name='create_obyekt_given_amount'),
+    path('edit_obyekt_given_amount/', edit_obyekt_given_amount, name='edit_obyekt_given_amount'),
+
     path('set_obyekt_cookie/<int:obyekt_id>/', set_obyekt_cookie, name='set_obyekt_cookie'),
     path('set_obyekt_cookie2/<int:obyekt_id>/', set_obyekt_cookie2, name='set_obyekt_cookie2'),
+
+    path('given_money_views/', given_money_views, name='given_money_views'),
+
 
     # path('obyekt/', obyekt_dashboard, name='obyekt_dashboard'),
     # path('yangi_tovarlar/', newproduct, name='newproduct'),
