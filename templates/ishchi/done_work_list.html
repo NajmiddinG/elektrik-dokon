@@ -129,10 +129,12 @@ td {
                   {% endif %}
                 {% endif %}
                 <h3><i class='bx bx-receipt'></i> Bajarilgan Ishlar</h3>
-                {% if worker_type == 'Admin' %}
-                <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
-                <p data-label="obyekt" title="+ Obyekt qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt</p>
-                {% endif %}
+                <select id="productTypeSelect" title="Oy bo'yicha saralash" style="width: 210px;">
+                    <option value="0" {% if request.COOKIES.worker_months == 0 %}selected {% endif %}>Oyni tanlang</option>
+                    {% for worker_month in worker_months %}
+                        <option value="{{ worker_month.id }}" {% if request.COOKIES.worker_months == worker_month.id|stringformat:"s" %}selected {% endif %}>{{ worker_month.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             {% if worker_type == 'Ishchi' %}
@@ -142,7 +144,7 @@ td {
                     <th><center>№</center></th>
                     <th><center>Masul</center></th>
                     <th><center>Xizmat narxi</center></th>
-                    <th><center>Tasdiqlandi</center></th>
+                    <!-- <th><center>Tasdiqlandi</center></th> -->
                     <th><center>Kiritilgan vaqt</center></th>
                 </tr>
                 </thead>
@@ -153,7 +155,7 @@ td {
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">
                         <a href="{% url 'ishchi_app:done_work_detail' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.responsible }}</a></td>
                         <td id="{{ obyekt.id }}earn_amount">{{ obyekt.earn_amount|spacecomma }} so'm</td>
-                    <td id="{{ obyekt.id }}admin_accepted" {% if obyekt.admin_accepted %} style="color: green;" {% else %} style="color:red;" {% endif %}>{{ obyekt.admin_accepted|bool_to_word }}</td>
+                    <!-- <td id="{{ obyekt.id }}admin_accepted" {% if obyekt.admin_accepted %} style="color: green;" {% else %} style="color:red;" {% endif %}>{{ obyekt.admin_accepted|bool_to_word }}</td> -->
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                 </tr>
                 {% endfor %}
@@ -284,7 +286,11 @@ td {
     </form>
 </div>
 
-<script>    
+<script>
+    document.getElementById('productTypeSelect').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'dokon_app:set_product_type_cookie' 0 %}".replace('0', selectedValue);
+    });
     function toggleForm(formId) {
         var formContainer = document.getElementById(formId);
         var currentDisplay = window.getComputedStyle(formContainer).display;

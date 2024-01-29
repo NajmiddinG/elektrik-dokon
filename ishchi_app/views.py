@@ -29,6 +29,7 @@ from django.shortcuts import get_object_or_404
 from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType
 from main_app.models import Worker, User, WorkDay
 from ishchi_app.models import Work, WorkDayMoney, Money
+from main_app.calculate import calculate_worker_to_obyekt
 
 
 def dashboard(request):
@@ -59,9 +60,9 @@ def obyekt_ishi(request):
 
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('obyekt_id', 0))
-    if selected_obyekt:
+    try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
-    else:
+    except:
         work_amounts = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
@@ -120,8 +121,8 @@ def done_work_post(request):
                         completed=product_details['completed'],
                     )
                     
-                    # Add the created ProductHistoryCame instance to history_came's history_products
                     history_came.work_amount.add(product_history)
+                calculate_worker_to_obyekt(history_came.id)
                 messages.success(request, "Bajarilgan ishlaringiz muvaffaqqiyatli qo'shildi")
         except Exception as e:
             print(e)
@@ -152,9 +153,9 @@ def done_work_detail(request):
 
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('workdaymoney_id', 0))
-    if selected_obyekt:
+    try:
         work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
-    else:
+    except:
         work_amounts = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']

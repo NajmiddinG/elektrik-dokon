@@ -111,9 +111,9 @@ def obyekt_ishi(request):
 
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('obyekt_id', 0))
-    if selected_obyekt:
+    try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
-    else:
+    except:
         work_amounts = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
