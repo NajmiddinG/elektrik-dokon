@@ -34,13 +34,14 @@ def calculate_all_from_zero():
             money_obyekt+=work_amount_all.completed*work_amount_all.job.first_price
         workdaymoney.earn_amount = money_ishchi
         workdaymoney.save()
-        
-        work_amount = WorkAmount.objects.get(id=workdaymoney.work_amount.first().job.id)
-        obyekt_data = work_amount.obyekt_set.values().first()
-        obyekt_data['real_dept'] -= money_obyekt
+        try:
+            work_amount = WorkAmount.objects.get(id=workdaymoney.work_amount.first().job.id)
+            obyekt_data = work_amount.obyekt_set.values().first()
+            obyekt_data['real_dept'] -= money_obyekt
 
-        first_obyekt = work_amount.obyekt_set.first()
-        for key, value in obyekt_data.items():
-            setattr(first_obyekt, key, value)
+            first_obyekt = work_amount.obyekt_set.first()
+            for key, value in obyekt_data.items():
+                setattr(first_obyekt, key, value)
 
-        first_obyekt.save()
+            first_obyekt.save()
+        except: pass
