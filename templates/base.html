@@ -26,7 +26,6 @@
             max-width: 300px;
             z-index: 1000;
         }
-
         .message {
             padding: 10px;
             margin-bottom: 10px;
@@ -98,6 +97,15 @@
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
         }
+        td {
+    overflow: hidden; /* Hide any content that exceeds the width */
+    text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+#myTable3 td, #myTable3 th {
+    padding-left: 5px;
+    padding-right: 5px;
+}
     </style>
 </head>
 
@@ -245,6 +253,7 @@
                 foizNarxiInput.value = foizNarxiValue.toFixed(2);
             }
         });
+        
     </script>
     <script src="{% static 'js/variables.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>

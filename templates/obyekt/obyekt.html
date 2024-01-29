@@ -110,10 +110,13 @@
     cursor: pointer;
 }
 td {
-    max-width: 200px; /* Set a maximum width for the cell */
     overflow: hidden; /* Hide any content that exceeds the width */
     text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
     white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+#myTable3 td, #myTable3 th {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 </style>
@@ -157,16 +160,16 @@ td {
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
                     <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}">
-                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name }}</a>
+                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name|break_func:25 }}</a>
                     </td>
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">{{ obyekt.responsible }}</td>
-                    <td id="{{ obyekt.id }}address" style="max-width: 100px; padding-left: 5px;" title="{{ obyekt.address|capfirst }}">{{ obyekt.address|capfirst }}</td>
-                    <td id="{{ obyekt.id }}job_type" style="max-width: 100px; padding-left: 5px;" title="{{ obyekt.job_type|capfirst }}">{{ obyekt.job_type|capfirst }}</td>
+                    <td id="{{ obyekt.id }}job_type"  title="{{ obyekt.job_type|capfirst }}">{{ obyekt.job_type|capfirst }}</td>
                     <td id="{{ obyekt.id }}deal_amount">{{ obyekt.deal_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}real_dept">{{ obyekt.real_dept|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}completed">{{ obyekt.completed|bool_to_word }}</td>
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
+                    <td id="{{ obyekt.id }}address"  title="{{ obyekt.address|capfirst }}">{{ obyekt.address|capfirst }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -387,8 +390,8 @@ td {
             nameInput.value = nameId;
             addressInput.value = addressId;
             job_typeInput.value = job_typeId;
-            deal_amountInput.value = parseFloat(deal_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
-            given_amountInput.value = parseFloat(given_amountId.replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            deal_amountInput.value = parseFloat(deal_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
+            given_amountInput.value = parseFloat(given_amountId.replace(' so\'m', '').replace(',', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '')); // Convert price to number;
             max_deptInput.value = max_deptId;
             obyekt_workerInput.value = obyekt_workerId;
 

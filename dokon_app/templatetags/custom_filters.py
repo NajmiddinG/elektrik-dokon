@@ -30,3 +30,10 @@ def subtract(value, arg):
         return int(value) - int(arg)
     except (ValueError, TypeError):
         return ""
+
+@register.filter(name='break_func')
+def break_func(value, chunk_size=25):
+    ans = ''
+    for i in range(0, len(value), chunk_size):
+        ans += value[i:i + chunk_size] + ''
+    return ans
