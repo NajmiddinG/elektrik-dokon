@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money
 from main_app.models import Worker, User, WorkDay
+from main_app.calculate import calculate_all_from_zero
 
 
 def dashboard(request):
@@ -239,6 +240,15 @@ def set_obyekt_cookie2(request, obyekt_id):
     
     return response
 
+def calculate_all_from_zero_view(request):
+    if has_some_error(request): return redirect('/login/')
+
+    if bool(request.user.workers.filter(name__iexact='admin').first()):
+        calculate_all_from_zero()
+        referer = request.META.get('HTTP_REFERER')
+        response = HttpResponseRedirect(referer or '/')
+        return response
+    return redirect('/login/')
 
 def create_obyekt_given_amount(request):
     if has_some_error(request): return redirect('/login/')

@@ -138,6 +138,10 @@ td {
                 {% if worker_type == 'Admin' %}
                 <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
                 <p data-label="obyekt" title="+ Obyekt qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt</p>
+                <p data-label="obyekt" title="Qayta hisoblash" class="add-button add-btn" style="background-color: red;">
+                    <a href="{% url 'obyekt_app:calculate_all_from_zero_view' %}" style="color:white;">Qayta hisoblash</a>
+                </p>
+                
                 {% endif %}
             </div>
             <table id="myTable3">

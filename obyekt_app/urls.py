@@ -14,6 +14,7 @@ from .views import (
     create_obyekt_given_amount,
     edit_obyekt_given_amount,
     given_money_views,
+    calculate_all_from_zero_view
 )
 app_name = 'obyekt_app'
 
@@ -35,6 +36,7 @@ urlpatterns = [
     path('set_obyekt_cookie2/<int:obyekt_id>/', set_obyekt_cookie2, name='set_obyekt_cookie2'),
 
     path('given_money_views/', given_money_views, name='given_money_views'),
+    path('calculate_all_from_zero_view/', calculate_all_from_zero_view, name='calculate_all_from_zero_view'),
 
 
     # path('obyekt/', obyekt_dashboard, name='obyekt_dashboard'),

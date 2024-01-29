@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from .models import User, Worker, WorkDay
+from ishchi_app.models import Work, WorkAmount, WorkDayMoney
 
 def check_user(request):
     try:
@@ -251,3 +252,91 @@ def end_job(request):
         return redirect(referer)
     else:
         return redirect('/')
+    
+
+# def done_work_post(request):
+#     if has_some_error(request): return redirect('/login/')
+
+#     if request.method == 'POST':
+#         try:
+#             # 'quantity;1': ['0'], 'quantity;2': ['0'],
+#             done_works = []
+#             history_came = [request.user, 0] # responsible, earn_amount
+#             for key, number in request.POST.items():
+#                 if key.startswith('quantity;') and number!='0':
+#                     number = int(number)
+#                     product_id = int(key.split(';')[1])
+#                     product_details = {
+#                         'job_id': product_id,
+#                         'completed': number,
+#                     }
+#                     work_amount = WorkAmount.objects.get(id=product_id)
+#                     history_came[1]+=number*work_amount.service_price
+#                     done_works.append(product_details)
+#             if history_came[1]==0:
+#                 messages.error(request, "Xatolik ro'y berdi!")
+#             else:
+#                 history_came = WorkDayMoney.objects.create(
+#                     responsible=history_came[0],
+#                     earn_amount=history_came[1],
+#                 )
+#                 for product_details in done_works:
+#                     product_history = Work.objects.create(
+#                         job_id=product_details['job_id'],
+#                         completed=product_details['completed'],
+#                     )
+                    
+#                     history_came.work_amount.add(product_history)
+#                 calculate_worker_to_obyekt(history_came.id)
+#                 messages.success(request, "Bajarilgan ishlaringiz muvaffaqqiyatli qo'shildi")
+#         except Exception as e:
+#             print(e)
+#             messages.error(request, "Xatolik ro'y berdi!")
+
+#     return redirect("ishchi_app:dashboard")
+    
+
+# def done_work_list(request):
+#     if has_some_error(request): return redirect('/login/')
+
+#     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
+#     user_id = request.COOKIES['user']
+#     worker_id = request.COOKIES['worker']
+#     workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+#     worker_type = request.user.workers.values_list('name', flat=True).first()
+#     context = {
+#         'active': 'ishchi_3',
+#         'workdaymoneys': workdaymoneys,
+#         'worker_type': worker_type,
+#         'position': 'end' if is_working else 'start',
+
+#     }
+#     return render(request, 'ishchi/done_work_list.html', context=context)
+
+# def done_work_detail(request):
+#     if has_some_error(request): return redirect('/login/')
+
+#     cookies = request.COOKIES
+#     selected_obyekt = int(cookies.get('workdaymoney_id', 0))
+#     try:
+#         work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
+#     except:
+#         work_amounts = []
+#     user_id = request.COOKIES['user']
+#     worker_id = request.COOKIES['worker']
+#     workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+#     worker_type = request.user.workers.values_list('name', flat=True).first()
+#     context = {
+#         'active': 'ishchi_4',
+#         'workdaymoneys': workdaymoneys,
+#         'worker_type': worker_type,
+#         'work_amounts': work_amounts,
+#     }
+#     response = render(request, 'ishchi/done_work_detail.html', context=context)
+#     if selected_obyekt==0:
+#         try:
+#             latest_obyekt = WorkDayMoney.objects.filter(responsible=request.user).latest('date').id
+#             response.set_cookie('workdaymoney_id', str(latest_obyekt))
+#         except:
+#             response.set_cookie('workdaymoney_id', '0')
+#     return response
