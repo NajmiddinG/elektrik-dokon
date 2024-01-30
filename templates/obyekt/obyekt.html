@@ -154,7 +154,7 @@ td {
                     <th><center>Kelishilgan summa</center></th>
                     <th><center>Olingan summa</center></th>
                     <th><center>Real qarzdorlik</center></th>
-                    <th><center>Bajarilgan</center></th>
+                    <th><center>Bajarilgan ish</center></th>
                     <th><center>Olingan vaqt</center></th>
                     <th><center>Manzil</center></th>
                 </tr>
@@ -171,7 +171,7 @@ td {
                     <td id="{{ obyekt.id }}deal_amount">{{ obyekt.deal_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}real_dept">{{ obyekt.real_dept|spacecomma }} so'm</td>
-                    <td id="{{ obyekt.id }}completed">{{ obyekt.completed|bool_to_word }}</td>
+                    <td id="{{ obyekt.id }}completed">{{ obyekt.given_amount|default:0|subtract:obyekt.real_dept|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                     <td id="{{ obyekt.id }}address"  title="{{ obyekt.address|capfirst }}">{{ obyekt.address|capfirst }}</td>
                 </tr>

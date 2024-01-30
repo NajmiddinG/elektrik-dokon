@@ -119,11 +119,6 @@ def obyekt_ishi(request):
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
 
-    try:
-        work_volume = sum(i.total_completed*i.first_price for i in work_amounts)
-    except:
-        work_volume = 0
-    
     if bool(request.user.workers.filter(name__iexact='admin').first()):
         obyekts = Obyekt.objects.all().order_by('-date')
     else:
@@ -140,7 +135,6 @@ def obyekt_ishi(request):
         'work_amounts': work_amounts,
         'obyektjobtypes': obyektjobtypes,
         'workeramountjobtypes': workeramountjobtypes,
-        'work_volume': work_volume,
     }
     response = render(request, 'obyekt/obyekt_ishi.html', context=context)
     if selected_obyekt==0:
