@@ -119,7 +119,10 @@ def obyekt_ishi(request):
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
 
-    work_volume = sum(i.total_completed*i.first_price for i in work_amounts)
+    try:
+        work_volume = sum(i.total_completed*i.first_price for i in work_amounts)
+    except:
+        work_volume = 0
     
     if bool(request.user.workers.filter(name__iexact='admin').first()):
         obyekts = Obyekt.objects.all().order_by('-date')
