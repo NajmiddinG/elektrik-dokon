@@ -252,8 +252,15 @@ def end_job(request):
         return redirect(referer)
     else:
         return redirect('/')
-    
 
+def set_cookie_for_all_types_of_filter_view(request, name, value):
+    if has_some_error(request): 
+        return redirect('/login/')
+
+    response = redirect(request.META.get('HTTP_REFERER', '/'))
+    response.set_cookie(str(name), str(value))
+
+    return response
 # def done_work_post(request):
 #     if has_some_error(request): return redirect('/login/')
 

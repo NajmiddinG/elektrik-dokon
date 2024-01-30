@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.db.models import Min, Max
 
 from dokon_app.models import (
     ProductType,
@@ -133,17 +134,40 @@ def done_work_post(request):
 
 def done_work_list(request):
     if has_some_error(request): return redirect('/login/')
-
+    try:
+        first_date = WorkDayMoney.objects.filter(responsible=request.user).aggregate(Min('date'))['date__min']
+        last_date = WorkDayMoney.objects.filter(responsible=request.user).aggregate(Max('date'))['date__max']
+        first_one = 12*first_date.year+first_date.month
+        last_one = 12*last_date.year+last_date.month
+        months = [i for i in range(first_one, last_one+1)]
+    except:
+        months = []
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
-    workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+    cookies = request.COOKIES
+    selected_obyekt = int(cookies.get('worker_months', 0))
+    try:
+        workdaymoneys = WorkDayMoney.objects.filter(
+            responsible=request.user,
+            date__year=selected_obyekt // 12,
+            date__month=selected_obyekt % 12
+        ).order_by('-date')
+    except:
+        workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+
+    work_money_earn = 0
+    for workdaymoney_item in workdaymoneys:
+        work_money_earn += workdaymoney_item.earn_amount
+    
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'ishchi_3',
         'workdaymoneys': workdaymoneys,
         'worker_type': worker_type,
         'position': 'end' if is_working else 'start',
+        'months': months,
+        'work_money_earn': work_money_earn,
 
     }
     return render(request, 'ishchi/done_work_list.html', context=context)

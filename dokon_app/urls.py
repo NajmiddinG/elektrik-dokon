@@ -13,7 +13,6 @@ from .views import (
     insert_new_porduct,
     obyekt_dashboard,
     sell_product_to_obyekt,
-    # santexnika
 )
 from .santexnikaviews import (
     dashboard_santexnika,

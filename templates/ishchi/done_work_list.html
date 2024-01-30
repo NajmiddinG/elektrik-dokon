@@ -128,10 +128,11 @@ td {
                   {% endif %}
                 {% endif %}
                 <h3><i class='bx bx-receipt'></i> Bajarilgan Ishlar</h3>
+                <label for="productTypeSelect">Oy filter:</label>
                 <select id="productTypeSelect" title="Oy bo'yicha saralash" style="width: 210px;">
-                    <option value="0" {% if request.COOKIES.worker_months == 0 %}selected {% endif %}>Oyni tanlang</option>
-                    {% for worker_month in worker_months %}
-                        <option value="{{ worker_month.id }}" {% if request.COOKIES.worker_months == worker_month.id|stringformat:"s" %}selected {% endif %}>{{ worker_month.name }}</option>
+                    <option disabled>Oyni tanlang</option>
+                    {% for month in months %}
+                        <option value="{{ month }}" {% if request.COOKIES.worker_months == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -160,6 +161,9 @@ td {
                 {% endfor %}
                 </tbody>
             </table>
+            <div class="footer">
+                <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">{{ work_money_earn|spacecomma }}</span> so'm</p>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -288,7 +292,7 @@ td {
 <script>
     document.getElementById('productTypeSelect').addEventListener('change', function() {
     var selectedValue = this.value;
-    window.location.href = "{% url 'dokon_app:set_product_type_cookie' 0 %}".replace('0', selectedValue);
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'worker_months').replace('1', selectedValue);
     });
     function toggleForm(formId) {
         var formContainer = document.getElementById(formId);

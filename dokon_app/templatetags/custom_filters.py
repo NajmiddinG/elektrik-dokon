@@ -37,3 +37,28 @@ def break_func(value, chunk_size=25):
     for i in range(0, len(value), chunk_size):
         ans += value[i:i + chunk_size] + ''
     return ans
+
+@register.filter(name='define_cur_month')
+def define_cur_month(value):
+    value = int(value)
+    months_table = {
+        0:'Yanvar',
+        1:'Fevral',
+        2:'Mart',
+        3:'Aprel',
+        4:'May',
+        5:'Iyun',
+        6:'Iyul',
+        7:'Avgust',
+        8:'Sentyabr',
+        9:'Oktabr',
+        10:'Noyabr',
+        11:'Dekabr',
+
+    }
+    return months_table[value%12]
+
+@register.filter(name='define_cur_year')
+def define_cur_year(value):
+    value = int(value)
+    return value//12

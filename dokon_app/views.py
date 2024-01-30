@@ -277,7 +277,7 @@ def set_product_type_cookie(request, product_type_id):
     response = redirect('dokon_app:mahsulot')
     response.set_cookie('product_type', str(product_type_id))
     return response
-
+    
 def newproduct(request):
     if has_some_error(request): return redirect('/login/')
 
