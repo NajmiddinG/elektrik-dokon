@@ -349,19 +349,11 @@ def create_obyekt_instruktsiya(request):
         try:
             # Access the uploaded file from request.FILES
             uploaded_file = request.FILES.get('doc')
-            # Check if an Instruktsiya already exists
-            existing_instruktsiya = Instructsiya.objects.first()
-
-            if existing_instruktsiya:
-                # Update the existing Instruktsiya's doc field
-                existing_instruktsiya.doc = uploaded_file
-                existing_instruktsiya.save()
-                messages.success(request, 'Instruktsiya muvaffaqiyatli yangilandi.')
-            else:
-                # Create a new Instruktsiya instance with the uploaded file
-                new_instruktsiya = Instructsiya(doc=uploaded_file)
-                new_instruktsiya.save()
-                messages.success(request, 'Instruktsiya muvaffaqiyatli yaratildi.')
+            name = request.POST['name']
+            # Create a new Instruktsiya instance with the uploaded file
+            new_instruktsiya = Instructsiya(name=name, doc=uploaded_file)
+            new_instruktsiya.save()
+            messages.success(request, f'{name} Instruktsiya muvaffaqiyatli yaratildi.')
         except Exception as e:
             messages.error(request, f'Xatolik yuz berdi: {str(e)}')
 

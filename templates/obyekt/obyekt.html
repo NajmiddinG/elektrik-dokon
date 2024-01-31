@@ -275,6 +275,10 @@ td {
     <form action="{% url 'obyekt_app:create_obyekt_instruktsiya' %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="box-wrapper">
             <div class="input-box">
+                <label for="name">Nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-box">
                 <label for="doc">Instruktsiya(pdf, doc, rasm, ...):</label>
                 <input type="file" id="doc" name="doc">
             </div>

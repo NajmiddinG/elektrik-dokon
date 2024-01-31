@@ -53,6 +53,7 @@ class Given_money(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 class Instructsiya(models.Model):
+    name = models.CharField(default='Instruktsiya', max_length=255)
     doc = models.FileField(upload_to='instructsiya/', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 

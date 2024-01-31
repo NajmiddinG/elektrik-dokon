@@ -26,7 +26,7 @@ class AllowAdmin(admin.ModelAdmin):
 
 @admin.register(Instructsiya)
 class InstructsiyaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'date')
+    list_display = ('id', 'name', 'date')
 
 
 admin.site.register(WorkAmount, WorkAmountAdmin)

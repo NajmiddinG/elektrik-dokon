@@ -174,11 +174,16 @@ td {
                 <div class="title">
                     <i class='bx bx-leaf'></i>
                     <h2>
-                        <a href="{{ instruktsiya.doc.url }}" target="_blank">Instruktsiya bilan tanishing</a>
+                        Instruktsiya bilan tanishing
                     </h2>
+                    {% for i in instruktsiya %}
+                    <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
+                        <a href="{{ i.doc.url }}" target="_blank" style="color: green;">{{ forloop.counter }} - {{ i.name }}</a>
+                    </p>
+                    {% endfor %}
                 </div>
                 <form action="{% url 'ishchi_app:allow_add' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
-                    <button type="submit" class="add-button add-btn">Roziman</button>
+                    <button type="submit" class="add-button add-btn">Qabul qildim</button>
                 </form>
             {% endif %}
         </div>

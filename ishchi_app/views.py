@@ -38,7 +38,7 @@ def dashboard(request):
 
     has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
     if not has_allow_entry:
-        instruktsiya_doc = Instructsiya.objects.first()
+        instruktsiya_doc = Instructsiya.objects.all()
     else:
         instruktsiya_doc = None
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
@@ -68,7 +68,7 @@ def obyekt_ishi(request):
 
     has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
     if not has_allow_entry:
-        instruktsiya_doc = Instructsiya.objects.first()
+        instruktsiya_doc = Instructsiya.objects.all()
     else:
         instruktsiya_doc = None
     cookies = request.COOKIES
