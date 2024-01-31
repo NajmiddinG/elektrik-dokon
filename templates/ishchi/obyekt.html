@@ -168,7 +168,8 @@ td {
                 {% endfor %}
                 </tbody>
             </table>
-                <i class='bx bxs-file' style="padding-top: 5px;"></i><h2>Instruktsiyalar</h2>
+                <i class='bx bxs-file' style="padding-top: 20px;"></i><span style="font-weight: 600; font-size: 20px;">Instruktsiyalar</span>
+
                 {% for i in instruktsiya %}
                 <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
                     <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - {{ i.doc.name|extract_doc }}</a>
@@ -178,10 +179,7 @@ td {
             {% endif %}
             {% else %}
                 <div class="title">
-                    <i class='bx bxs-file'></i>
-                    <h2>
-                        Instruktsiya bilan tanishing
-                    </h2>
+                    <i class='bx bxs-file' style="padding-top: 20px;"></i><span style="font-weight: 600; font-size: 20px;">Instruktsiya bilan tanishing</span>
                     {% for i in instruktsiya %}
                     <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
                         <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - {{ i.doc.name|extract_doc }}</a>

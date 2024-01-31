@@ -114,8 +114,11 @@ def obyekt_ishi(request):
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
+        obyekt_doc = Obyekt_doc.objects.filter(obyekt=Obyekt.objects.get(pk=selected_obyekt))
+        print(obyekt_doc)
     except:
         work_amounts = []
+        obyekt_doc = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
 
@@ -135,6 +138,7 @@ def obyekt_ishi(request):
         'work_amounts': work_amounts,
         'obyektjobtypes': obyektjobtypes,
         'workeramountjobtypes': workeramountjobtypes,
+        'obyekt_doc': obyekt_doc,
     }
     response = render(request, 'obyekt/obyekt_ishi.html', context=context)
     if selected_obyekt==0:

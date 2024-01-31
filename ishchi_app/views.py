@@ -56,7 +56,6 @@ def dashboard(request):
         'position': 'end' if is_working else 'start',
         'allowed': has_allow_entry,
         'instruktsiya': instruktsiya_doc,
-        'obyekt_doc': obyekt_doc,
 
     }
     return render(request, 'ishchi/obyekt.html', context=context)
@@ -70,7 +69,7 @@ def obyekt_ishi(request):
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
-        obyekt_doc = Obyekt_doc.objects.all(pk=selected_obyekt)
+        obyekt_doc = Obyekt_doc.objects.filter(obyekt=Obyekt.objects.get(pk=selected_obyekt))
     except:
         work_amounts = []
         obyekt_doc = []
@@ -91,6 +90,7 @@ def obyekt_ishi(request):
         'workeramountjobtypes': workeramountjobtypes,
         'allowed': has_allow_entry,
         'instruktsiya': instruktsiya_doc,
+        'obyekt_doc': obyekt_doc,
     }
     response = render(request, 'ishchi/obyekt_ishi.html', context=context)
     if selected_obyekt==0:
