@@ -128,7 +128,8 @@ td {
                   {% endif %}
                 {% endif %}
                 <h3><i class='bx bx-receipt'></i> Bajarilgan Ishlar</h3>
-                <label for="productTypeSelect">Oy filter:</label>
+                <p style="margin: 10px 0;font-size: 20px;color: green;">Umumiy summa: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
+                <label for="productTypeSelect" style="font-size: 20px;">Oy filter:</label>
                 <select id="productTypeSelect" title="Oy bo'yicha saralash" style="width: 210px;">
                     <option disabled>Oyni tanlang</option>
                     {% for month in months %}
@@ -142,8 +143,8 @@ td {
                 <thead>
                 <tr>
                     <th><center>№</center></th>
-                    <th><center>Masul</center></th>
-                    <th><center>Xizmat narxi</center></th>
+                    <th><center>Obyekt nomi</center></th>
+                    <th><center>Ish haqqi</center></th>
                     <!-- <th><center>Tasdiqlandi</center></th> -->
                     <th><center>Kiritilgan vaqt</center></th>
                 </tr>
@@ -152,18 +153,19 @@ td {
                 {% for obyekt in workdaymoneys %}
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
-                    <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">
-                        <a href="{% url 'ishchi_app:done_work_detail' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.responsible }}</a></td>
-                        <td id="{{ obyekt.id }}earn_amount">{{ obyekt.earn_amount|spacecomma }} so'm</td>
+                    <td id="{{ obyekt.id }}obyekt">
+                        <a href="{% url 'ishchi_app:dashboard' %}" onclick="setObyektCookie1({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
+                    </td>
+                    <td id="{{ obyekt.id }}earn_amount">
+                        <a href="{% url 'ishchi_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.id }})">{{ obyekt.earn_amount|spacecomma }} so'm</a>
+                    </td>
                     <!-- <td id="{{ obyekt.id }}admin_accepted" {% if obyekt.admin_accepted %} style="color: green;" {% else %} style="color:red;" {% endif %}>{{ obyekt.admin_accepted|bool_to_word }}</td> -->
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <div class="footer">
-                <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">{{ work_money_earn|spacecomma }}</span> so'm</p>
-            </div>
+            
             {% endif %}
         </div>
     </div>
@@ -362,7 +364,11 @@ td {
         });
     })
     });
-    function setObyektCookie(obyektId) {
+    function setObyektCookie1(obyektId) {
+        // Set the cookie with the obyekt_id
+        document.cookie = 'obyekt_id=' + obyektId + '; path=/';
+    }
+    function setObyektCookie2(obyektId) {
         // Set the cookie with the obyekt_id
         document.cookie = 'workdaymoney_id=' + obyektId + '; path=/';
     }

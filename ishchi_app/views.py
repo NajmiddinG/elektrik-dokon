@@ -151,18 +151,33 @@ def done_work_list(request):
         selected_obyekt = 24289
         
     try:
-        workdaymoneys = WorkDayMoney.objects.filter(
+        workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible=request.user,
             date__year=selected_obyekt // 12,
             date__month=selected_obyekt % 12
         ).order_by('-date')
-    except:
+        workdaymoneys2 = []
+        workdaymoneys = {}
+        for detail1 in workdaymoneys_obyekt:
+            workdaymoneys['id']=detail1.id
+            workdaymoneys['responsible']=detail1.responsible
+            workdaymoneys['earn_amount']=detail1.earn_amount
+            workdaymoneys['work_amount']=detail1.work_amount
+            workdaymoneys['date']=detail1.date
+            work_amount2 = detail1.work_amount.first().job
+            obyekt_data = list(work_amount2.obyekt_set.values().first().values())
+            workdaymoneys['obyekt_id'] = obyekt_data[0]
+            workdaymoneys['obyekt_name'] = obyekt_data[2]
+            workdaymoneys2.append(workdaymoneys)
+            # print(workdaymoneys)
+        workdaymoneys = workdaymoneys2
+    except Exception as e:
+        print(e)
         workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
 
-    print(workdaymoneys, 123123, selected_obyekt)
     work_money_earn = 0
     for workdaymoney_item in workdaymoneys:
-        work_money_earn += workdaymoney_item.earn_amount
+        work_money_earn += workdaymoney_item['earn_amount']
     
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
