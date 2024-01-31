@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from obyekt_app.models import Obyekt
 
 from .models import (
     ProductType,
@@ -108,12 +109,14 @@ def obyekt_dashboard(request):
     worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
+    obyekt = Obyekt.objects.all()
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'dokon_6',
         'products': products,
         'product_types': product_types,
-        'worker_type': worker_type
+        'worker_type': worker_type,
+        'obyekts': obyekt,
     }
     return render(request, 'dokon/obyekt_dashboard.html', context=context)
 

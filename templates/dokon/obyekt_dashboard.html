@@ -235,7 +235,17 @@ td {
                       {% endfor %}
                     </tbody>
                 </table>
-
+                
+                <div class="footer" style="padding-top: 30px;">
+                  <label for="obyekt_id" style="margin: 10px 0;font-weight: 600; font-size: 20px;">Obyektni tanlang</label>
+                  <select id="obyekt_id" class="button_cool" name="selected_obyekt_id" title="Obyektlar" style="width: 210px; margin-left: 30px;">
+                    <option disabled>Obyektni tanlang</option>
+                    {% for obyekt in obyekts %}
+                        <option value="{{ obyekt.id }}">{{ obyekt.name }} - {{ obyekt.responsible }} - {{ obyekt.tel_number }} </option>
+                    {% endfor %}
+                </select>
+                </div>
+              
                 <div class="footer">
                     <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">0</span> so'm</p>
                     <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Sotish</button>

@@ -146,7 +146,8 @@ def done_work_list(request):
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     cookies = request.COOKIES
-    selected_obyekt = int(cookies.get('worker_months', 0))
+    selected_obyekt = int(cookies.get('worker_months', 24288))
+    if selected_obyekt==0: selected_obyekt = 24288
     try:
         workdaymoneys = WorkDayMoney.objects.filter(
             responsible=request.user,
