@@ -57,6 +57,7 @@ class Instructsiya(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 class Obyekt_doc(models.Model):
+    obyekt = models.ForeignKey(Obyekt, on_delete=models.CASCADE)
     doc = models.FileField(upload_to='obyekt_doc/', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 

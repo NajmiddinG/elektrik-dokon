@@ -27,7 +27,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Allow, Instructsiya
+from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Allow, Instructsiya, Obyekt_doc
 from main_app.models import Worker, User, WorkDay
 from ishchi_app.models import Work, WorkDayMoney, Money
 from main_app.calculate import calculate_worker_to_obyekt
@@ -56,6 +56,7 @@ def dashboard(request):
         'position': 'end' if is_working else 'start',
         'allowed': has_allow_entry,
         'instruktsiya': instruktsiya_doc,
+        'obyekt_doc': obyekt_doc,
 
     }
     return render(request, 'ishchi/obyekt.html', context=context)
@@ -69,8 +70,10 @@ def obyekt_ishi(request):
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
+        obyekt_doc = Obyekt_doc.objects.all(pk=selected_obyekt)
     except:
         work_amounts = []
+        obyekt_doc = []
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     obyekts = Obyekt.objects.all().order_by('-date')

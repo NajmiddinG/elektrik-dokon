@@ -368,10 +368,13 @@ def create_obyekt_xujjat(request):
     
     if request.method == 'POST':
         try:
+
+            cookies = request.COOKIES
+            selected_obyekt = int(cookies.get('obyekt_id', 1))
             # Access the uploaded file from request.FILES
             uploaded_file = request.FILES.get('doc')
             # Create a new Instruktsiya instance with the uploaded file
-            new_obyekt_doc = Obyekt_doc(doc=uploaded_file)
+            new_obyekt_doc = Obyekt_doc(obyekt=Obyekt.objects.get(pk=selected_obyekt), doc=uploaded_file)
             new_obyekt_doc.save()
             messages.success(request, f'Xujjat muvaffaqiyatli yaratildi.')
         except Exception as e:
