@@ -172,13 +172,13 @@ td {
             {% endif %}
             {% else %}
                 <div class="title">
-                    <i class='bx bx-leaf'></i>
+                    <i class='bx bxs-file'></i>
                     <h2>
                         Instruktsiya bilan tanishing
                     </h2>
                     {% for i in instruktsiya %}
                     <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
-                        <a href="{{ i.doc.url }}" target="_blank" style="color: green;">{{ forloop.counter }} - {{ i.name }}</a>
+                        <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - instruktsiya</a>
                     </p>
                     {% endfor %}
                 </div>

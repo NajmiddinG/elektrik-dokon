@@ -150,6 +150,7 @@ td {
                 {% endfor %}
             </select>
             {% if worker_type == 'Admin' %}
+            <p data-label="jobtype" title="+ Xujjat" class="add-button add-btn" onclick="toggleForm('xujjatFormContainer')">+ Xujjat</p>
             <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
             <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
             <p data-label="given_money" title="+ Olingan summa qo'shish" class="add-button add-btn" onclick="toggleForm('given_moneyFormContainer')">+ Olingan summa</p>
@@ -284,6 +285,23 @@ td {
         <button type="submit" class="save">Saqlash</button>
     </form>
 </div>
+
+<div id="xujjatFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bxs-file'></i>
+        <h2>Olingan summa qo'shish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_obyekt_xujjat' %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="doc">Xujjat(pdf, doc, rasm, ...):</label>
+                <input type="file" id="doc" name="doc">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
 
 <div id="given_moneyFormContainer" class="add-form-container">
     <div class="title">

@@ -6,7 +6,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money, Instructsiya
+from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money, Instructsiya, Obyekt_doc
 from main_app.models import Worker, User, WorkDay
 from main_app.calculate import calculate_all_from_zero
 
@@ -349,11 +349,31 @@ def create_obyekt_instruktsiya(request):
         try:
             # Access the uploaded file from request.FILES
             uploaded_file = request.FILES.get('doc')
-            name = request.POST['name']
             # Create a new Instruktsiya instance with the uploaded file
-            new_instruktsiya = Instructsiya(name=name, doc=uploaded_file)
+            new_instruktsiya = Instructsiya(doc=uploaded_file)
             new_instruktsiya.save()
-            messages.success(request, f'{name} Instruktsiya muvaffaqiyatli yaratildi.')
+            messages.success(request, f'Instruktsiya muvaffaqiyatli yaratildi.')
+        except Exception as e:
+            messages.error(request, f'Xatolik yuz berdi: {str(e)}')
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('/')
+
+def create_obyekt_xujjat(request):
+    if has_some_error(request):
+        return redirect('/login/')
+    
+    if request.method == 'POST':
+        try:
+            # Access the uploaded file from request.FILES
+            uploaded_file = request.FILES.get('doc')
+            # Create a new Instruktsiya instance with the uploaded file
+            new_obyekt_doc = Obyekt_doc(doc=uploaded_file)
+            new_obyekt_doc.save()
+            messages.success(request, f'Xujjat muvaffaqiyatli yaratildi.')
         except Exception as e:
             messages.error(request, f'Xatolik yuz berdi: {str(e)}')
 

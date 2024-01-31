@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import WorkAmount, Obyekt, ObyektJobType, WorkAmountJobType, Given_money, Allow, Instructsiya
+from .models import WorkAmount, Obyekt, ObyektJobType, WorkAmountJobType, Given_money, Allow, Instructsiya, Obyekt_doc
 
 class WorkAmountAdmin(admin.ModelAdmin):
     list_display = ('id', 'job_type', 'visible_obyekt', 'first_price', 'service_price', 'total_completed', 'total', 'date')
@@ -26,7 +26,12 @@ class AllowAdmin(admin.ModelAdmin):
 
 @admin.register(Instructsiya)
 class InstructsiyaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'date')
+    list_display = ('id', 'date')
+
+
+@admin.register(Obyekt_doc)
+class Obyekt_docAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date')
 
 
 admin.site.register(WorkAmount, WorkAmountAdmin)
