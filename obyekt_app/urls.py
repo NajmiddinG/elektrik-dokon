@@ -14,7 +14,8 @@ from .views import (
     create_obyekt_given_amount,
     edit_obyekt_given_amount,
     given_money_views,
-    calculate_all_from_zero_view
+    calculate_all_from_zero_view,
+    create_obyekt_instruktsiya
 )
 app_name = 'obyekt_app'
 
@@ -28,6 +29,8 @@ urlpatterns = [
     path('create_obyekt_ishi/', create_obyekt_ishi, name='create_obyekt_ishi'),
     path('edit_obyekt_ishi/<int:obyekt_id>/', edit_obyekt_ishi, name='edit_obyekt_ishi'),
     path('create_work_amount_job_type/', create_work_amount_job_type, name='create_work_amount_job_type'),
+
+    path('create_obyekt_instruktsiya/', create_obyekt_instruktsiya, name='create_obyekt_instruktsiya'),
 
     path('create_obyekt_given_amount/', create_obyekt_given_amount, name='create_obyekt_given_amount'),
     path('edit_obyekt_given_amount/', edit_obyekt_given_amount, name='edit_obyekt_given_amount'),

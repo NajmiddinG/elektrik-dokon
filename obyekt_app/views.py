@@ -6,7 +6,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money
+from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money, Instructsiya
 from main_app.models import Worker, User, WorkDay
 from main_app.calculate import calculate_all_from_zero
 
@@ -338,3 +338,35 @@ def edit_obyekt_given_amount(request):
             messages.error(request, 'Xatolik yuz berdi.')
 
     return redirect('obyekt_app:given_money_views')
+
+
+
+def create_obyekt_instruktsiya(request):
+    if has_some_error(request):
+        return redirect('/login/')
+    
+    if request.method == 'POST':
+        try:
+            # Access the uploaded file from request.FILES
+            uploaded_file = request.FILES.get('doc')
+            # Check if an Instruktsiya already exists
+            existing_instruktsiya = Instructsiya.objects.first()
+
+            if existing_instruktsiya:
+                # Update the existing Instruktsiya's doc field
+                existing_instruktsiya.doc = uploaded_file
+                existing_instruktsiya.save()
+                messages.success(request, 'Instruktsiya muvaffaqiyatli yangilandi.')
+            else:
+                # Create a new Instruktsiya instance with the uploaded file
+                new_instruktsiya = Instructsiya(doc=uploaded_file)
+                new_instruktsiya.save()
+                messages.success(request, 'Instruktsiya muvaffaqiyatli yaratildi.')
+        except Exception as e:
+            messages.error(request, f'Xatolik yuz berdi: {str(e)}')
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('/')

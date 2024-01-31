@@ -147,6 +147,7 @@ td {
 {% block content %}
 <main data-name="obyekt">
     <div class="bottom-data">
+        {% if allowed %}
         <div class="orders">
             <div class="header">          
             <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
@@ -206,6 +207,18 @@ td {
             <!-- Hidden input fields to store selected product data -->
             <input type="hidden" name="selected_products" id="selectedProducts" value="">
         </form>
+        </div>
+
+        {% else %}
+        <div class="title">
+            <i class='bx bx-leaf'></i>
+            <h2>
+                <a href="{{ instruktsiya.doc.url }}" target="_blank">Instruktsiya bilan tanishing</a>
+            </h2>
+            <form action="{% url 'ishchi_app:allow_add' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
+                <button type="submit" class="add-button add-btn">Roziman</button>
+            </form>
+        {% endif %}
         </div>
     </div>
 

@@ -5,6 +5,7 @@ from .views import (
     done_work_post,
     done_work_list,
     done_work_detail,
+    allow_add,
 )
 
 app_name = 'ishchi_app'
@@ -16,4 +17,6 @@ urlpatterns = [
 
     path('done_work_list/', done_work_list, name='done_work_list'),
     path('done_work_detail/', done_work_detail, name='done_work_detail'),
+
+    path('allow_add/', allow_add, name='allow_add'),
 ]

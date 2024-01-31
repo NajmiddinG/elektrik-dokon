@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import WorkAmount, Obyekt, ObyektJobType, WorkAmountJobType, Given_money
+from .models import WorkAmount, Obyekt, ObyektJobType, WorkAmountJobType, Given_money, Allow, Instructsiya
 
 class WorkAmountAdmin(admin.ModelAdmin):
     list_display = ('id', 'job_type', 'visible_obyekt', 'first_price', 'service_price', 'total_completed', 'total', 'date')
@@ -19,6 +19,15 @@ class GivenMoneyAdmin(admin.ModelAdmin):
     list_display = ('id', 'obyekt', 'responsible', 'amount', 'comment', 'date')
     search_fields = ('obyekt__name', 'responsible__username', 'amount', 'comment')
     list_filter = ('date',)
+
+@admin.register(Allow)
+class AllowAdmin(admin.ModelAdmin):
+    list_display = ('id', 'responsible', 'date')
+
+@admin.register(Instructsiya)
+class InstructsiyaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date')
+
 
 admin.site.register(WorkAmount, WorkAmountAdmin)
 admin.site.register(Obyekt, ObyektAdmin)

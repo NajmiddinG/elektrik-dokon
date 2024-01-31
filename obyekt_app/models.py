@@ -51,3 +51,11 @@ class Given_money(models.Model):
     amount = models.IntegerField(default=0, blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
+
+class Instructsiya(models.Model):
+    doc = models.FileField(upload_to='instructsiya/', blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+class Allow(models.Model):
+    responsible = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)

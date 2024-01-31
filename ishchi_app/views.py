@@ -27,7 +27,7 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
-from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType
+from obyekt_app.models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Allow, Instructsiya
 from main_app.models import Worker, User, WorkDay
 from ishchi_app.models import Work, WorkDayMoney, Money
 from main_app.calculate import calculate_worker_to_obyekt
@@ -36,6 +36,11 @@ from main_app.calculate import calculate_worker_to_obyekt
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
+    has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
+    if not has_allow_entry:
+        instruktsiya_doc = Instructsiya.objects.first()
+    else:
+        instruktsiya_doc = None
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
@@ -52,6 +57,8 @@ def dashboard(request):
         'obyektjobtypes': obyektjobtypes,
         'workeramountjobtypes': workeramountjobtypes,
         'position': 'end' if is_working else 'start',
+        'allowed': has_allow_entry,
+        'instruktsiya': instruktsiya_doc,
 
     }
     return render(request, 'ishchi/obyekt.html', context=context)
@@ -59,6 +66,11 @@ def dashboard(request):
 def obyekt_ishi(request):
     if has_some_error(request): return redirect('/login/')
 
+    has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
+    if not has_allow_entry:
+        instruktsiya_doc = Instructsiya.objects.first()
+    else:
+        instruktsiya_doc = None
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
@@ -80,6 +92,8 @@ def obyekt_ishi(request):
         'work_amounts': work_amounts,
         'obyektjobtypes': obyektjobtypes,
         'workeramountjobtypes': workeramountjobtypes,
+        'allowed': has_allow_entry,
+        'instruktsiya': instruktsiya_doc,
     }
     response = render(request, 'ishchi/obyekt_ishi.html', context=context)
     if selected_obyekt==0:
@@ -220,3 +234,21 @@ def done_work_detail(request):
         except:
             response.set_cookie('workdaymoney_id', '0')
     return response
+
+
+def allow_add(request):
+    if has_some_error(request):
+        return redirect('/login/')
+    
+    if request.method == 'POST':
+        try:
+            Allow.objects.create(responsible=request.user)
+            messages.success(request, 'Juda soz.')
+        except Exception as e:
+            messages.error(request, f'Xatolik yuz berdi: {str(e)}')
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('/')

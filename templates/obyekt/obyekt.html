@@ -136,6 +136,7 @@ td {
                 {% endif %}
                 <h3><i class='bx bx-receipt'></i> Obyektlar</h3>
                 {% if worker_type == 'Admin' %}
+                <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('instruktsiyaFormContainer')">+ Instruktsiya</p>
                 <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
                 <p data-label="obyekt" title="+ Obyekt qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt</p>
                 <p data-label="obyekt" title="Qayta hisoblash" class="add-button add-btn" style="background-color: red;">
@@ -260,6 +261,22 @@ td {
             <div class="input-box">
                 <label for="max_dept">Max qarzdorlik:</label>
                 <input type="number" value="0" min="0" id="max_dept" name="max_dept">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<div id="instruktsiyaFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-leaf'></i>
+        <h2>Instruktsiya qo'shish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_obyekt_instruktsiya' %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="doc">Instruktsiya(pdf, doc, rasm, ...):</label>
+                <input type="file" id="doc" name="doc">
             </div>
         </div>
         <button type="submit" class="save">Saqlash</button>

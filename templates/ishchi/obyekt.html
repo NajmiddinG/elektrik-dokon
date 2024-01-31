@@ -121,10 +121,11 @@ td {
 <main data-name="obyekt">
     <div class="bottom-data">
         <div class="orders">
+            {% if allowed %}
             <div class="header">
                 {% if worker_type == 'Ishchi' %}
-                  {% if position == 'start' %}
-                    <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
+                {% if position == 'start' %}
+                <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
                   {% else %}
                   <a href="{% url 'main_app:end_job' %}" class="add-button add-btn">Ishni tugatish</a>
                   {% endif %}
@@ -137,6 +138,7 @@ td {
             </div>
 
             {% if worker_type == 'Ishchi' %}
+
             {% if position == 'end' %}
             <table id="myTable3">
                 <thead>
@@ -167,6 +169,17 @@ td {
                 </tbody>
             </table>
             {% endif %}
+            {% endif %}
+            {% else %}
+                <div class="title">
+                    <i class='bx bx-leaf'></i>
+                    <h2>
+                        <a href="{{ instruktsiya.doc.url }}" target="_blank">Instruktsiya bilan tanishing</a>
+                    </h2>
+                </div>
+                <form action="{% url 'ishchi_app:allow_add' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
+                    <button type="submit" class="add-button add-btn">Roziman</button>
+                </form>
             {% endif %}
         </div>
     </div>
