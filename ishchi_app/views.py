@@ -146,8 +146,10 @@ def done_work_list(request):
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     cookies = request.COOKIES
-    selected_obyekt = int(cookies.get('worker_months', 24288))
-    if selected_obyekt==0: selected_obyekt = 24288
+    selected_obyekt = int(cookies.get('worker_months', 24289))
+    if selected_obyekt in [0, 24287]:
+        selected_obyekt = 24289
+        
     try:
         workdaymoneys = WorkDayMoney.objects.filter(
             responsible=request.user,
@@ -157,6 +159,7 @@ def done_work_list(request):
     except:
         workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
 
+    print(workdaymoneys, 123123, selected_obyekt)
     work_money_earn = 0
     for workdaymoney_item in workdaymoneys:
         work_money_earn += workdaymoney_item.earn_amount
@@ -171,7 +174,9 @@ def done_work_list(request):
         'work_money_earn': work_money_earn,
 
     }
-    return render(request, 'ishchi/done_work_list.html', context=context)
+    response = render(request, 'ishchi/done_work_list.html', context=context)
+    response.set_cookie('worker_months', selected_obyekt)
+    return response
 
 def done_work_detail(request):
     if has_some_error(request): return redirect('/login/')
