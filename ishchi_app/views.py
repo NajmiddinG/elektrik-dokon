@@ -157,8 +157,8 @@ def done_work_list(request):
             date__month=selected_obyekt % 12
         ).order_by('-date')
         workdaymoneys2 = []
-        workdaymoneys = {}
         for detail1 in workdaymoneys_obyekt:
+            workdaymoneys = {}
             workdaymoneys['id']=detail1.id
             workdaymoneys['responsible']=detail1.responsible
             workdaymoneys['earn_amount']=detail1.earn_amount
