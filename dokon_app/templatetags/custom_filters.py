@@ -62,3 +62,10 @@ def define_cur_month(value):
 def define_cur_year(value):
     value = int(value)
     return value//12
+
+
+@register.filter(name='extract_doc')
+def extract_doc(value):
+    print(value)
+    value = list(value.split('/'))[-1]
+    return value

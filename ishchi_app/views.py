@@ -37,10 +37,7 @@ def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
     has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
-    if not has_allow_entry:
-        instruktsiya_doc = Instructsiya.objects.all()
-    else:
-        instruktsiya_doc = None
+    instruktsiya_doc = Instructsiya.objects.all()
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
@@ -67,10 +64,7 @@ def obyekt_ishi(request):
     if has_some_error(request): return redirect('/login/')
 
     has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
-    if not has_allow_entry:
-        instruktsiya_doc = Instructsiya.objects.all()
-    else:
-        instruktsiya_doc = None
+    instruktsiya_doc = Instructsiya.objects.all()
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
