@@ -25,8 +25,6 @@ class Money(models.Model):
     name = models.CharField(max_length=255)
     given_amount = models.IntegerField(default=0, blank=True, null=True)
     total_earn = models.IntegerField(default=0, blank=True, null=True)
-    year = models.IntegerField(default=2023)
-    month = models.IntegerField(default=datetime.now().month)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

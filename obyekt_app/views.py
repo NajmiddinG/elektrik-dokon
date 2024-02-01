@@ -115,7 +115,6 @@ def obyekt_ishi(request):
     try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
         obyekt_doc = Obyekt_doc.objects.filter(obyekt=Obyekt.objects.get(pk=selected_obyekt))
-        print(obyekt_doc)
     except:
         work_amounts = []
         obyekt_doc = []

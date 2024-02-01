@@ -122,7 +122,7 @@
             {% if worker_type == 'Admin' %}
             <li data-name="sotish"><a href="{% url 'main_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-user'></i>Userlar bo'limi</a></li>
             <li class="{% if active == 'main_1' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:dashboard' %}"><i class='bx bx-user'></i>Userlar</a></li>
-            <li class="{% if active == 'main_2' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:ishchilar_holati' %}"><i class='bx bx-user'></i>Ishchilar holati</a></li>
+            <li class="{% if active == 'main_2' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:ishchilar_holati' %}"><i class='bx bx-user'></i>Ishchilar oyligi</a></li>
             {% endif %}
             {% if worker_type == 'Admin' or worker_type == 'Dokon' %}
             <li data-name="sotish"><a href="{% url 'dokon_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bxs-zap'></i>Elektr bo'limi</a></li>

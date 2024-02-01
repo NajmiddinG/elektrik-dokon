@@ -131,7 +131,7 @@ td {
                 <p style="margin: 10px 0;font-size: 20px;color: green;">Oylik: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
                 <label for="productTypeSelect" style="font-size: 20px;">Oy filter:</label>
                 <select id="productTypeSelect" title="Oy bo'yicha saralash" style="width: 210px;">
-                    <option disabled>Oyni tanlang</option>
+                    <option value="24200">Oyni tanlang</option>
                     {% for month in months %}
                         <option value="{{ month }}" {% if request.COOKIES.worker_months == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
                     {% endfor %}
@@ -154,7 +154,7 @@ td {
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
                     <td id="{{ obyekt.id }}obyekt">
-                        <a href="{% url 'ishchi_app:dashboard' %}" onclick="setObyektCookie1({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
+                        <a href="{% url 'ishchi_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
                     </td>
                     <td id="{{ obyekt.id }}earn_amount">
                         <a href="{% url 'ishchi_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.id }})">{{ obyekt.earn_amount|spacecomma }} so'm</a>

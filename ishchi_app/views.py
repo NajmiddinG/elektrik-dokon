@@ -189,7 +189,6 @@ def done_work_list(request):
     work_money_earn = 0
     for workdaymoney_item in workdaymoneys:
         work_money_earn += workdaymoney_item['earn_amount']
-    
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'ishchi_3',
