@@ -9,7 +9,7 @@ class WorkDayMoneyAdmin(admin.ModelAdmin):
     filter_horizontal = ('work_amount',)  # This allows a multi-select widget for work_amount
 
 class MoneyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'responsible', 'name', 'given_amount', 'total_earn', 'date')
+    list_display = ('id', 'responsible', 'name', 'month', 'given_amount', 'date')
 
 # Register models
 admin.site.register(Work, WorkAdmin)

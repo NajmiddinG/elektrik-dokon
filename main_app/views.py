@@ -236,27 +236,25 @@ def create_obyekt_worker_months(request):
     if has_some_error(request): return redirect('/login/')
     if request.method=='POST':
         try:
-            obyekt_id = str(request.POST.get('obyekt_id'))
-            amount = int(request.POST.get('amount'))
-            comment = str(request.POST.get('comment'))
-            given_money = Given_money.objects.create(
-                obyekt=Obyekt.objects.get(id=obyekt_id),
-                responsible=request.user,
-                amount=amount,
-                comment=comment,
+            cookies = request.COOKIES
+            selected_obyekt1 = int(cookies.get('worker_admin_id', 0))
+            selected_obyekt2 = int(cookies.get('worker_date_admin_id', 24290))
+
+            name = str(request.POST.get('name'))
+            money = int(request.POST.get('money'))
+            given_money = Money.objects.create(
+                responsible_id=selected_obyekt1,
+                name=name,
+                given_amount=money,
+                month=selected_obyekt2
             )
             given_money.save()
-            obyekt = Obyekt.objects.get(id=obyekt_id)
-            obyekt.given_amount+=amount
-            obyekt.real_dept+=amount
-            obyekt.save()
-
-            messages.success(request, f"{obyekt.name} Obyektga {amount} miqdorda pull qo'shildi")
+            messages.success(request, f"{money} pull miqdori {User.objects.get(id=selected_obyekt1).first_name}  ga muaffaqiyatli qo'shildi!")
         except Exception as e:
             print(e)
             messages.error(request, 'Xatolik yuz berdi.')
 
-    return redirect('obyekt_app:given_money_views')
+    return redirect('main_app:ishchilar_holati')
 
 def ishchilar_holati(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
@@ -283,8 +281,7 @@ def ishchilar_holati(request):
             date__year=selected_obyekt2 // 12,
             date__month=selected_obyekt2 % 12
         ).order_by('-date')
-        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1,  date__year=selected_obyekt2 // 12,
-            date__month=selected_obyekt2 % 12)
+        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1,  month=selected_obyekt2)
         workdaymoneys2 = []
         for detail1 in workdaymoneys_obyekt:
             workdaymoneys = {}
@@ -325,6 +322,7 @@ def ishchilar_holati(request):
         'given_total': given_total,
         'all_workers': Worker.objects.get(name='Ishchi').user.all(),
         'months': months,
+        'real_money': given_total-work_money_earn
     }
     response = render(request, 'main_app/ishchilar_holati.html', context=context)
     try:

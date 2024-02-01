@@ -11,7 +11,17 @@
 
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import user_login, dashboard, create_user, edit_user, ishchilar_holati, start_job, end_job, set_cookie_for_all_types_of_filter_view
+from .views import (
+    user_login,
+    dashboard,
+    create_user,
+    edit_user,
+    ishchilar_holati,
+    start_job,
+    end_job,
+    set_cookie_for_all_types_of_filter_view,
+    create_obyekt_worker_months,
+)
 
 app_name = 'main_app'
 
@@ -27,5 +37,7 @@ urlpatterns = [
     path('end_job/', end_job, name="end_job"),
 
     path('set_cookie_for_all_types_of_filter_view/<str:name>/<int:value>/', set_cookie_for_all_types_of_filter_view, name="set_cookie_for_all_types_of_filter_view"),
+
+    path('create_obyekt_worker_months/', create_obyekt_worker_months, name="create_obyekt_worker_months"),
 
 ]

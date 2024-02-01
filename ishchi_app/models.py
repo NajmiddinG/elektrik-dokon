@@ -24,7 +24,7 @@ class Money(models.Model):
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     given_amount = models.IntegerField(default=0, blank=True, null=True)
-    total_earn = models.IntegerField(default=0, blank=True, null=True)
+    month = models.IntegerField(default=24290)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
