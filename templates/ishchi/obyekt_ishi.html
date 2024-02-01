@@ -147,7 +147,7 @@ td {
 {% block content %}
 <main data-name="obyekt">
     <div class="bottom-data">
-        {% if allowed %}
+        {% if position == 'end' %}
         <div class="orders">
             <div class="header">          
             <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
@@ -223,7 +223,7 @@ td {
                         <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - {{ i.doc.name|extract_doc }}</a>
                     </p>
                     {% endfor %}
-                    <form action="{% url 'ishchi_app:allow_add' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
+                    <form action="{% url 'main_app:start_job' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
                         <button type="submit" class="add-button add-btn">Qabul qildim</button>
                     </form>
                 </div>

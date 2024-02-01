@@ -121,21 +121,34 @@ td {
 <main data-name="obyekt">
     <div class="bottom-data">
         <div class="orders">
+            <h3><i class='bx bx-receipt'></i> Obyektlar</h3>
+            {% if position == 'end' %}
+            <br>
+            <a href="{% url 'main_app:end_job' %}" class="add-button add-btn">Ishni tugatish</a>
+            {% endif %}
             {% if allowed %}
             <div class="header">
-                {% if worker_type == 'Ishchi' %}
-                {% if position == 'start' %}
-                <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
-                  {% else %}
-                  <a href="{% url 'main_app:end_job' %}" class="add-button add-btn">Ishni tugatish</a>
-                  {% endif %}
-                {% endif %}
-                <h3><i class='bx bx-receipt'></i> Obyektlar</h3>
                 {% if worker_type == 'Admin' %}
                 <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
                 <p data-label="obyekt" title="+ Obyekt qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt</p>
                 {% endif %}
             </div>
+            {% if worker_type == 'Ishchi' %}
+            {% if position == 'start' %}
+
+            <div class="title">
+                <i class='bx bxs-file' style="padding-top: 20px;"></i><span style="font-weight: 600; font-size: 20px;">Instruktsiya bilan tanishing</span>
+                {% for i in instruktsiya %}
+                <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
+                    <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - {{ i.doc.name|extract_doc }}</a>
+                </p>
+                {% endfor %}
+            </div>
+            <form action="{% url 'main_app:start_job' %}" class="info" method="post" style="padding: 10px;">{% csrf_token %}
+                <button type="submit" class="add-button add-btn">Qabul qildim</button>
+            </form>
+            {% endif %}
+            {% endif %}
 
             {% if worker_type == 'Ishchi' %}
 

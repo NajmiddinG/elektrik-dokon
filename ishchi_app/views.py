@@ -76,6 +76,7 @@ def obyekt_ishi(request):
     user_id = request.COOKIES['user']
     worker_id = request.COOKIES['worker']
     obyekts = Obyekt.objects.all().order_by('-date')
+    is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     obyektjobtypes = ObyektJobType.objects.all().order_by('name')
@@ -91,6 +92,7 @@ def obyekt_ishi(request):
         'allowed': has_allow_entry,
         'instruktsiya': instruktsiya_doc,
         'obyekt_doc': obyekt_doc,
+        'position': 'end' if is_working else 'start',
     }
     response = render(request, 'ishchi/obyekt_ishi.html', context=context)
     if selected_obyekt==0:
