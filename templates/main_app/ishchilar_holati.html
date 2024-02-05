@@ -122,7 +122,7 @@ td {
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
-                <h3><i class='bx bx-receipt'></i> Ishchining bajargan ishlari</h3>
+                <h3><i class='bx bx-receipt'></i> Oylik</h3>
                 
                 <p data-label="jobtype" title="+ Oylik" class="add-button add-btn" onclick="toggleForm('oylikFormContainer')">+ Pul berish</p>
                 <select id="productTypeSelect1" class="button_cool" title="Oy bo'yicha saralash" style="width: 210px;">
@@ -137,6 +137,41 @@ td {
                         <option value="{{ month }}" {% if request.COOKIES.worker_date_admin_id == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
                     {% endfor %}
                 </select>
+            </div>
+
+            {% if worker_type == 'Admin' %}
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Berilgan summa: <span id="totalAmount">{{ given_total|spacecomma }}</span> so'm</p>
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Ishchining oyligi: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Qoldiq: <span id="totalAmount">{{ real_money|spacecomma }}</span> so'm</p>
+            <br>
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Nomi</center></th>
+                    <th><center>Narxi</center></th>
+                    <th><center>Qaysi oy uchun</center></th>
+                    <th><center>Qachon berildi</center></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for obyekt in month_given_amount %}
+                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
+                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
+                    <td id="{{ obyekt.id }}name">{{ obyekt.name }}</td>
+                    <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
+                    <td id="{{ obyekt.id }}month">{{ obyekt.month|define_cur_month }} - {{ obyekt.month|define_cur_year }}</td>
+                    <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            
+            {% endif %}
+        </div>
+        <div class="orders">
+            <div class="header">
+                <h3><i class='bx bx-receipt'></i> Ishchining bajargan ishlari</h3>
             </div>
 
             {% if worker_type == 'Admin' %}
@@ -155,10 +190,10 @@ td {
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
                     <td id="{{ obyekt.id }}obyekt">
-                        <a href="{% url 'ishchi_app:obyekt_ishi' %}" onclick="setObyektCookie2({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
+                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
                     </td>
                     <td id="{{ obyekt.id }}earn_amount">
-                        <a href="{% url 'ishchi_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.id }})">{{ obyekt.earn_amount|spacecomma }} so'm</a>
+                        <a href="{% url 'main_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.obyekt_id }}, {{ obyekt.id }})">{{ obyekt.earn_amount|spacecomma }} so'm</a>
                     </td>
                     <!-- <td id="{{ obyekt.id }}admin_accepted" {% if obyekt.admin_accepted %} style="color: green;" {% else %} style="color:red;" {% endif %}>{{ obyekt.admin_accepted|bool_to_word }}</td> -->
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
@@ -166,10 +201,6 @@ td {
                 {% endfor %}
                 </tbody>
             </table>
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Berilgan summa: <span id="totalAmount">{{ given_total|spacecomma }}</span> so'm</p>
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Ishchining oyligi: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Qoldiq: <span id="totalAmount">{{ real_money|spacecomma }}</span> so'm</p>
-            
             {% endif %}
         </div>
     </div>
@@ -378,11 +409,12 @@ td {
     });
     function setObyektCookie1(obyektId) {
         // Set the cookie with the obyekt_id
-        document.cookie = 'worker_date_admin_id=' + obyektId + '; path=/';
+        document.cookie = 'obyekt_id=' + obyektId + '; path=/';
     }
-    function setObyektCookie2(obyektId) {
+    function setObyektCookie2(obyektId, worker_money_day_id) {
         // Set the cookie with the obyekt_id
-        document.cookie = 'worker_admin_id=' + obyektId + '; path=/';
+        document.cookie = 'obyekt_id=' + obyektId + '; path=/';
+        document.cookie = 'workdaymoney_id=' + worker_money_day_id + '; path=/';
     }
 </script>
 {% endblock %}

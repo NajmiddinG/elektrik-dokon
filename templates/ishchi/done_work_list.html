@@ -122,13 +122,7 @@ td {
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
-                {% if worker_type == 'Ishchi' %}
-                  {% if position == 'start' %}
-                    <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
-                  {% endif %}
-                {% endif %}
-                <h3><i class='bx bx-receipt'></i> Bajarilgan Ishlar</h3>
-                <p style="margin: 10px 0;font-size: 20px;color: green;">Oylik: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
+                <h3><i class='bx bx-receipt'></i> Oylik</h3>
                 <label for="productTypeSelect" style="font-size: 20px;">Oy filter:</label>
                 <select id="productTypeSelect" title="Oy bo'yicha saralash" style="width: 210px;">
                     <option value="24200">Oyni tanlang</option>
@@ -136,6 +130,45 @@ td {
                         <option value="{{ month }}" {% if request.COOKIES.worker_months == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
                     {% endfor %}
                 </select>
+            </div>
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Berilgan summa: <span id="totalAmount">{{ given_total|spacecomma }}</span> so'm</p>
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Oylik: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
+            <p style="margin: 10px 0;font-size: 20px;color: green;">Qoldiq: <span id="totalAmount">{{ real_money|spacecomma }}</span> so'm</p>
+            <br>
+            
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Nomi</center></th>
+                    <th><center>Narxi</center></th>
+                    <th><center>Qaysi oy uchun</center></th>
+                    <th><center>Qachon berildi</center></th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for obyekt in month_given_amount %}
+                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
+                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
+                    <td id="{{ obyekt.id }}name">{{ obyekt.name }}</td>
+                    <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
+                    <td id="{{ obyekt.id }}month">{{ obyekt.month|define_cur_month }} - {{ obyekt.month|define_cur_year }}</td>
+                    <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+           
+        </div>
+        <div class="orders">
+            <div class="header">
+                {% if worker_type == 'Ishchi' %}
+                  {% if position == 'start' %}
+                    <a href="{% url 'main_app:start_job' %}" class="add-button add-btn">Ishni boshlash</a>
+                  {% endif %}
+                {% endif %}
+                <h3><i class='bx bx-receipt'></i> Bajarilgan Ishlar</h3>
+                
             </div>
 
             {% if worker_type == 'Ishchi' %}

@@ -66,6 +66,5 @@ def define_cur_year(value):
 
 @register.filter(name='extract_doc')
 def extract_doc(value):
-    print(value)
     value = list(value.split('/'))[-1]
     return value

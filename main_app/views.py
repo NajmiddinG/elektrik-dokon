@@ -10,6 +10,7 @@ from django.db.models import Min, Max
 
 from .models import User, Worker, WorkDay
 from ishchi_app.models import Work, WorkAmount, WorkDayMoney, Money
+from obyekt_app.models import Obyekt
 
 def check_user(request):
     try:
@@ -311,7 +312,6 @@ def ishchilar_holati(request):
     
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
     worker_type = request.user.workers.values_list('name', flat=True).first()
-    print(months)
     context = {
         'active': 'main_2',
         'month_given_amount': month_given_amount,
@@ -369,3 +369,33 @@ def edit_obyekt_worker_months(request):
 
     # def __str__(self) -> str:
     #     return self.responsible.first_name
+
+
+
+def done_work_detail(request):
+    if has_some_error(request): return redirect('/login/')
+
+    cookies = request.COOKIES
+    selected_obyekt = int(cookies.get('workdaymoney_id', 0))
+    try:
+        work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
+    except:
+        work_amounts = []
+    user_id = request.COOKIES['user']
+    worker_id = request.COOKIES['worker']
+    workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'ishchi_4',
+        'workdaymoneys': workdaymoneys,
+        'worker_type': worker_type,
+        'work_amounts': work_amounts,
+    }
+    response = render(request, 'ishchi/done_work_detail.html', context=context)
+    if selected_obyekt==0:
+        try:
+            latest_obyekt = WorkDayMoney.objects.filter(responsible=request.user).latest('date').id
+            response.set_cookie('workdaymoney_id', str(latest_obyekt))
+        except:
+            response.set_cookie('workdaymoney_id', '0')
+    return response

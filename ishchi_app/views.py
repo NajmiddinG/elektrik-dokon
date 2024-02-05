@@ -109,6 +109,7 @@ def done_work_post(request):
     if request.method == 'POST':
         try:
             # 'quantity;1': ['0'], 'quantity;2': ['0'],
+            print(request.POST)
             done_works = []
             history_came = [request.user, 0] # responsible, earn_amount
             for key, number in request.POST.items():
@@ -164,6 +165,7 @@ def done_work_list(request):
         selected_obyekt = 24289
         
     try:
+        month_given_amount = Money.objects.filter(responsible_id=request.user,  month=selected_obyekt)
         workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible=request.user,
             date__year=selected_obyekt // 12,
@@ -187,6 +189,11 @@ def done_work_list(request):
     except Exception as e:
         print(e)
         workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
+        month_given_amount = Money.objects.filter(responsible_id=request.user)
+    
+    given_total = 0
+    for item in month_given_amount:
+        given_total+=item.given_amount
 
     work_money_earn = 0
     for workdaymoney_item in workdaymoneys:
@@ -199,6 +206,9 @@ def done_work_list(request):
         'position': 'end' if is_working else 'start',
         'months': months,
         'work_money_earn': work_money_earn,
+        'month_given_amount': month_given_amount,
+        'given_total': given_total,
+        'real_money': given_total-work_money_earn,
 
     }
     response = render(request, 'ishchi/done_work_list.html', context=context)

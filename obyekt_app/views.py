@@ -197,7 +197,6 @@ def edit_obyekt_ishi(request, obyekt_id):
     if has_some_error(request): return redirect('/login/')
     if request.method == 'POST':
         try:
-            print(request.POST)
             # 'obyekt_worker': ['2'], 'job_type': ['2'], 'service_price': ['4'], 'total_completed': ['5'], 'total': ['9']
             if bool(request.user.workers.filter(name__iexact='admin').first()):
                 work_amount = WorkAmount.objects.get(id=obyekt_id)

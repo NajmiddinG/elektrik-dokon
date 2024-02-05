@@ -1,0 +1,440 @@
+<!-- obyekt.html -->
+{% extends 'base.html' %}
+
+{% block title %}Obyektlar{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+    
+    .add-form-container {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 300px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .add-form-container .title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .add-form-container .title i {
+        font-size: 24px;
+        margin-right: 10px;
+        color: #3498db; /* Blue color, change as needed */
+    }
+
+    .add-form-container .title h2 {
+        font-size: 18px;
+        margin: 0;
+        color: #333; /* Dark text color, change as needed */
+    }
+
+    .add-form-container .box-wrapper {
+        margin-bottom: 20px;
+    }
+
+    .add-form-container .input-box {
+        margin-bottom: 15px;
+    }
+
+    .add-form-container label {
+        display: block;
+        font-size: 14px;
+        color: #666; /* Gray text color, change as needed */
+        margin-bottom: 5px;
+    }
+
+    .add-form-container input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc; /* Light border color, change as needed */
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .add-form-container .save {
+        background-color: #38903c; /* Green color, change as needed */
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .table-container {
+        max-height: 300px; /* Adjust the height as needed */
+        overflow: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr, th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    tr, td {
+        text-align: center;
+        padding:8px;
+        border: 1px solid #dddddd;
+    }
+    td:first-child {
+        color: green;
+    }
+    .add-button .add-btn {
+        width: 20   0px !important;
+    }
+    .add-button {
+    border: none;
+    padding: 7px 10px;
+    background: var(--primary);
+    color: var(--light);
+    border-radius: 5px;
+    overflow-x: visible;
+    white-space: nowrap;
+    cursor: pointer;
+}
+td {
+    overflow: hidden; /* Hide any content that exceeds the width */
+    text-overflow: ellipsis; /* Show an ellipsis (...) when content overflows */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+        #ObyektSelect {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #ObyektSelect:hover {
+            border-color: #aaa;
+        }
+
+        #ObyektSelect:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+        }
+    .product_search {
+        min-width: 75%;
+    }
+    @media only screen and (max-width: 600px) {
+    .product_search {
+      min-width: 75%;
+    }
+  }
+</style>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<main data-name="obyekt">
+    <div class="bottom-data">
+        <div class="orders">
+            <div class="header">          
+            <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
+            <label for="ObyektSelect">Obyektlar</label>
+            <select id="ObyektSelect" title="Obyektlarni nomlari" style="width: 210px;">
+                {% for obyekt in workdaymoneys %}
+                    <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id == obyekt.id|stringformat:"s" %}selected {% endif %}>{{ obyekt.responsible }} : {{ obyekt.date|date:"d-m-Y" }}</option>
+                {% endfor %}
+            </select>
+            {% if worker_type == 'Admin' %}
+            <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
+            <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
+            {% endif %}
+        </div>
+        <!-- <form action="{% url 'ishchi_app:done_work_post' %}" method="post" enctype="multipart/form-data" class="form" id="productForm"> -->
+            {% csrf_token %}
+            <table id="myTable3">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Ish turi</center></th>
+                    {% if worker_type != 'Obyekt' %}
+                    <th><center>Bog'langan</center></th>
+                    {% endif %}
+                    <th><center>Xizmat haqqi</center></th>
+                    <th><center>Bajarilganlar ish</center></th>
+                </tr>
+                </thead>
+                <tbody id="myDropdown2">
+                {% for work_amount in work_amounts %}
+                <tr class="edit-work_amount" data-id="{{ work_amount.id }}">
+                    <td id="{{ work_amount.id }}" class="work_amount-id" data-id="{{ work_amount.id }}">{{ forloop.counter }}</td>
+                    <td id="{{ work_amount.id }}job_type" data-id="{{ work_amount.id }}" title="{{ work_amount.job|capfirst }}" style="color: green;">{{ work_amount.job|capfirst }}</td>
+                    {% if worker_type != 'Obyekt' %}
+                    <td id="{{ work_amount.id }}visible_obyekt">{{ work_amount.job.visible_obyekt|bool_to_word }}</td>
+                    {% endif %}
+                    <td id="{{ work_amount.id }}service_price">{{ work_amount.job.service_price|spacecomma }} so'm</td>
+                    <td id="{{ work_amount.id }}completed">{{ work_amount.completed|spacecomma }}</td>
+                    
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <!-- <div class="footer">
+                <p style="margin: 10px 0;font-weight: 600; font-size: 20px;">Umumiy summa: <span id="totalAmount" style="color: green;">0</span> so'm</p>
+                <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px;">Saqlash</button>
+            </div> -->
+            <!-- Hidden input fields to store selected product data -->
+            <input type="hidden" name="selected_products" id="selectedProducts" value="">
+        <!-- </form> -->
+        </div>
+    </div>
+
+</main>
+
+
+<!-- create -->
+<!-- <div id="productTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-detail'></i>
+        <h2>Obyekt turi qo'shish</h2>
+    </div>
+    <form action="create_product_type' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomini kiritng:</label>
+                <input type="text" id="name" name="name">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div> -->
+<!-- edit -->
+<!-- <div id="editproductTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-detail'></i>
+        <h2>Obyekt turini o'zgartirish</h2>
+    </div>
+    <form action="edit_product_type' 0 %}" class="info" method="post" id="editProductTypeForm">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomi:</label>
+                <input type="text" id="name" name="name" value="{id}">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div> -->
+
+<!-- create -->
+<div id="productFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-detail'></i>
+        <h2>Obyekt ishi qo'shish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_obyekt_ishi' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="obyekt_worker">Obyekt nomi:</label>
+                <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
+                    {% for obyekt in workdaymoneys %}
+                        <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id|default:"-1"|add:0 == obyekt.id %} selected {% endif %}>{{ obyekt.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="job_type">Ish turi:</label>
+                <select id="job_type" name="job_type" style="width: 250px;">
+                    {% for workeramountjobtype in workeramountjobtypes %}
+                    <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="service_price">Xizmat haqqi:</label>
+                <input type="text" value="0" min="0" id="service_price" name="service_price">
+            </div>
+            <div class="input-box">
+                <label for="total_completed">Tugatilganlar soni:</label>
+                <input type="text" value="0" min="0" id="total_completed" name="total_completed">
+            </div>
+            <div class="input-box">
+                <label for="total">Umumiy soni:</label>
+                <input type="text" value="1" min="1" id="total" name="total">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<div id="jobTypeFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-briefcase'></i>
+        <h2>Ish turi qo'shish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_work_amount_job_type' %}" class="info" method="post">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="name">Nomi:</label>
+                <input type="text" id="name" name="name">
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<!-- edit -->
+<div id="editObyektFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-detail'></i>
+        <h2>Obyekt ishini o'zgartirish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:edit_obyekt_ishi' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
+        <div class="box-wrapper">
+            {% if worker_type == 'Admin' %}
+            <div class="box-wrapper">
+                <div class="input-box">
+                    <label for="obyekt_worker">Obyekt nomi:</label>
+                    <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
+                        {% for obyekt in workdaymoneys %}
+                            <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id|default:"-1"|add:0 == obyekt.id %} selected {% endif %}>{{ obyekt.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label for="job_type">Ish turi:</label>
+                    <select id="job_type" name="job_type" style="width: 250px;">
+                        {% for workeramountjobtype in workeramountjobtypes %}
+                        <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label for="service_price">Xizmat haqqi:</label>
+                    <input type="text" value="0" min="0" id="service_price" name="service_price">
+                </div>
+                <div class="input-box">
+                    <label for="total_completed">Tugatilganlar soni:</label>
+                    <input type="text" value="0" min="0" id="total_completed" name="total_completed">
+                </div>
+                <div class="input-box">
+                    <label for="total">Umumiy soni:</label>
+                    <input type="text" value="1" min="1" id="total" name="total">
+                </div>
+            </div>
+            {% else %}
+            <label for="">Admin obyektni o'zgartira oladi xolos</label>
+            {% endif %}
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<script>    
+    function toggleForm(formId) {
+        var formContainer = document.getElementById(formId);
+        var currentDisplay = window.getComputedStyle(formContainer).display;
+
+        formContainer.style.display = (currentDisplay === 'none') ? 'block' : 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find all elements with class 'product-type'
+        var productTypeCells = document.querySelectorAll('.product-type');
+
+        productTypeCells.forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                var productTypeName = cell.textContent.trim();
+                var productTypeId = cell.getAttribute('data-id');
+
+                // Populate the input fields in the edit form
+                var editForm = document.getElementById('editProductTypeForm');
+                var nameInput = editForm.querySelector('#name');
+
+                nameInput.value = productTypeName;
+
+                // Update the form action URL with the product type ID
+                editForm.action = '/ishchi/edit_product_type/' + productTypeId + '/';
+
+                // Show or toggle the edit form as needed
+                toggleForm('editproductTypeFormContainer');
+                document.getElementById('name').focus();
+            });
+        });
+    // Find all elements with class 'product-id'
+    var obyektIdCells = document.querySelectorAll('.work_amount-id');
+    console.log(obyektIdCells);
+    obyektIdCells.forEach(function (cell) {
+        cell.addEventListener('click', function () {
+            var obyektId = cell.getAttribute('id');
+            var job_type = document.getElementById(obyektId + 'job_type').textContent.trim();
+            var service_price = document.getElementById(obyektId + 'service_price').textContent.trim();
+            var total_completed = document.getElementById(obyektId + 'total_completed').textContent.trim();
+            var total = document.getElementById(obyektId + 'total').textContent.trim();
+            
+            // Populate the input fields in the edit form
+            var editForm = document.getElementById('editObyektForm');
+            var job_typeInput = editForm.querySelector('#job_type');
+            var service_priceInput = editForm.querySelector('#service_price');
+            var total_completedInput = editForm.querySelector('#total_completed');
+            var totalInput = editForm.querySelector('#total');
+
+            job_typeInput.value = job_type;
+            service_priceInput.value = parseFloat(service_price.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
+            total_completedInput.value = parseFloat(total_completed.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
+            totalInput.value = parseFloat(total.replace(' so\'m', '').replace(',', '').replaceAll(' ', '').replaceAll(' ', '')); // Convert price to number;
+
+            editForm.action = '/ishchi/edit_obyekt_ishi/' + obyektId + '/';
+            toggleForm('editObyektFormContainer');
+        });
+    })
+    });
+    document.getElementById('ObyektSelect').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'obyekt_app:set_obyekt_cookie2' 0 %}".replace('0', selectedValue);
+    });
+    function calculateTotal() {
+    // Select all input elements with class "product_search" within the table
+    var inputs = document.querySelectorAll('#myDropdown2 input');
+    var totalAmount = 0;
+    
+    // Iterate through each input and calculate the total amount
+    inputs.forEach(function(input) {
+        var quantity = parseInt(input.value);
+        var price = parseInt(input.getAttribute('data-product-real-price'));
+        var maxQuantity = parseInt(input.getAttribute('data-max-quantity'));
+
+        // Check if the quantity and price are valid numbers
+        if (!isNaN(quantity) && !isNaN(price) && quantity >= 0 && quantity <= maxQuantity) {
+            totalAmount += quantity * price;
+        }
+    });
+    // Update the total amount in the <span> element
+    document.getElementById('totalAmount').innerText = totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    // Add an event listener to the form to recalculate the total on input change
+    document.getElementById('productForm').addEventListener('input', function(event) {
+        calculateTotal();
+    });
+    document.getElementById('productForm').addEventListener('keydown', function(event) {
+      // Check if the pressed key is Enter and if the active element is an input
+      if (event.key === 'Enter' && document.activeElement.tagName.toLowerCase() === 'input') {
+          event.preventDefault();
+          // Optionally, you can handle the Enter key press in the input here
+      }
+    //   calculateTotal();
+  });
+    // Call the calculateTotal function initially to set the initial total amount
+
+</script>
+{% endblock %}
