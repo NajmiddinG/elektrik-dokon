@@ -150,16 +150,25 @@ td {
         <div class="orders">
             <div class="header">          
             <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
-            <label for="ObyektSelect">Obyektlar</label>
+            <select id="productTypeSelect1" class="button_cool" title="Oy bo'yicha saralash" style="width: 210px;">
+                <option value="0">Ishchini tanlang</option>
+                {% for worker in all_workers %}
+                <option value="{{ worker.id }}" {% if request.COOKIES.worker_admin_id == worker.id|stringformat:"s" %}selected {% endif %}>{{ worker.first_name }}</option>
+                {% endfor %}
+            </select>
+            <select id="productTypeSelect2" class="button_cool" title="Oy bo'yicha saralash" style="width: 210px;">
+                <option value="24200">Oyni tanlang</option>
+                {% for month in months %}
+                    <option value="{{ month }}" {% if request.COOKIES.worker_date_admin_id == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
+                {% endfor %}
+            </select>
+            </select>
             <select id="ObyektSelect" title="Obyektlarni nomlari" style="width: 210px;">
+                <option value="0">Ishni tanlang</option>
                 {% for obyekt in workdaymoneys %}
                     <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id == obyekt.id|stringformat:"s" %}selected {% endif %}>{{ obyekt.responsible }} : {{ obyekt.date|date:"d-m-Y" }}</option>
                 {% endfor %}
             </select>
-            {% if worker_type == 'Admin' %}
-            <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
-            <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
-            {% endif %}
         </div>
         <!-- <form action="{% url 'ishchi_app:done_work_post' %}" method="post" enctype="multipart/form-data" class="form" id="productForm"> -->
             {% csrf_token %}
@@ -398,9 +407,17 @@ td {
         });
     })
     });
+    document.getElementById('productTypeSelect1').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'worker_admin_id').replace('1', selectedValue);
+    });
+    document.getElementById('productTypeSelect2').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'worker_date_admin_id').replace('1', selectedValue);
+    });
     document.getElementById('ObyektSelect').addEventListener('change', function() {
     var selectedValue = this.value;
-    window.location.href = "{% url 'obyekt_app:set_obyekt_cookie2' 0 %}".replace('0', selectedValue);
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'workdaymoney_id').replace('1', selectedValue);
     });
     function calculateTotal() {
     // Select all input elements with class "product_search" within the table

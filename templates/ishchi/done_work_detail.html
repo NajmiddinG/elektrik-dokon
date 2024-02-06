@@ -150,8 +150,8 @@ td {
         <div class="orders">
             <div class="header">          
             <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
-            <label for="ObyektSelect">Obyektlar</label>
-            <select id="ObyektSelect" title="Obyektlarni nomlari" style="width: 210px;">
+            <label for="ObyektSelect">Qilingan ishlar</label>
+            <select id="ObyektSelect" title="Qilingan ishlar" style="width: 210px;">
                 {% for obyekt in workdaymoneys %}
                     <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id == obyekt.id|stringformat:"s" %}selected {% endif %}>{{ obyekt.responsible }} : {{ obyekt.date|date:"d-m-Y" }}</option>
                 {% endfor %}
