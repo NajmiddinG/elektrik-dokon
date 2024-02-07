@@ -162,16 +162,16 @@ td {
                 </thead>
                 <tbody>
                 {% for obyekt in obyekts %}
-                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
+                <tr class="edit-obyekt" data-id="{{ obyekt.id }}" >
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
                     <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}">
-                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name|break_func:25 }}</a>
+                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})" style="color: {{ obyekt.real_dept|obyekt_status:obyekt.max_dept }};">{{ obyekt.name|break_func:25 }}</a>
                     </td>
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">{{ obyekt.responsible }}</td>
                     <td id="{{ obyekt.id }}job_type"  title="{{ obyekt.job_type|capfirst }}">{{ obyekt.job_type|capfirst }}</td>
                     <td id="{{ obyekt.id }}deal_amount">{{ obyekt.deal_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
-                    <td id="{{ obyekt.id }}real_dept">{{ obyekt.real_dept|spacecomma }} so'm</td>
+                    <td id="{{ obyekt.id }}real_dept" style="color: {{ obyekt.real_dept|obyekt_status:obyekt.max_dept }};">{{ obyekt.real_dept|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}completed">{{ obyekt.given_amount|default:0|subtract:obyekt.real_dept|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                     <td id="{{ obyekt.id }}address"  title="{{ obyekt.address|capfirst }}">{{ obyekt.address|capfirst }}</td>

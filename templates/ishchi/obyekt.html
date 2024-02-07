@@ -169,7 +169,7 @@ td {
                 {% for obyekt in obyekts %}
                 <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
                     <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
-                    <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}" style="color: green;">
+                    <td id="{{ obyekt.id }}name" data-id="{{ obyekt.id }}" title="{{ obyekt.name|capfirst }}" style="color: {{ obyekt.real_dept|obyekt_status:obyekt.max_dept }};">
                         <a href="{% url 'ishchi_app:obyekt_ishi' %}" onclick="setObyektCookie({{ obyekt.id }})">{{ obyekt.name }}</a>
                     </td>
                     <td id="{{ obyekt.id }}responsible" data-id="{{ obyekt.responsible.id }}">{{ obyekt.responsible }}</td>

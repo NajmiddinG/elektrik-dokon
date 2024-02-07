@@ -68,3 +68,19 @@ def define_cur_year(value):
 def extract_doc(value):
     value = list(value.split('/'))[-1]
     return value
+
+@register.filter(name='obyekt_status')
+def obyekt_status(value, arg):
+    try:
+        value = -int(value)
+        arg = int(arg)
+        if value>arg:
+            return 'red'
+        elif value/arg>0.7:
+            return 'orange'
+        else:
+            return 'green'
+    except Exception as e:
+        print(e)
+        return 'red'
+

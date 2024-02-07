@@ -241,7 +241,7 @@ td {
                   <select id="obyekt_id" class="button_cool" name="selected_obyekt_id" title="Obyektlar" style="width: 210px; margin-left: 30px;">
                     <option disabled>Obyektni tanlang</option>
                     {% for obyekt in obyekts %}
-                        <option value="{{ obyekt.id }}">{{ obyekt.name }} - {{ obyekt.responsible }} - {{ obyekt.tel_number }} </option>
+                        <option value="{{ obyekt.id }}" style="color: {{ obyekt.real_dept|obyekt_status:obyekt.max_dept }};">{{ obyekt.name }} - {{ obyekt.responsible }} - {{ obyekt.responsible.tel_number }} </option>
                     {% endfor %}
                 </select>
                 </div>
