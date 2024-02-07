@@ -6,6 +6,8 @@ from main_app.views import has_some_error
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
+from obyekt_app.models import Obyekt
+
 from .models import (
     ProductType,
     Product,
@@ -31,7 +33,7 @@ def dashboard_santexnika(request):
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '1_santexnika',
+        'active': 'dokon_1_santexnika',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
@@ -106,18 +108,18 @@ def obyekt_dashboard_santexnika(request):
     worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
+    obyekt = Obyekt.objects.all()
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '6_santexnika',
+        'active': 'dokon_6_santexnika',
         'products': products,
         'product_types': product_types,
-        'worker_type': worker_type
+        'worker_type': worker_type,
+        'obyekts': obyekt,
     }
     return render(request, 'dokon/obyekt_dashboard_santexnika.html', context=context)
 
 def sell_product_to_obyekt_santexnika(request):
-    print(request.POST)
-    return HttpResponse("Hello")
     if has_some_error(request): return redirect('/login/')
     try:
         total_money = 0
@@ -127,11 +129,11 @@ def sell_product_to_obyekt_santexnika(request):
             if key.startswith('quantity;') and number!='0':
                 number = int(number)
                 product_id = int(key.split(';')[1])
+                price = int(request.POST['price;'+str(product_id)])
                 product = Product.objects.get(id=product_id)
-                price = int(product.price*(100+product.profit_percentage)/100)
                 if number>product.remain:
                     messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
-                    return redirect('dokon_app:dashboard_santexnika')
+                    return redirect('dokon_app:obyekt_dashboard_santexnika')
                 
                 total_money += price*number
                 
@@ -141,9 +143,9 @@ def sell_product_to_obyekt_santexnika(request):
                     'total_amount': price * number,
                     'profit': (price - product.price) * number,
                 }
-                history_sold_outs[1]+=number
-                history_sold_outs[2]+=price*number
-                history_sold_outs[3]+=(price - product.price) * number
+                history_sold_outs[1]+=product_details['quantity']
+                history_sold_outs[2]+=product_details['total_amount']
+                history_sold_outs[3]+= product_details['profit']
                 sold_out_products.append(product_details)
 
                 product.remain-=number
@@ -152,16 +154,17 @@ def sell_product_to_obyekt_santexnika(request):
             messages.error(request, "Xatolik ro'y berdi!")
         else:
             # Create a HistorySoldOut object
-            history_sold_out = HistorySoldOut.objects.create(
+            history_sold_out = HistoryObject.objects.create(
                 responsible=history_sold_outs[0],
-                total_number_sold_out=history_sold_outs[1],
+                history_object_id=int(request.POST['selected_obyekt_id']),
+                total_number_given=history_sold_outs[1],
                 total_amount=history_sold_outs[2],
                 profit=history_sold_outs[3],
             )
 
-            # Create instances in ProductHistorySoldOut
+            # Create instances in ProductHistoryObject
             for product_details in sold_out_products:
-                product_history = ProductHistorySoldOut.objects.create(
+                product_history = ProductHistoryObject.objects.create(
                     type_id=product_details['product_id'],
                     number=product_details['quantity'],
                     total_amount=product_details['total_amount'],
@@ -169,14 +172,22 @@ def sell_product_to_obyekt_santexnika(request):
                     date=history_sold_out.date
                 )
                 
-                # Add the created ProductHistorySoldOut instance to history_sold_out's history_products
+                # Add the created ProductHistoryObject instance to history_sold_out's history_products
                 history_sold_out.history_products.add(product_history)
-            messages.success(request, "Sotish muvaffaqiyatli amalga oshirildi!")
+
+                # add amount to real dept
+                obyekt_obj = Obyekt.objects.get(id=request.POST['selected_obyekt_id'])
+                obyekt_obj.real_dept -= history_sold_outs[2]
+                obyekt_obj.save()
+                print(obyekt_obj)
+
+            messages.success(request, f"{obyekt_obj.name} Obyektga berish muvaffaqiyatli amalga oshirildi!")
 
     except Exception as e:
+        print(e, 2324234)
         messages.error(request, "Xatolik ro'y berdi!")
 
-    return redirect('dokon_app:dashboard_santexnika')
+    return redirect('dokon_app:obyekt_dashboard_santexnika')
 
 def mahsulot_santexnika(request):
     if has_some_error(request): return redirect('/login/')
@@ -191,7 +202,7 @@ def mahsulot_santexnika(request):
         products = Product.objects.filter(type__first_type='santexnika').order_by('type', '-date')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '2_santexnika',
+        'active': 'dokon_2_santexnika',
         "product_types": ProductType.objects.filter(first_type='santexnika').order_by('-date'),
         "products": products,
         'worker_type': worker_type
@@ -285,7 +296,7 @@ def newproduct_santexnika(request):
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
-        'active': '5_santexnika',
+        'active': 'dokon_5_santexnika',
         'products': products,
         'product_types': product_types,
         'worker_type': worker_type
@@ -340,40 +351,3 @@ def insert_new_porduct_santexnika(request):
         messages.error(request, "Xatolik ro'y berdi!")
 
     return redirect('dokon_app:newproduct_santexnika')
-
-
-
-
-
-
-# def get_products(request):
-#     if request.method == 'POST' and request.is_ajax():
-#         product_type_id = request.POST.get('product_type_id')
-#         # Fetch products based on the selected product type
-#         products = Product.objects.filter(type_id=product_type_id)
-#         # Render the products into HTML
-#         products_html = render_to_string('products_table.html', {'products': products})
-#         return JsonResponse({'products_html': products_html})
-#     else:
-#         return JsonResponse({'error': 'Invalid request'})
-# def zakaz(request):
-#     if has_some_error(request): return redirect('/login/')
-
-#     user_id = request.COOKIES['user']
-#     worker_id = request.COOKIES['worker']
-#     print(user_id, worker_id)
-#     context = {
-#         'active': '3_santexnika',
-#     }
-#     return render(request, 'dokon/zakaz.html', context=context)
-
-# def etiroz(request):
-#     if has_some_error(request): return redirect('/login/')
-
-#     user_id = request.COOKIES['user']
-#     worker_id = request.COOKIES['worker']
-#     print(user_id, worker_id)
-#     context = {
-#         'active': '4_santexnika',
-#     }
-#     return render(request, 'dokon/etiroz.html', context=context)

@@ -192,7 +192,6 @@ td {
                               <th><center style="font-size: 18px !important;">№</center></th>
                               <th><center style="font-size: 18px !important;">Mahsulot turi</center></th>
                               <th><center style="font-size: 18px !important;">Nomi</center></th>
-                              <th><center style="font-size: 18px !important;">Narxi</center></th>
                             </tr>
                           </thead>
                           <tbody id="myDropdown">
@@ -201,7 +200,6 @@ td {
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ product.type.name|capfirst }}</td>
                                 <td>{{ product.name|capfirst }}</td>
-                                <td>{{ product.price|real_money:product.profit_percentage }} so'm</td>
                             </tr>
                           {% endfor %}
                           </tbody>
@@ -228,8 +226,8 @@ td {
                         <tr>
                           <td><center>{{ product.type.name }}</center></td>
                           <td data-product-real-price='{{ product.price|real_money:product.profit_percentage }}'><center>{{ product.name }}</center></td>
-                          <td style="max-width: 75px !important;"><center>{{ product.price|real_money:product.profit_percentage }}</center></td>
-                          <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="{{ product.remain }}" class="product_search" onchange="calculateTotal"></center></td>
+                          <td style="max-width: 75px !important;"><center><input type="number" name="price;{{ product.id }}" id="price;{{ product.id }}" value="{{ product.price|real_money:product.profit_percentage }}" min="0" class="product_search" onchange="calculateTotal"></center></td>
+                          <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="1000000000" class="product_search product_search2" onchange="calculateTotal"></center></td>
                           <td><center>{{ product.remain|spacecomma }}</center></td>
                         </tr>
                       {% endfor %}
@@ -350,16 +348,15 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
 
   function calculateTotal() {
     // Select all input elements with class "product_search" within the table
-    var inputs = document.querySelectorAll('#myDropdown2 input.product_search');
+    var inputs = document.querySelectorAll('#myDropdown2 input.product_search2');
 
     var totalAmount = 0;
 
     // Iterate through each input and calculate the total amount
     inputs.forEach(function(input) {
         var quantity = parseInt(input.value);
-        var price = parseInt(input.closest('tr').querySelector('td:nth-child(2)').getAttribute('data-product-real-price'));
-        // Check if the quantity and price are valid numbers
-        if (!isNaN(quantity) && !isNaN(price)) {
+        var price = parseInt(input.closest('tr').querySelector('td:nth-child(3) input').value);
+        if (!isNaN(quantity) && !isNaN(price) && quantity*price) {
             totalAmount += quantity * price;
         }
     });

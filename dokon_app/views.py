@@ -121,8 +121,6 @@ def obyekt_dashboard(request):
     return render(request, 'dokon/obyekt_dashboard.html', context=context)
 
 def sell_product_to_obyekt(request):
-    print(request.POST)
-    return HttpResponse("Hello")
     if has_some_error(request): return redirect('/login/')
     try:
         total_money = 0
@@ -132,11 +130,11 @@ def sell_product_to_obyekt(request):
             if key.startswith('quantity;') and number!='0':
                 number = int(number)
                 product_id = int(key.split(';')[1])
+                price = int(request.POST['price;'+str(product_id)])
                 product = Product.objects.get(id=product_id)
-                price = int(product.price*(100+product.profit_percentage)/100)
                 if number>product.remain:
                     messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
-                    return redirect('dokon_app:dashboard')
+                    return redirect('dokon_app:obyekt_dashboard')
                 
                 total_money += price*number
                 
@@ -146,9 +144,9 @@ def sell_product_to_obyekt(request):
                     'total_amount': price * number,
                     'profit': (price - product.price) * number,
                 }
-                history_sold_outs[1]+=number
-                history_sold_outs[2]+=price*number
-                history_sold_outs[3]+=(price - product.price) * number
+                history_sold_outs[1]+=product_details['quantity']
+                history_sold_outs[2]+=product_details['total_amount']
+                history_sold_outs[3]+= product_details['profit']
                 sold_out_products.append(product_details)
 
                 product.remain-=number
@@ -157,16 +155,17 @@ def sell_product_to_obyekt(request):
             messages.error(request, "Xatolik ro'y berdi!")
         else:
             # Create a HistorySoldOut object
-            history_sold_out = HistorySoldOut.objects.create(
+            history_sold_out = HistoryObject.objects.create(
                 responsible=history_sold_outs[0],
-                total_number_sold_out=history_sold_outs[1],
+                history_object_id=int(request.POST['selected_obyekt_id']),
+                total_number_given=history_sold_outs[1],
                 total_amount=history_sold_outs[2],
                 profit=history_sold_outs[3],
             )
 
-            # Create instances in ProductHistorySoldOut
+            # Create instances in ProductHistoryObject
             for product_details in sold_out_products:
-                product_history = ProductHistorySoldOut.objects.create(
+                product_history = ProductHistoryObject.objects.create(
                     type_id=product_details['product_id'],
                     number=product_details['quantity'],
                     total_amount=product_details['total_amount'],
@@ -174,14 +173,22 @@ def sell_product_to_obyekt(request):
                     date=history_sold_out.date
                 )
                 
-                # Add the created ProductHistorySoldOut instance to history_sold_out's history_products
+                # Add the created ProductHistoryObject instance to history_sold_out's history_products
                 history_sold_out.history_products.add(product_history)
-            messages.success(request, "Sotish muvaffaqiyatli amalga oshirildi!")
+
+                # add amount to real dept
+                obyekt_obj = Obyekt.objects.get(id=request.POST['selected_obyekt_id'])
+                obyekt_obj.real_dept -= history_sold_outs[2]
+                obyekt_obj.save()
+                print(obyekt_obj)
+
+            messages.success(request, f"{obyekt_obj.name} Obyektga berish muvaffaqiyatli amalga oshirildi!")
 
     except Exception as e:
+        print(e, 2324234)
         messages.error(request, "Xatolik ro'y berdi!")
 
-    return redirect('dokon_app:dashboard')
+    return redirect('dokon_app:obyekt_dashboard')
 
 def mahsulot(request):
     if has_some_error(request): return redirect('/login/')
@@ -345,40 +352,3 @@ def insert_new_porduct(request):
         messages.error(request, "Xatolik ro'y berdi!")
 
     return redirect('dokon_app:newproduct')
-
-
-
-
-
-
-# def get_products(request):
-#     if request.method == 'POST' and request.is_ajax():
-#         product_type_id = request.POST.get('product_type_id')
-#         # Fetch products based on the selected product type
-#         products = Product.objects.filter(type_id=product_type_id)
-#         # Render the products into HTML
-#         products_html = render_to_string('products_table.html', {'products': products})
-#         return JsonResponse({'products_html': products_html})
-#     else:
-#         return JsonResponse({'error': 'Invalid request'})
-# def zakaz(request):
-#     if has_some_error(request): return redirect('/login/')
-
-#     user_id = request.COOKIES['user']
-#     worker_id = request.COOKIES['worker']
-#     print(user_id, worker_id)
-#     context = {
-#         'active': 'dokon_3',
-#     }
-#     return render(request, 'dokon/zakaz.html', context=context)
-
-# def etiroz(request):
-#     if has_some_error(request): return redirect('/login/')
-
-#     user_id = request.COOKIES['user']
-#     worker_id = request.COOKIES['worker']
-#     print(user_id, worker_id)
-#     context = {
-#         'active': 'dokon_4',
-#     }
-#     return render(request, 'dokon/etiroz.html', context=context)
