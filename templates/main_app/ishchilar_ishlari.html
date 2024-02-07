@@ -182,6 +182,7 @@ td {
                     {% endif %}
                     <th><center>Xizmat haqqi</center></th>
                     <th><center>Bajarilganlar ish</center></th>
+                    <th><center>Vaqt</center></th>
                 </tr>
                 </thead>
                 <tbody id="myDropdown2">
@@ -194,6 +195,7 @@ td {
                     {% endif %}
                     <td id="{{ work_amount.id }}service_price">{{ work_amount.job.service_price|spacecomma }} so'm</td>
                     <td id="{{ work_amount.id }}completed">{{ work_amount.completed|spacecomma }}</td>
+                    <td id="{{ obyekt.id }}date">{{ work_amount.date|date:"H:i:s <-> d-m-Y" }}</td>
                     
                 </tr>
                 {% endfor %}

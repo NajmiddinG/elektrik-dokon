@@ -399,7 +399,10 @@ def done_work_detail(request):
             work_amounts = []
             for entry in WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, date__year=selected_obyekt2 // 12,
             date__month=selected_obyekt2 % 12).order_by('-date'):
-                work_amounts.extend(list(entry.work_amount.all()))
+                w = entry.work_amount.all()
+                for i in range(len(w)):
+                    w[i].date = entry.date
+                work_amounts.extend(list(w))
         else: work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible_id=selected_obyekt1).work_amount.all()
 
     except:
