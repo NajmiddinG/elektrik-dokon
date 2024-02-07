@@ -134,7 +134,7 @@ def sell_product_to_obyekt(request):
                 product = Product.objects.get(id=product_id)
                 if number>product.remain:
                     messages.error(request, "Xatolik ro'y berdi. Omborda yetarli mahsulot yo'q!")
-                    return redirect('dokon_app:obyekt_dashboard')
+                    return redirect('dokon_app:obyekt_dashboard_santexnika')
                 
                 total_money += price*number
                 
@@ -149,10 +149,11 @@ def sell_product_to_obyekt(request):
                 history_sold_outs[3]+= product_details['profit']
                 sold_out_products.append(product_details)
 
-                product.remain-=number
-                product.save()
+        obyekt_obj = Obyekt.objects.get(id=request.POST['selected_obyekt_id'])
         if total_money==0:
             messages.error(request, "Xatolik ro'y berdi!")
+        elif obyekt_obj.max_dept+ obyekt_obj.real_dept - history_sold_outs[2]<0:
+            messages.error(request, 'Obyektning qarzdorligi maxsimal chegaraga yetib keldi!')
         else:
             # Create a HistorySoldOut object
             history_sold_out = HistoryObject.objects.create(
@@ -165,6 +166,9 @@ def sell_product_to_obyekt(request):
 
             # Create instances in ProductHistoryObject
             for product_details in sold_out_products:
+                product = Product.objects.get(id=product_details['product_id'])
+                product.remain -= product_details['quantity']
+                product.save()
                 product_history = ProductHistoryObject.objects.create(
                     type_id=product_details['product_id'],
                     number=product_details['quantity'],
@@ -175,6 +179,7 @@ def sell_product_to_obyekt(request):
                 
                 # Add the created ProductHistoryObject instance to history_sold_out's history_products
                 history_sold_out.history_products.add(product_history)
+
 
                 # add amount to real dept
                 obyekt_obj = Obyekt.objects.get(id=request.POST['selected_obyekt_id'])
