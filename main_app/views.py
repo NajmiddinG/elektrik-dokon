@@ -377,10 +377,7 @@ def done_work_detail(request):
 
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('workdaymoney_id', 0))
-    try:
-        work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
-    except:
-        work_amounts = []
+
     cookies = request.COOKIES
     selected_obyekt1 = int(cookies.get('worker_admin_id', 0))
     if selected_obyekt1==0:
@@ -398,9 +395,16 @@ def done_work_detail(request):
     except:
         months = []
     try:
-        work_amounts = WorkDayMoney.objects.get(id=selected_obyekt).work_amount.all()
+        if selected_obyekt == 0:
+            work_amounts = []
+            for entry in WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, date__year=selected_obyekt2 // 12,
+            date__month=selected_obyekt2 % 12).order_by('-date'):
+                work_amounts.extend(list(entry.work_amount.all()))
+        else: work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible_id=selected_obyekt1).work_amount.all()
+
     except:
         work_amounts = []
+
     try:
         workdaymoneys = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, 
             date__year=selected_obyekt2 // 12,
@@ -424,12 +428,10 @@ def done_work_detail(request):
 
     response = render(request, 'main_app/ishchilar_ishlari.html', context=context)
     try:
-        latest_obyekt = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, 
-            date__year=selected_obyekt2 // 12,
-            date__month=selected_obyekt2 % 12).latest('date').id
+        if not work_amounts and WorkDayMoney.objects.get(id=selected_obyekt):
+            response.set_cookie('workdaymoney_id', str(0))
         response.set_cookie('worker_admin_id', str(selected_obyekt1))
         response.set_cookie('worker_date_admin_id', str(selected_obyekt2))
-        response.set_cookie('workdaymoney_id', str(latest_obyekt))
     except Exception as e:
         print(e)
     return response

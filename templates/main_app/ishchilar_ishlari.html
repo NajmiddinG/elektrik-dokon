@@ -164,7 +164,7 @@ td {
             </select>
             </select>
             <select id="ObyektSelect" title="Obyektlarni nomlari" style="width: 210px;">
-                <option value="0">Ishni tanlang</option>
+                <option value="0">Barcha ishlar</option>
                 {% for obyekt in workdaymoneys %}
                     <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id == obyekt.id|stringformat:"s" %}selected {% endif %}>{{ obyekt.responsible }} : {{ obyekt.date|date:"d-m-Y" }}</option>
                 {% endfor %}
