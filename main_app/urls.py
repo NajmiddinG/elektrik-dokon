@@ -22,6 +22,7 @@ from .views import (
     set_cookie_for_all_types_of_filter_view,
     create_obyekt_worker_months,
     done_work_detail,
+    edit_obyekt_worker_months,
 )
 
 app_name = 'main_app'
@@ -42,5 +43,7 @@ urlpatterns = [
     path('create_obyekt_worker_months/', create_obyekt_worker_months, name="create_obyekt_worker_months"),
 
     path('ishchilar_ishlari/', done_work_detail, name="done_work_detail"),
+
+    path('edit_obyekt_worker_months/<int:done_work_id>/', edit_obyekt_worker_months, name='edit_obyekt_worker_months'),
 
 ]

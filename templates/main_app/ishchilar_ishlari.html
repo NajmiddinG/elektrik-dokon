@@ -181,7 +181,7 @@ td {
                     <th><center>Bog'langan</center></th>
                     {% endif %}
                     <th><center>Xizmat haqqi</center></th>
-                    <th><center>Bajarilganlar ish</center></th>
+                    <th><center>Soni</center></th>
                     <th><center>Vaqt</center></th>
                 </tr>
                 </thead>
@@ -248,7 +248,7 @@ td {
 </div> -->
 
 <!-- create -->
-<div id="productFormContainer" class="add-form-container">
+<!-- <div id="productFormContainer" class="add-form-container">
     <div class="title">
         <i class='bx bx-detail'></i>
         <h2>Obyekt ishi qo'shish</h2>
@@ -302,56 +302,33 @@ td {
         </div>
         <button type="submit" class="save">Saqlash</button>
     </form>
-</div>
+</div> -->
 
 <!-- edit -->
 <div id="editObyektFormContainer" class="add-form-container">
     <div class="title">
         <i class='bx bx-detail'></i>
-        <h2>Obyekt ishini o'zgartirish</h2>
+        <h2>Bajarilgan ishni o'zgartirish</h2>
     </div>
-    <form action="{% url 'obyekt_app:edit_obyekt_ishi' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
+    <form action="{% url 'main_app:edit_obyekt_worker_months' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
         <div class="box-wrapper">
             {% if worker_type == 'Admin' %}
             <div class="box-wrapper">
                 <div class="input-box">
-                    <label for="obyekt_worker">Obyekt nomi:</label>
-                    <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
-                        {% for obyekt in workdaymoneys %}
-                            <option value="{{ obyekt.id }}" {% if request.COOKIES.workdaymoney_id|default:"-1"|add:0 == obyekt.id %} selected {% endif %}>{{ obyekt.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-box">
-                    <label for="job_type">Ish turi:</label>
-                    <select id="job_type" name="job_type" style="width: 250px;">
-                        {% for workeramountjobtype in workeramountjobtypes %}
-                        <option value="{{ workeramountjobtype.name }}">{{ workeramountjobtype.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-box">
-                    <label for="service_price">Xizmat haqqi:</label>
-                    <input type="text" value="0" min="0" id="service_price" name="service_price">
-                </div>
-                <div class="input-box">
                     <label for="total_completed">Tugatilganlar soni:</label>
                     <input type="text" value="0" min="0" id="total_completed" name="total_completed">
-                </div>
-                <div class="input-box">
-                    <label for="total">Umumiy soni:</label>
-                    <input type="text" value="1" min="1" id="total" name="total">
+                    <input type="number" name="work_id" id="work_id" hidden>
                 </div>
             </div>
             {% else %}
-            <label for="">Admin obyektni o'zgartira oladi xolos</label>
+            <label for="">Admin bu funksiyaga ega</label>
             {% endif %}
         </div>
         <button type="submit" class="save">Saqlash</button>
     </form>
 </div>
 
-<script>    
+<script>
     function toggleForm(formId) {
         var formContainer = document.getElementById(formId);
         var currentDisplay = window.getComputedStyle(formContainer).display;
@@ -387,24 +364,16 @@ td {
     obyektIdCells.forEach(function (cell) {
         cell.addEventListener('click', function () {
             var obyektId = cell.getAttribute('id');
-            var job_type = document.getElementById(obyektId + 'job_type').textContent.trim();
-            var service_price = document.getElementById(obyektId + 'service_price').textContent.trim();
-            var total_completed = document.getElementById(obyektId + 'total_completed').textContent.trim();
-            var total = document.getElementById(obyektId + 'total').textContent.trim();
+            var total_completed = document.getElementById(obyektId + 'completed').textContent.trim();
             
-            // Populate the input fields in the edit form
             var editForm = document.getElementById('editObyektForm');
-            var job_typeInput = editForm.querySelector('#job_type');
-            var service_priceInput = editForm.querySelector('#service_price');
+            var work_idInput = editForm.querySelector('#work_id');
             var total_completedInput = editForm.querySelector('#total_completed');
-            var totalInput = editForm.querySelector('#total');
 
-            job_typeInput.value = job_type;
-            service_priceInput.value = parseFloat(service_price.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;;
+            work_idInput.value = obyektId;
             total_completedInput.value = parseFloat(total_completed.replace(' so\'m', '').replaceAll(',', '').replaceAll(' ', '')); // Convert price to number;
-            totalInput.value = parseFloat(total.replace(' so\'m', '').replace(',', '').replaceAll(' ', '').replaceAll(' ', '')); // Convert price to number;
 
-            editForm.action = '/ishchi/edit_obyekt_ishi/' + obyektId + '/';
+            editForm.action = '/edit_obyekt_worker_months/' + obyektId + '/';
             toggleForm('editObyektFormContainer');
         });
     })

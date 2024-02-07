@@ -10,7 +10,7 @@ from django.db.models import Min, Max
 
 from .models import User, Worker, WorkDay
 from ishchi_app.models import Work, WorkAmount, WorkDayMoney, Money
-from obyekt_app.models import Obyekt
+from obyekt_app.models import Obyekt, WorkAmount
 
 def check_user(request):
     try:
@@ -332,30 +332,40 @@ def ishchilar_holati(request):
         print(e)
     return response
 
-def edit_obyekt_worker_months(request):
+def edit_obyekt_worker_months(request, done_work_id):
     if has_some_error(request): return redirect('/login/')
     if request.method=='POST':
         try:
-            given_money_id = str(request.POST.get('given_money_id'))
-            amount = int(request.POST.get('amount'))
-            comment = str(request.POST.get('comment'))
-            given_money = Given_money.objects.get(id=given_money_id)
-            obyekt = Obyekt.objects.get(id=given_money.obyekt.id)
-            obyekt.given_amount = obyekt.given_amount-given_money.amount+amount
-            obyekt.real_dept = obyekt.real_dept-given_money.amount+amount
-            obyekt.save()
-            given_money.amount = amount
-            given_money.responsible=request.user
-            given_money.amount=amount
-            given_money.comment=comment
-            given_money.save()
+            work_id = int(request.POST.get('work_id'))
+            total_completed = int(request.POST.get('total_completed'))
+            work_obj = Work.objects.get(id=work_id)
+            diff = total_completed-work_obj.completed
+            diff_price_worker = diff*work_obj.job.service_price
+            diff_price_object = diff*work_obj.job.first_price
+            # changing Work according to diff
+            work_obj.completed = total_completed
+            work_obj.save()
+            # changing workdayamount according to diff
+            workdaymoney_obj = work_obj.workdaymoney_set.values().first()
+            workdaymoney_obj = WorkDayMoney.objects.get(id=workdaymoney_obj['id'])
+            workdaymoney_obj.earn_amount += diff_price_worker
+            workdaymoney_obj.save()
+            # changing obyekt's work amount according to diff
+            work_amount_obj = WorkAmount.objects.get(id=work_obj.job.id)
+            work_amount_obj.total_completed+=diff
+            work_amount_obj.save()
+            # changing obyekt according to diff
+            obyekt_obj = work_amount_obj.obyekt_set.values().first()
+            obyekt_obj = Obyekt.objects.get(id=obyekt_obj['id'])
+            obyekt_obj.real_dept-=diff_price_object
+            obyekt_obj.save()
 
-            messages.success(request, f"{given_money.id}- olingan pull {amount} ga o'zgartirildi!")
+            messages.success(request, "Obyekt ni real qarzdorligi, Obyekt ishining tugatilganlar soni, Qilingan ish qiymati va Qilingan ishni soni muvaffaqiyatli o'zgardi!")
         except Exception as e:
             print(e)
             messages.error(request, 'Xatolik yuz berdi.')
 
-    return redirect('obyekt_app:given_money_views')
+    return redirect('main_app:done_work_detail')
 
 
 # class Money(models.Model):
