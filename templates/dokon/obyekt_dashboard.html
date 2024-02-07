@@ -226,7 +226,7 @@ td {
                         <tr>
                           <td><center>{{ product.type.name }}</center></td>
                           <td data-product-real-price='{{ product.price|real_money:product.profit_percentage }}'><center>{{ product.name }}</center></td>
-                          <td style="max-width: 75px !important;"><center><input type="number" name="price;{{ product.id }}" id="price;{{ product.id }}" value="{{ product.price|real_money:product.profit_percentage }}" min="0" class="product_search" onchange="calculateTotal"></center></td>
+                          <td style="max-width: 75px !important;"><center><input type="number" name="price;{{ product.id }}" id="price;{{ product.id }}" value="{{ product.price|real_money2:product.profit_percentage }}" min="0" class="product_search" onchange="calculateTotal"></center></td>
                           <td style="max-width: 75px !important;"><center><input type="number" name="quantity;{{ product.id }}" id="{{ product.id }}" value="0" min="0" max="1000000000" class="product_search product_search2" onchange="calculateTotal"></center></td>
                           <td><center>{{ product.remain|spacecomma }}</center></td>
                         </tr>
