@@ -181,7 +181,12 @@ td {
                   <h3>Yangi mahsulotlar</h3>
                   <!-- <input type="text" class="product_search" placeholder="Mahsulot nomi"> -->
                   <input type="text" placeholder="Mahsulot nomi.." id="myInput2" onkeyup="filterFunction2()" style="max-width: 400px;">
-
+                  <select id="myselect2" class="button_cool" title="Mahsulot turi bo'yicha saralash" style="width: 210px;" onchange="filterFunction2()">
+                    <option value="0" {% if request.COOKIES.product_type == 0 %}selected {% endif %}>Hamma mahsulotlar</option>
+                    {% for product_type in product_types %}
+                        <option value="{{ product_type.id }}" {% if request.COOKIES.product_type == product_type.id|stringformat:"s" %}selected {% endif %}>{{ product_type.name }}</option>
+                    {% endfor %}
+                </select>
                   <div class="dropdown">
                       <button onclick="myFunction()" class="dropbtn add-button add-btn" style="display: none;">Qidirish</button>
                       <div id="myDropdown" class="dropdown-content">  
@@ -280,22 +285,30 @@ if (dropdown.style.display === "none" || dropdown.style.display === "") {
   calculateTotal();
   }
   function filterFunction2() {
-    var input, filter, ul, li, a, i;
+    var input, select, filter, filter2, ul, li, a, i;
     input = document.getElementById("myInput2");
     filter = input.value.toUpperCase();
+    select = document.getElementById("myselect2");
+    filter2 = select.options[select.selectedIndex].text.toUpperCase();
     div = document.getElementById("myDropdown2");
     a = div.getElementsByTagName("tr");
     for (i = 0; i < a.length; i++) {
-      txtValue = a[i].textContent || a[i].innerText;
-      console.log(txtValue.toUpperCase().indexOf(filter) > -1)
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-      a[i].style.display = "";
-      } else {
-      a[i].style.display = "none";
-      }
-  }
-  calculateTotal();
-  }
+        var row = a[i];
+        var secondTd = row.getElementsByTagName("td")[0];
+        console.log(secondTd);
+        if (secondTd) {
+            var txtValue = row.textContent || row.innerText;
+            var secondTdText = secondTd.textContent || secondTd.innerText;
+
+            if (txtValue.toUpperCase().indexOf(filter) > -1 && (secondTdText.toUpperCase() === filter2 || filter2 === "HAMMA MAHSULOTLAR")) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+    calculateTotal();
+}
 
 // Add a click event listener to each product link
   document.querySelectorAll('.dropdown-content tr').forEach(function(link) {
