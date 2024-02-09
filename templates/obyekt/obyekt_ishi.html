@@ -209,6 +209,7 @@ td {
                             <th><center>Kimga</center></th>
                             <th><center>Doc</center></th>
                             <th><center>Vaqt</center></th>
+                            <th><center>O'chirish</center></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -218,6 +219,7 @@ td {
                             <td id="{{ doc.id }}role" data-id="{{ doc.id }}" title="{{ doc.role|capfirst }}">{{ doc.role|capfirst }}</td>
                             <td id="{{ doc.id }}doc"><i class='bx bxs-file'></i><a href="{{ doc.doc.url }}" target="_blank" style="color: green; font-size: 20px;">{{ doc.doc.name|extract_doc }}</a></td>
                             <td id="{{ doc.id }}date">{{ doc.date|date:"d-m-Y" }}</td>
+                            <td><a style="color:  red;" href="{% url 'obyekt_app:delete_doc' doc.id %}"><i class='bx bxs-tag-x' style="vertical-align: bottom;"></i>O'chirish</a></td>
                         </tr>
                         {% endfor %}
                         </tbody>

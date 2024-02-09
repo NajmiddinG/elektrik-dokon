@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from .models import Obyekt, WorkAmount, WorkAmountJobType, ObyektJobType, Given_money, Instructsiya, Obyekt_doc
 from main_app.models import Worker, User, WorkDay
 from main_app.calculate import calculate_all_from_zero
+import os
+from django.conf import settings
 
 
 def dashboard(request):
@@ -392,3 +394,25 @@ def create_obyekt_xujjat(request, role=1):
 
 def edit_doc(request, doc_id):
     pass
+
+def delete_doc(request, doc_id):
+    if has_some_error(request) or not request.user.workers.filter(name__iexact='admin').exists():
+        return redirect('/login/')
+    try:
+        obyekt_doc = Obyekt_doc.objects.get(pk=doc_id)
+    except Obyekt_doc.DoesNotExist:
+        messages.error(request, "Xujjat mavjud emas")
+
+    if obyekt_doc.doc:
+        doc_path = os.path.join(settings.MEDIA_ROOT, str(obyekt_doc.doc))
+        if os.path.exists(doc_path):
+            os.remove(doc_path)
+
+    # Delete the Obyekt_doc object
+    obyekt_doc.delete()
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('/')

@@ -18,6 +18,7 @@ from .views import (
     create_obyekt_instruktsiya,
     create_obyekt_xujjat,
     edit_doc,
+    delete_doc
 )
 app_name = 'obyekt_app'
 
@@ -41,6 +42,7 @@ urlpatterns = [
     path('set_obyekt_cookie/<int:obyekt_id>/', set_obyekt_cookie, name='set_obyekt_cookie'),
     path('set_obyekt_cookie2/<int:obyekt_id>/', set_obyekt_cookie2, name='set_obyekt_cookie2'),
     path('edit_doc/<int:doc_id>/', edit_doc, name='edit_doc'),
+    path('delete_doc/<int:doc_id>/', delete_doc, name='delete_doc'),
 
     path('given_money_views/', given_money_views, name='given_money_views'),
     path('calculate_all_from_zero_view/', calculate_all_from_zero_view, name='calculate_all_from_zero_view'),
