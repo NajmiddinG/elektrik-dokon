@@ -563,7 +563,6 @@ td {
             toggleForm('editObyektFormContainer');
         });
     })
-    });
     document.getElementById('ObyektSelect').addEventListener('change', function() {
     var selectedValue = this.value;
     window.location.href = "{% url 'obyekt_app:set_obyekt_cookie' 0 %}".replace('0', selectedValue);
