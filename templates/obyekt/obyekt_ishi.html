@@ -150,7 +150,8 @@ td {
                 {% endfor %}
             </select>
             {% if worker_type == 'Admin' %}
-            <p data-label="jobtype" title="+ Xujjat" class="add-button add-btn" onclick="toggleForm('xujjatFormContainer')">+ Xujjat</p>
+            <p data-label="jobtype" title="+ Ishchiga xujjat" class="add-button add-btn" onclick="toggleForm('xujjatFormContainer')">+ Ishchiga xujjat</p>
+            <p data-label="jobtype" title="+ Obyektga xujjat" class="add-button add-btn" onclick="toggleForm('xujjat2FormContainer')">+ Obyektga xujjat</p>
             <p data-label="jobtype" title="+ Ish turi" class="add-button add-btn" onclick="toggleForm('jobTypeFormContainer')">+ Ish turi</p>
             <p data-label="obyekt" title="+ Obyekt ishlari qo'shish" class="add-button add-btn" onclick="toggleForm('productFormContainer')">+ Obyekt ishi</p>
             <p data-label="given_money" title="+ Olingan summa qo'shish" class="add-button add-btn" onclick="toggleForm('given_moneyFormContainer')">+ Olingan summa</p>
@@ -200,11 +201,50 @@ td {
             </table>
             
                     <i class='bx bxs-file' style="padding-top: 20px;"></i><span style="font-weight: 600; font-size: 20px;">Obyekt xujjatlar</span>
-                            {% for i in obyekt_doc %}
-                            <p style="padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
-                                <i class='bx bxs-file'></i><a href="{{ i.doc.url }}" target="_blank" style="color: green; font-size: 20px;">&nbsp;{{ forloop.counter }} - {{ i.doc.name|extract_doc }}</a>
-                            </p>
-                            {% endfor %}
+                    {% if worker_type == 'Admin' %}
+                    <table id="myTable_doc_admin" style="margin-top: 20px;">
+                        <thead>
+                        <tr>
+                            <th><center>№</center></th>
+                            <th><center>Kimga</center></th>
+                            <th><center>Doc</center></th>
+                            <th><center>Vaqt</center></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for doc in obyekt_doc %}
+                        <tr class="edit-doc" data-id="{{ doc.id }}">
+                            <td id="{{ doc.id }}" class="admin-doc-id" data-id="{{ doc.id }}">{{ forloop.counter }}</td>
+                            <td id="{{ doc.id }}role" data-id="{{ doc.id }}" title="{{ doc.role|capfirst }}">{{ doc.role|capfirst }}</td>
+                            <td id="{{ doc.id }}doc"><i class='bx bxs-file'></i><a href="{{ doc.doc.url }}" target="_blank" style="color: green; font-size: 20px;">{{ doc.doc.name|extract_doc }}</a></td>
+                            <td id="{{ doc.id }}date">{{ doc.date|date:"d-m-Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <table id="myTable_doc" style="margin-top: 20px;">
+                        <thead>
+                        <tr>
+                            <th><center>№</center></th>
+                            <th><center>Kimga</center></th>
+                            <th><center>Doc</center></th>
+                            <th><center>Vaqt</center></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for doc in obyekt_doc %}
+                        <tr class="edit-doc" data-id="{{ doc.id }}">
+                            <td id="{{ doc.id }}" class="doc-id" data-id="{{ doc.id }}">{{ forloop.counter }}</td>
+                            <td id="{{ doc.id }}job_type" data-id="{{ doc.id }}" title="{{ doc.job_type|capfirst }}">{{ doc.role|capfirst }}</td>
+                            <td id="{{ doc.id }}doc"><i class='bx bxs-file'></i><a href="{{ doc.doc.url }}" target="_blank" style="color: green; font-size: 20px;">{{ doc.doc.name|extract_doc }}</a></td>
+                            <td id="{{ doc.id }}date">{{ doc.date|date:"d-m-Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                            
         </div>
     </div>
 
@@ -296,9 +336,25 @@ td {
 <div id="xujjatFormContainer" class="add-form-container">
     <div class="title">
         <i class='bx bxs-file'></i>
-        <h2>Xujjat</h2>
+        <h2>Ishchiga xujjat</h2>
     </div>
-    <form action="{% url 'obyekt_app:create_obyekt_xujjat' %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <form action="{% url 'obyekt_app:create_obyekt_xujjat' 1 %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="box-wrapper">
+            <div class="input-box">
+                <label for="doc">Xujjat(pdf, doc, rasm, ...):</label>
+                <input type="file" id="doc" name="doc" required>
+            </div>
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
+<div id="xujjat2FormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bxs-file'></i>
+        <h2>Obyektga xujjat</h2>
+    </div>
+    <form action="{% url 'obyekt_app:create_obyekt_xujjat' 0 %}" class="info" method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="box-wrapper">
             <div class="input-box">
                 <label for="doc">Xujjat(pdf, doc, rasm, ...):</label>
@@ -402,6 +458,31 @@ td {
     </form>
 </div>
 
+
+<div id="editDocFormContainer" class="add-form-container">
+    <div class="title">
+        <i class='bx bx-detail'></i>
+        <h2>Xujjatni o'zgartirish</h2>
+    </div>
+    <form action="{% url 'obyekt_app:edit_doc' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
+        <div class="box-wrapper">
+            {% if worker_type == 'Admin' %}
+            <div class="box-wrapper">
+                <div class="input-box">
+                    <label for="role">Role:</label>
+                    <select id="role" name="role" style="width: 250px;">
+                        <option value="ishchi">Ishchi</option>
+                        <option value="obyekt">Obyekt</option>
+                    </select>
+                </div>
+            {% else %}
+            <label for="">Admin obyektni o'zgartira oladi xolos</label>
+            {% endif %}
+        </div>
+        <button type="submit" class="save">Saqlash</button>
+    </form>
+</div>
+
 <script>    
     function toggleForm(formId) {
         var formContainer = document.getElementById(formId);
@@ -432,6 +513,26 @@ td {
                 document.getElementById('name').focus();
             });
         });
+        
+        var docIdCells = document.querySelectorAll('.admin-doc-id');
+    docIdCells.forEach(function (cell) {
+        cell.addEventListener('click', function () {
+            var doc_id = cell.getAttribute('id');
+            var role = document.getElementById(doc_id + 'role').textContent.trim();
+            var doc = document.getElementById(doc_id + 'doc').textContent.trim();
+
+            var editForm = document.getElementById('editDocFormContainer');
+            var docInput = editForm.querySelector('#role');
+            // var roleInput = editForm.querySelector('#doc');
+
+            docInput.value = doc;
+            // roleInput.value = role;
+
+            editForm.action = '/obyekt/edit_doc/' + doc_id + '/';
+            toggleForm('editDocFormContainer');
+        });
+    })
+    });
     // Find all elements with class 'product-id'
     var obyektIdCells = document.querySelectorAll('.work_amount-id');
     console.log(obyektIdCells);

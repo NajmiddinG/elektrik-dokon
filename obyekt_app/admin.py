@@ -31,7 +31,7 @@ class InstructsiyaAdmin(admin.ModelAdmin):
 
 @admin.register(Obyekt_doc)
 class Obyekt_docAdmin(admin.ModelAdmin):
-    list_display = ('id', 'obyekt', 'date')
+    list_display = ('id', 'role', 'obyekt', 'date')
 
 
 admin.site.register(WorkAmount, WorkAmountAdmin)

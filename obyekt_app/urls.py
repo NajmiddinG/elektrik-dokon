@@ -17,6 +17,7 @@ from .views import (
     calculate_all_from_zero_view,
     create_obyekt_instruktsiya,
     create_obyekt_xujjat,
+    edit_doc,
 )
 app_name = 'obyekt_app'
 
@@ -32,13 +33,14 @@ urlpatterns = [
     path('create_work_amount_job_type/', create_work_amount_job_type, name='create_work_amount_job_type'),
 
     path('create_obyekt_instruktsiya/', create_obyekt_instruktsiya, name='create_obyekt_instruktsiya'),
-    path('create_obyekt_xujjat/', create_obyekt_xujjat, name='create_obyekt_xujjat'),
+    path('create_obyekt_xujjat/<int:role>/', create_obyekt_xujjat, name='create_obyekt_xujjat'),
 
     path('create_obyekt_given_amount/', create_obyekt_given_amount, name='create_obyekt_given_amount'),
     path('edit_obyekt_given_amount/', edit_obyekt_given_amount, name='edit_obyekt_given_amount'),
 
     path('set_obyekt_cookie/<int:obyekt_id>/', set_obyekt_cookie, name='set_obyekt_cookie'),
     path('set_obyekt_cookie2/<int:obyekt_id>/', set_obyekt_cookie2, name='set_obyekt_cookie2'),
+    path('edit_doc/<int:doc_id>/', edit_doc, name='edit_doc'),
 
     path('given_money_views/', given_money_views, name='given_money_views'),
     path('calculate_all_from_zero_view/', calculate_all_from_zero_view, name='calculate_all_from_zero_view'),

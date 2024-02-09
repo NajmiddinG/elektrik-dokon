@@ -114,7 +114,10 @@ def obyekt_ishi(request):
     selected_obyekt = int(cookies.get('obyekt_id', 0))
     try:
         work_amounts = Obyekt.objects.get(pk=selected_obyekt).work_amount.all()
-        obyekt_doc = Obyekt_doc.objects.filter(obyekt=Obyekt.objects.get(pk=selected_obyekt))
+        if bool(request.user.workers.filter(name__iexact='admin').first()):
+            obyekt_doc = Obyekt_doc.objects.filter(obyekt=Obyekt.objects.get(pk=selected_obyekt)).order_by('role')
+        else:
+            obyekt_doc = Obyekt_doc.objects.filter(role='obyekt', obyekt=Obyekt.objects.get(pk=selected_obyekt))
     except:
         work_amounts = []
         obyekt_doc = []
@@ -364,19 +367,18 @@ def create_obyekt_instruktsiya(request):
     else:
         return redirect('/')
 
-def create_obyekt_xujjat(request):
+def create_obyekt_xujjat(request, role=1):
     if has_some_error(request):
         return redirect('/login/')
-    
     if request.method == 'POST':
         try:
-
+            r = ['obyekt', 'ishchi'][role]
             cookies = request.COOKIES
             selected_obyekt = int(cookies.get('obyekt_id', 1))
             # Access the uploaded file from request.FILES
             uploaded_file = request.FILES.get('doc')
             # Create a new Instruktsiya instance with the uploaded file
-            new_obyekt_doc = Obyekt_doc(obyekt=Obyekt.objects.get(pk=selected_obyekt), doc=uploaded_file)
+            new_obyekt_doc = Obyekt_doc(role=r, obyekt=Obyekt.objects.get(pk=selected_obyekt), doc=uploaded_file)
             new_obyekt_doc.save()
             messages.success(request, f'Xujjat muvaffaqiyatli yaratildi.')
         except Exception as e:
@@ -387,3 +389,6 @@ def create_obyekt_xujjat(request):
         return redirect(referer)
     else:
         return redirect('/')
+
+def edit_doc(request, doc_id):
+    pass
