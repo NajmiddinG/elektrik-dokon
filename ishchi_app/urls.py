@@ -6,7 +6,6 @@ from .views import (
     done_work_list,
     done_work_detail,
     allow_add,
-    generate_worker_pdf,
 )
 
 app_name = 'ishchi_app'
@@ -20,5 +19,5 @@ urlpatterns = [
     path('done_work_detail/', done_work_detail, name='done_work_detail'),
 
     path('allow_add/', allow_add, name='allow_add'),
-    path('generate_worker_pdf/', generate_worker_pdf, name='generate_worker_pdf'),
+    
 ]
