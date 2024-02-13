@@ -27,8 +27,6 @@ from main_app.models import Worker, User
 def dashboard_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
@@ -104,8 +102,6 @@ def sell_product_santexnika(request):
 def obyekt_dashboard_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     obyekt = Obyekt.objects.all()
@@ -294,8 +290,6 @@ def set_product_type_cookie_santexnika(request, product_type_id):
 def newproduct_santexnika(request):
     if has_some_error(request): return redirect('/login/')
 
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='santexnika').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='santexnika').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()

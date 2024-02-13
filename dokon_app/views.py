@@ -27,8 +27,6 @@ def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
@@ -105,8 +103,6 @@ def sell_product(request):
 def obyekt_dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     obyekt = Obyekt.objects.all()
@@ -296,8 +292,6 @@ def set_product_type_cookie(request, product_type_id):
 def newproduct(request):
     if has_some_error(request): return redirect('/login/')
 
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
