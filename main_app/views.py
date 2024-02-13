@@ -14,14 +14,9 @@ from obyekt_app.models import Obyekt, WorkAmount
 
 def check_user(request):
     try:
-        user_id = request.COOKIES['user']
-        worker_id = request.COOKIES['worker']
-        
-        if not user_id or not worker_id:
-            return False
-        user = User.objects.get(id=user_id)
-        work = user.workers.filter(id=worker_id).first()
-        if not work:
+        work = request.user.workers.exists()
+        user = request.user
+        if not user or not work:
             return False
         return True
 
@@ -126,8 +121,6 @@ def dashboard(request):
         is_working = WorkDay.objects.filter(responsible_id=user_info['id'], end_date__isnull=True).exists()
         user_info['is_working'] = is_working
         users_with_workers_info.append(user_info)
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'main_1',
@@ -430,8 +423,6 @@ def done_work_detail(request):
         print(e)
         workdaymoneys = []
     
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {

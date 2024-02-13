@@ -50,8 +50,6 @@ def dashboard(request):
     has_allow_entry = Allow.objects.filter(responsible=request.user).exists()
     instruktsiya_doc = Instructsiya.objects.all()
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     obyekts = Obyekt.objects.all().order_by('-date')
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
     worker_type = request.user.workers.values_list('name', flat=True).first()
@@ -84,8 +82,6 @@ def obyekt_ishi(request):
     except:
         work_amounts = []
         obyekt_doc = []
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     obyekts = Obyekt.objects.all().order_by('-date')
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
     obyekt_workers = User.objects.filter(workers__name='Obyekt')
@@ -168,8 +164,6 @@ def done_work_list(request):
     except:
         months = []
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     cookies = request.COOKIES
     selected_obyekt = int(cookies.get('worker_months', 24289))
     if selected_obyekt in [0, 24287]:
@@ -235,8 +229,6 @@ def done_work_detail(request):
         work_amounts = WorkDayMoney.objects.get(id=selected_obyekt, responsible=request.user).work_amount.all()
     except:
         work_amounts = []
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     workdaymoneys = WorkDayMoney.objects.filter(responsible=request.user).order_by('-date')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {

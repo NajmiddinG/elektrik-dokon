@@ -84,3 +84,6 @@ def obyekt_status(value, arg):
         print(e)
         return 'red'
 
+@register.filter(name='obyekt_subtract')
+def obyekt_subtract(value, arg):
+    return spacecomma(value+arg)

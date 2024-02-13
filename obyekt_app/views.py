@@ -17,8 +17,6 @@ def dashboard(request):
     if has_some_error(request): return redirect('/login/')
 
     is_working = WorkDay.objects.filter(responsible=request.user, end_date__isnull=True).exists()
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
 
     if bool(request.user.workers.filter(name__iexact='admin').first()):
         obyekts = Obyekt.objects.all().order_by('-date')
@@ -123,8 +121,6 @@ def obyekt_ishi(request):
     except:
         work_amounts = []
         obyekt_doc = []
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
 
     if bool(request.user.workers.filter(name__iexact='admin').first()):
         obyekts = Obyekt.objects.all().order_by('-date')
@@ -293,8 +289,6 @@ def given_money_views(request):
         work_amounts = Given_money.objects.filter(obyekt_id=selected_obyekt)
     except:
         work_amounts = []
-    user_id = request.COOKIES['user']
-    worker_id = request.COOKIES['worker']
     if bool(request.user.workers.filter(name__iexact='admin').first()):
         obyekts = Obyekt.objects.all().order_by('-date')
     else:
