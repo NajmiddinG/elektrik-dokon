@@ -495,6 +495,7 @@ def generate_worker_pdf(request):
 
     # Add table for Berilgan oylik hisoboti
     table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
     table.style = 'Table Grid'
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = '№'
@@ -504,7 +505,6 @@ def generate_worker_pdf(request):
 
     for cell in hdr_cells:
         cell.paragraphs[0].alignment = 1  # Center alignment
-        cell.width = Inches(0.1)
 
     for index, money in enumerate(moneys):
         row_cells = table.add_row().cells
@@ -515,11 +515,9 @@ def generate_worker_pdf(request):
 
         for cell in row_cells:
             cell.paragraphs[0].alignment = 1  # Center alignment
-            cell.width = Inches(0.1)
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
-            cell.width = Inches(0.1)
     try:
         workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible=user,
@@ -546,6 +544,7 @@ def generate_worker_pdf(request):
     doc.add_heading("Kunlik hisobotlar", level=2)
 
     table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
     table.style = 'Table Grid'
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = '№'
@@ -555,7 +554,6 @@ def generate_worker_pdf(request):
 
     for cell in hdr_cells:
         cell.paragraphs[0].alignment = 1
-        cell.width = Inches(0.1)
         
     for index, workdaymoney in enumerate(workdaymoneys):
         row_cells = table.add_row().cells
@@ -566,15 +564,14 @@ def generate_worker_pdf(request):
 
         for cell in row_cells:
             cell.paragraphs[0].alignment = 1
-            cell.width = Inches(0.1)
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1
-            cell.width = Inches(0.1)
     
     doc.add_heading("Qilingan ishlar hisoboti", level=2)
 
     table = doc.add_table(rows=1, cols=5)
+    table.width = Inches(6.5)
     table.style = 'Table Grid'
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = '№'
@@ -585,7 +582,6 @@ def generate_worker_pdf(request):
 
     for cell in hdr_cells:
         cell.paragraphs[0].alignment = 1
-        cell.width = Inches(0.1)
     i = 0
     for index, workdaymoney in enumerate(workdaymoneys):
         for work in workdaymoney['work_amount'].all():
@@ -599,11 +595,9 @@ def generate_worker_pdf(request):
 
             for cell in row_cells:
                 cell.paragraphs[0].alignment = 1
-                cell.width = Inches(0.1)
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1
-            cell.width = Inches(0.1)
     
     doc.save(buffer)
     buffer.seek(0)
