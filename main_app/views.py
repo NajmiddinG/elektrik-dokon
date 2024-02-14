@@ -453,7 +453,7 @@ def hisobotlar(request):
     cur_date = timezone.now()
     year, month = cur_date.year, cur_date.month
 
-    months = [i for i in range(2023*12+1, year*12+month+1)]
+    months = [i for i in range(2024*12+1, year*12+month+1)]
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'main_4',
