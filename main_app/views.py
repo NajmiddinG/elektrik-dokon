@@ -17,6 +17,7 @@ from reportlab.lib.units import inch
 from io import BytesIO
 from docx import Document
 from docx.shared import Inches
+from datetime import datetime
 
 
 
@@ -486,20 +487,23 @@ def bool_to_word(value):
     if value: return "Ha"
     return "Yo'q"
 
+def today_accurate_format():
+    today = datetime.today()
+    return today.strftime('%d-%m-%Y')
+
 def elektrik_products_current_report(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
 
-    month = int(request.COOKIES.get('worker_date_admin_id', 24289))
     buffer = BytesIO()
     doc = Document()
-    doc.add_heading(f"Do'konning {month_accurate_format(month)} hisoboti.", level=1)
+    doc.add_heading(f"Do'konning {today_accurate_format()} hisoboti.", level=1)
     doc.add_heading("Elektr mahsulotlar", level=2)
     table = doc.add_table(rows=1, cols=7)
     table.width = Inches(6.5)
     widths = [2, 4, 4, 2, 2, 2, 3]
     total_widths = sum(widths)
     for i, width in enumerate(widths):
-        table.columns[i].width = Inches(width / total_widths * 6.5)  # Assuming total width of 6.5 inches
+        table.columns[i].width = Inches(width / total_widths * 6.5)
 
     table.style = 'Table Grid'
     hdr_cells = table.rows[0].cells
@@ -562,9 +566,85 @@ def elektrik_products_current_report(request):
     doc.save(buffer)
     buffer.seek(0)
 
-    return FileResponse(buffer, as_attachment=True, filename=f'Dokon {month_accurate_format(month)} elektr mahsulotlar hisoboti.docx')
+    return FileResponse(buffer, as_attachment=True, filename=f"Elektr mahsulotlari {today_accurate_format()} sana holati.docx")
 
 
+def santexnika_products_current_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"Do'konning {today_accurate_format()} hisoboti.", level=1)
+    doc.add_heading("Santexnika mahsulotlar", level=2)
+    table = doc.add_table(rows=1, cols=7)
+    table.width = Inches(6.5)
+    widths = [2, 4, 4, 2, 2, 2, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Turi'
+    hdr_cells[2].text = 'Nomi'
+    hdr_cells[3].text = 'Kelish narx'
+    hdr_cells[4].text = 'Sotilish narx'
+    hdr_cells[5].text = 'Qoldiq'
+    hdr_cells[6].text = 'Umumiy narx'
+    hdr_cells[0].paragraphs[0].runs[0].font.bold = True
+
+    total_kelish = 0
+    total_sotish = 0
+    index_t = 0
+    all_products = Product.objects.filter(type__first_type='santexnika').order_by('type__name')
+    print(all_products.count())
+    for product in all_products.iterator():
+        print(index_t)
+        index_t+=1
+        sotish_narx = (product.price*(100+product.profit_percentage))//100
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = product.type.name
+        row_cells[2].text = product.name
+        row_cells[3].text = spacecomma(product.price)
+        row_cells[4].text = spacecomma(sotish_narx)
+        row_cells[5].text = str(product.remain)
+        row_cells[6].text = spacecomma(sotish_narx * product.remain)
+        total_kelish += product.price*product.remain
+        total_sotish += sotish_narx*product.remain
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+
+    doc.add_heading("Umumiy Santexnika mahsulotlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=3)
+    widths = [1,3,3]
+    table.width = Inches(6.5)
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Umumiy tan narx'
+    hdr_cells[2].text = 'Umumiy mahsulot miqdori'
+
+    row_cells = table.add_row().cells
+    row_cells[0].text = str(1)
+    row_cells[1].text = spacecomma(total_kelish)
+    row_cells[2].text = spacecomma(total_sotish)
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"Santexnika mahsulotlari {today_accurate_format()} sana holati.docx")
 
 def create_monthly_workers_report(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')

@@ -27,6 +27,7 @@ from .views import (
     generate_worker_pdf,
     create_monthly_workers_report,
     elektrik_products_current_report,
+    santexnika_products_current_report,
 )
 
 app_name = 'main_app'
@@ -54,5 +55,6 @@ urlpatterns = [
     path('generate_worker_pdf/', generate_worker_pdf, name='generate_worker_pdf'),
     path('create_monthly_workers_report/', create_monthly_workers_report, name='create_monthly_workers_report'),
     path('elektrik_products_current_report/', elektrik_products_current_report, name='elektrik_products_current_report'),
+    path('santexnika_products_current_report/', santexnika_products_current_report, name='santexnika_products_current_report'),
 
 ]
