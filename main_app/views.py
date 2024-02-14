@@ -1,12 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from main_app.forms import LoginForm
-from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db.models import Min, Max
+from django.db.models import Min, Max, Q
 
 from .models import User, Worker, WorkDay
 from ishchi_app.models import Work, WorkAmount, WorkDayMoney, Money
@@ -17,15 +15,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from io import BytesIO
-from django.http import FileResponse
-import io
-
 from docx import Document
-from docx.shared import Pt
-from docx import Document
-from io import BytesIO
-from django.http import FileResponse
-from django.utils.translation import gettext as _
 from docx.shared import Inches
 
 
@@ -496,8 +486,9 @@ def bool_to_word(value):
     if value: return "Ha"
     return "Yo'q"
 
-
 def elektrik_products_current_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
     month = int(request.COOKIES.get('worker_date_admin_id', 24289))
     buffer = BytesIO()
     doc = Document()
@@ -576,6 +567,8 @@ def elektrik_products_current_report(request):
 
 
 def create_monthly_workers_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
     month = int(request.COOKIES.get('worker_date_admin_id', 24289))
     buffer = BytesIO()
     doc = Document()
@@ -647,6 +640,8 @@ def create_monthly_workers_report(request):
 
 
 def generate_worker_pdf(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
     buffer = BytesIO()
     doc = Document()
 
