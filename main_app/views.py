@@ -505,7 +505,7 @@ def elektrik_products_current_report(request):
     doc.add_heading("Elektr mahsulotlar", level=2)
     table = doc.add_table(rows=1, cols=7)
     table.width = Inches(6.5)
-    widths = [2, 4, 4, 2, 2, 2, 3]
+    widths = [1.5, 4, 4, 2, 2, 2, 3]
     total_widths = sum(widths)
     for i, width in enumerate(widths):
         table.columns[i].width = Inches(width / total_widths * 6.5)  # Assuming total width of 6.5 inches
@@ -596,9 +596,6 @@ def create_monthly_workers_report(request):
     hdr_cells[3].text = 'Qilingan ish miqdori'
     hdr_cells[4].text = 'Qoldiq'
 
-    for cell in hdr_cells:
-        cell.paragraphs[0].alignment = 1  # Center alignment
-
     total_1 = 0
     total_2 = 0
     index_t = 0
@@ -629,9 +626,6 @@ def create_monthly_workers_report(request):
             row_cells[3].text = spacecomma(total_done_work_amount)
             row_cells[4].text = spacecomma(total_given - total_done_work_amount)
 
-            for cell in row_cells:
-                cell.paragraphs[0].alignment = 1  # Center alignment
-        
     for ind in range(1):
             index_t += 1
             row_cells = table.add_row().cells
@@ -641,8 +635,6 @@ def create_monthly_workers_report(request):
             row_cells[3].text = spacecomma(total_2)
             row_cells[4].text = spacecomma(total_1 - total_2)
 
-            for cell in row_cells:
-                cell.paragraphs[0].alignment = 1  # Center alignment
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
@@ -707,9 +699,6 @@ def generate_worker_pdf(request):
     hdr_cells[2].text = 'Qilingan ish miqdori'
     hdr_cells[3].text = 'Qoldiq'
 
-    for cell in hdr_cells:
-        cell.paragraphs[0].alignment = 1  # Center alignment
-
     for index in range(1):
         row_cells = table.add_row().cells
         row_cells[0].text = str(index+1)
@@ -717,13 +706,10 @@ def generate_worker_pdf(request):
         row_cells[2].text = spacecomma(total_done_work_amount)
         row_cells[3].text = spacecomma(total_given - total_done_work_amount)
 
-        for cell in row_cells:
-            cell.paragraphs[0].alignment = 1  # Center alignment
     for row in table.rows:
         for cell in row.cells:
-            cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
-    
-    
+            cell.vertical_alignment = 1
+
     doc.add_heading("Berilgan oylik hisoboti", level=2)
 
     table = doc.add_table(rows=1, cols=4)
@@ -740,9 +726,6 @@ def generate_worker_pdf(request):
     hdr_cells[2].text = 'Miqdor'
     hdr_cells[3].text = 'Berilgan sana'
 
-    for cell in hdr_cells:
-        cell.paragraphs[0].alignment = 1  # Center alignment
-
     for index, money in enumerate(moneys):
         row_cells = table.add_row().cells
         row_cells[0].text = str(index+1)
@@ -750,8 +733,6 @@ def generate_worker_pdf(request):
         row_cells[2].text = str(spacecomma(money.given_amount))
         row_cells[3].text = money.date.strftime("%d-%m-%Y")
 
-        for cell in row_cells:
-            cell.paragraphs[0].alignment = 1  # Center alignment
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
@@ -772,9 +753,6 @@ def generate_worker_pdf(request):
     hdr_cells[2].text = 'Miqdor'
     hdr_cells[3].text = 'Sana'
 
-    for cell in hdr_cells:
-        cell.paragraphs[0].alignment = 1
-        
     for index, workdaymoney in enumerate(workdaymoneys):
         row_cells = table.add_row().cells
         row_cells[0].text = str(index+1)
@@ -782,8 +760,6 @@ def generate_worker_pdf(request):
         row_cells[2].text = str(spacecomma(workdaymoney['earn_amount']))
         row_cells[3].text = workdaymoney['date'].strftime("%d-%m-%Y")
 
-        for cell in row_cells:
-            cell.paragraphs[0].alignment = 1
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1
@@ -805,8 +781,6 @@ def generate_worker_pdf(request):
     hdr_cells[3].text = 'Soni'
     hdr_cells[4].text = 'Sana'
 
-    for cell in hdr_cells:
-        cell.paragraphs[0].alignment = 1
     i = 0
     for index, workdaymoney in enumerate(workdaymoneys):
         for work in workdaymoney['work_amount'].all():
@@ -818,8 +792,6 @@ def generate_worker_pdf(request):
             row_cells[3].text = str(work.completed)
             row_cells[4].text = workdaymoney['date'].strftime("%d-%m-%Y")
 
-            for cell in row_cells:
-                cell.paragraphs[0].alignment = 1
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1
