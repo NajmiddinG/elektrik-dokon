@@ -499,8 +499,11 @@ def create_monthly_workers_report(request):
     for cell in hdr_cells:
         cell.paragraphs[0].alignment = 1  # Center alignment
 
-
+    total_1 = 0
+    total_2 = 0
+    index_t = 0
     for user in Worker.objects.get(name='Ishchi').user.all():
+        index_t += 1
         moneys = Money.objects.filter(responsible=user, month=month)
         total_given = sum(money.given_amount for money in moneys)
         total_done_work_amount = 0
@@ -515,10 +518,12 @@ def create_monthly_workers_report(request):
         except Exception as e:
             workdaymoneys = []
 
+        total_1 += total_given
+        total_2 += total_done_work_amount
 
         for index in range(1):
             row_cells = table.add_row().cells
-            row_cells[0].text = str(index+1)
+            row_cells[0].text = str(index_t)
             row_cells[1].text = user.first_name
             row_cells[2].text = spacecomma(total_given)
             row_cells[3].text = spacecomma(total_done_work_amount)
@@ -526,9 +531,21 @@ def create_monthly_workers_report(request):
 
             for cell in row_cells:
                 cell.paragraphs[0].alignment = 1  # Center alignment
-        for row in table.rows:
-            for cell in row.cells:
-                cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
+        
+    for ind in range(1):
+            index_t += 1
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(index_t)
+            row_cells[1].text = "Umumiy"
+            row_cells[2].text = spacecomma(total_1)
+            row_cells[3].text = spacecomma(total_2)
+            row_cells[4].text = spacecomma(total_1 - total_2)
+
+            for cell in row_cells:
+                cell.paragraphs[0].alignment = 1  # Center alignment
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
     
     
     doc.save(buffer)
