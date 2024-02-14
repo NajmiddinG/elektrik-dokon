@@ -1,0 +1,27 @@
+<!-- dokon.html -->
+{% extends 'base.html' %}
+
+{% block title %}Etiroz{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+</style>
+{% endblock %}
+
+{% block content %}
+<main data-name="etirozlar" class="page" id="call">
+    <h2>Telefon raqam:</h2>
+    <div class="box">
+        <a href="tel:+998905338628">+998905338628</a>
+        <a href="tel:+998996328899">+998996328899</a>
+    </div>
+    <h2>Dasturdan yozish:</h2>
+    <form action="#" class="box" method="post">{% csrf_token %}
+        <input hidden type="text" name="ism" value="Abror">
+        <input hidden type="text" name="titul" value="Do'kon">
+        <textarea name="text" placeholder="Shu yerga yozing..."></textarea>
+        <button type="submit">Jo'natish</button>
+    </form>
+</main>
+{% endblock %}

@@ -1,0 +1,49 @@
+<!-- dokon.html -->
+{% extends 'base.html' %}
+
+{% block title %}Zakazlar{% endblock %}
+
+{% block styles %}
+<style>
+    /* Add your page-specific styles here */
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<main data-name="zakazlar">
+    <ul class="loyihalar">
+        {% for zakaz in zakaz_list %}
+        <li>
+            <div class="names_status">
+                <h3 class="name">{{ zakaz.obyekt_nomi|capfirst }}</h3>
+                <small class="user_status">
+                    <i class='bx bx-chevron-down'></i>
+                </small>
+            </div>
+            <div class="sms">
+                <ul class="mahsulotlar">
+                    {% for mahsulot in mahsulot_list %}
+                    <li>
+                        <div class="name">{{ mahsulot.mahsulot_nomi|capfirst }}</div>
+                        <div class="narxi">
+                            <p>{{ mahsulot.narxi }}</p>so'm
+                        </div>
+                        <div class="umumiy">
+                            <p>{{ mahsulot.soni }}</p>ta
+                        </div>
+                        <div class="soni">
+                            <span class="minus"><</span>
+                            <span class="input"><input type="number" value="0"></span>
+                            <span class="plus">></span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button type="submit" class="start">Jo'natish</button>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</main>
+{% endblock %}
