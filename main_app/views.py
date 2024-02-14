@@ -505,7 +505,7 @@ def elektrik_products_current_report(request):
     doc.add_heading("Elektr mahsulotlar", level=2)
     table = doc.add_table(rows=1, cols=7)
     table.width = Inches(6.5)
-    widths = [1.5, 4, 4, 2, 2, 2, 3]
+    widths = [2, 4, 4, 2, 2, 2, 3]
     total_widths = sum(widths)
     for i, width in enumerate(widths):
         table.columns[i].width = Inches(width / total_widths * 6.5)  # Assuming total width of 6.5 inches
@@ -687,7 +687,7 @@ def generate_worker_pdf(request):
 
     table = doc.add_table(rows=1, cols=4)
     table.width = Inches(6.5)
-    widths = [1,5,5,5]
+    widths = [2,5,5,5]
     table.width = Inches(6.5)
     total_widths = sum(widths)
     for i, width in enumerate(widths):
@@ -714,8 +714,7 @@ def generate_worker_pdf(request):
 
     table = doc.add_table(rows=1, cols=4)
     table.width = Inches(6.5)
-    widths = [1,5,5,5]
-    table.width = Inches(6.5)
+    widths = [2,5,5,5]
     total_widths = sum(widths)
     for i, width in enumerate(widths):
         table.columns[i].width = Inches(width / total_widths * 6.5)
@@ -741,7 +740,7 @@ def generate_worker_pdf(request):
 
     table = doc.add_table(rows=1, cols=4)
     table.width = Inches(6.5)
-    widths = [1,6,5,5]
+    widths = [2,6,5,5]
     table.width = Inches(6.5)
     total_widths = sum(widths)
     for i, width in enumerate(widths):
@@ -768,7 +767,7 @@ def generate_worker_pdf(request):
 
     table = doc.add_table(rows=1, cols=5)
     table.width = Inches(6.5)
-    widths = [1,7,5,2,5]
+    widths = [2,7,5,2,5]
     table.width = Inches(6.5)
     total_widths = sum(widths)
     for i, width in enumerate(widths):
