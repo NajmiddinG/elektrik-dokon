@@ -24,6 +24,7 @@ from .views import (
     done_work_detail,
     edit_obyekt_worker_months,
     generate_worker_pdf,
+    create_monthly_workers_report,
 )
 
 app_name = 'main_app'
@@ -48,4 +49,5 @@ urlpatterns = [
     path('edit_obyekt_worker_months/<int:done_work_id>/', edit_obyekt_worker_months, name='edit_obyekt_worker_months'),
 
     path('generate_worker_pdf/', generate_worker_pdf, name='generate_worker_pdf'),
+    path('create_monthly_workers_report/', create_monthly_workers_report, name='create_monthly_workers_report'),
 ]

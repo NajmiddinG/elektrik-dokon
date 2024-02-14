@@ -480,6 +480,63 @@ def bool_to_word(value):
     return "Yo'q"
 
 
+def create_monthly_workers_report(request):
+    month = int(request.COOKIES.get('worker_date_admin_id', 24289))
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"Ishchilarning {month_accurate_format(month)} hisoboti.", level=1)
+    doc.add_heading("Ishchining umumiy hisobot", level=2)
+    table = doc.add_table(rows=1, cols=5)
+    table.width = Inches(6.5)
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Ishchi'
+    hdr_cells[2].text = 'Berilgan summa'
+    hdr_cells[3].text = 'Qilingan ish miqdori'
+    hdr_cells[4].text = 'Qoldiq'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].alignment = 1  # Center alignment
+
+
+    for user in Worker.objects.get(name='Ishchi').user.all():
+        moneys = Money.objects.filter(responsible=user, month=month)
+        total_given = sum(money.given_amount for money in moneys)
+        total_done_work_amount = 0
+
+        try:
+            workdaymoneys_obyekt = WorkDayMoney.objects.filter(
+                responsible=user,
+                date__year=month // 12,
+                date__month=month % 12
+            ).order_by('-date')
+            total_done_work_amount += sum(money.earn_amount for money in workdaymoneys_obyekt)
+        except Exception as e:
+            workdaymoneys = []
+
+
+        for index in range(1):
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(index+1)
+            row_cells[1].text = user.first_name
+            row_cells[2].text = spacecomma(total_given)
+            row_cells[3].text = spacecomma(total_done_work_amount)
+            row_cells[4].text = spacecomma(total_given - total_done_work_amount)
+
+            for cell in row_cells:
+                cell.paragraphs[0].alignment = 1  # Center alignment
+        for row in table.rows:
+            for cell in row.cells:
+                cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
+    
+    
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f'{user.first_name}_{month_accurate_format(month)}.docx')
+
+
 def generate_worker_pdf(request):
     buffer = BytesIO()
     doc = Document()
@@ -489,11 +546,64 @@ def generate_worker_pdf(request):
     user_id = int(request.COOKIES.get('worker_admin_id', 0))
     user = User.objects.get(id=user_id)
     moneys = Money.objects.filter(responsible=user, month=month)
+    total_given = sum(money.given_amount for money in moneys)
+    total_done_work_amount = 0
+
+    try:
+        workdaymoneys_obyekt = WorkDayMoney.objects.filter(
+            responsible=user,
+            date__year=month // 12,
+            date__month=month % 12
+        ).order_by('-date')
+        total_done_work_amount += sum(money.earn_amount for money in workdaymoneys_obyekt)
+        workdaymoneys2 = []
+        for detail1 in workdaymoneys_obyekt:
+            workdaymoneys = {}
+            workdaymoneys['id']=detail1.id
+            workdaymoneys['responsible']=detail1.responsible
+            workdaymoneys['earn_amount']=detail1.earn_amount
+            workdaymoneys['work_amount']=detail1.work_amount
+            workdaymoneys['date']=detail1.date
+            work_amount2 = detail1.work_amount.first().job
+            obyekt_data = list(work_amount2.obyekt_set.values().first().values())
+            workdaymoneys['obyekt_id'] = obyekt_data[0]
+            workdaymoneys['obyekt_name'] = obyekt_data[2]
+            workdaymoneys2.append(workdaymoneys)
+        workdaymoneys = workdaymoneys2
+    except Exception as e:
+        workdaymoneys = []
 
     doc.add_heading(f"{user.first_name} ning {month_accurate_format(month)} hisoboti.", level=1)
+    doc.add_heading("Ishchining umumiy hisobot", level=2)
+
+    table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Berilgan summa'
+    hdr_cells[2].text = 'Qilingan ish miqdori'
+    hdr_cells[3].text = 'Qoldiq'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].alignment = 1  # Center alignment
+
+    for index in range(1):
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index+1)
+        row_cells[1].text = spacecomma(total_given)
+        row_cells[2].text = spacecomma(total_done_work_amount)
+        row_cells[3].text = spacecomma(total_given - total_done_work_amount)
+
+        for cell in row_cells:
+            cell.paragraphs[0].alignment = 1  # Center alignment
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
+    
+    
     doc.add_heading("Berilgan oylik hisoboti", level=2)
 
-    # Add table for Berilgan oylik hisoboti
     table = doc.add_table(rows=1, cols=4)
     table.width = Inches(6.5)
     table.style = 'Table Grid'
@@ -518,29 +628,7 @@ def generate_worker_pdf(request):
     for row in table.rows:
         for cell in row.cells:
             cell.vertical_alignment = 1  # 0 for top, 1 for center, 2 for bottom
-    try:
-        workdaymoneys_obyekt = WorkDayMoney.objects.filter(
-            responsible=user,
-            date__year=month // 12,
-            date__month=month % 12
-        ).order_by('-date')
-        workdaymoneys2 = []
-        for detail1 in workdaymoneys_obyekt:
-            workdaymoneys = {}
-            workdaymoneys['id']=detail1.id
-            workdaymoneys['responsible']=detail1.responsible
-            workdaymoneys['earn_amount']=detail1.earn_amount
-            workdaymoneys['work_amount']=detail1.work_amount
-            workdaymoneys['date']=detail1.date
-            work_amount2 = detail1.work_amount.first().job
-            obyekt_data = list(work_amount2.obyekt_set.values().first().values())
-            workdaymoneys['obyekt_id'] = obyekt_data[0]
-            workdaymoneys['obyekt_name'] = obyekt_data[2]
-            workdaymoneys2.append(workdaymoneys)
-        workdaymoneys = workdaymoneys2
-    except Exception as e:
-        workdaymoneys = []
-
+    
     doc.add_heading("Kunlik hisobotlar", level=2)
 
     table = doc.add_table(rows=1, cols=4)
