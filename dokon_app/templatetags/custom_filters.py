@@ -60,7 +60,7 @@ def define_cur_month(value):
 
 @register.filter(name='define_cur_year')
 def define_cur_year(value):
-    value = int(value)
+    value = int(value)-1
     return value//12
 
 

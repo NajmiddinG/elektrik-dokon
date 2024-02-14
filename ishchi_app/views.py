@@ -173,8 +173,8 @@ def done_work_list(request):
         month_given_amount = Money.objects.filter(responsible_id=request.user,  month=selected_obyekt)
         workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible=request.user,
-            date__year=selected_obyekt // 12,
-            date__month=selected_obyekt % 12
+            date__year=(selected_obyekt-1) // 12,
+            date__month=(selected_obyekt-1) % 12+1
         ).order_by('-date')
         workdaymoneys2 = []
         for detail1 in workdaymoneys_obyekt:

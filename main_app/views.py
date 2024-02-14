@@ -289,8 +289,8 @@ def ishchilar_holati(request):
     try:
         workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible_id=selected_obyekt1,
-            date__year=selected_obyekt2 // 12,
-            date__month=selected_obyekt2 % 12
+            date__year=(selected_obyekt2-1) // 12,
+            date__month=(selected_obyekt2-1) % 12+1
         ).order_by('-date')
         month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1,  month=selected_obyekt2)
         workdaymoneys2 = []
@@ -403,8 +403,8 @@ def done_work_detail(request):
     try:
         if selected_obyekt == 0:
             work_amounts = []
-            for entry in WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, date__year=selected_obyekt2 // 12,
-            date__month=selected_obyekt2 % 12).order_by('-date'):
+            for entry in WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, date__year=(selected_obyekt2-1) // 12,
+                date__month=(selected_obyekt2-1) % 12+1).order_by('-date'):
                 w = entry.work_amount.all()
                 for i in range(len(w)):
                     w[i].date = entry.date
@@ -420,8 +420,8 @@ def done_work_detail(request):
 
     try:
         workdaymoneys = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1, 
-            date__year=selected_obyekt2 // 12,
-            date__month=selected_obyekt2 % 12).order_by('-date')
+            date__year=(selected_obyekt2-1) // 12,
+            date__month=(selected_obyekt2-1) % 12+1).order_by('-date')
     except Exception as e:
         print(e)
         workdaymoneys = []
@@ -447,6 +447,22 @@ def done_work_detail(request):
         print(e)
     return response
 
+def hisobotlar(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    cur_date = timezone.now()
+    year, month = cur_date.year, cur_date.month
+
+    months = [i for i in range(2023*12+1, year*12+month+1)]
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'main_4',
+        'worker_type': worker_type,
+        'months': months,
+        'all_workers': Worker.objects.get(name='Ishchi').user.all(),
+    }
+    response = render(request, 'main_app/hisobotlar.html', context=context)
+    return response
 
 
 def month_accurate_format(value):
@@ -466,7 +482,7 @@ def month_accurate_format(value):
         0:'Dekabr',
 
     }
-    return f'{months_table[value%12]} - {value//12}'
+    return f'{months_table[value%12]} - {(value-1)//12}'
 
 def spacecomma(value):
     s_text = ''
@@ -511,8 +527,8 @@ def create_monthly_workers_report(request):
         try:
             workdaymoneys_obyekt = WorkDayMoney.objects.filter(
                 responsible=user,
-                date__year=month // 12,
-                date__month=month % 12
+                date__year=(month-1) // 12,
+                date__month=(month-1) % 12+1
             ).order_by('-date')
             total_done_work_amount += sum(money.earn_amount for money in workdaymoneys_obyekt)
         except Exception as e:
@@ -569,8 +585,8 @@ def generate_worker_pdf(request):
     try:
         workdaymoneys_obyekt = WorkDayMoney.objects.filter(
             responsible=user,
-            date__year=month // 12,
-            date__month=month % 12
+            date__year=(month-1) // 12,
+            date__month=(month-1) % 12+1
         ).order_by('-date')
         total_done_work_amount += sum(money.earn_amount for money in workdaymoneys_obyekt)
         workdaymoneys2 = []

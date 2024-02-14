@@ -122,8 +122,9 @@ td {
     <div class="bottom-data">
         <div class="orders">
             <div class="header">
-                <h3><i class='bx bx-receipt'></i> Oylik</h3>                
-                <p data-label="jobtype" title="+ Oylik" class="add-button add-btn" onclick="toggleForm('oylikFormContainer')">+ Pul berish</p>
+                <h3><i class='bx bx-receipt'></i> Hisobotlar</h3>
+                
+                
                 <select id="productTypeSelect1" class="button_cool" title="Oy bo'yicha saralash" style="width: 210px;">
                     <option value="0">Ishchini tanlang</option>
                     {% for worker in all_workers %}
@@ -139,67 +140,36 @@ td {
             </div>
 
             {% if worker_type == 'Admin' %}
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Berilgan summa: <span id="totalAmount">{{ given_total|spacecomma }}</span> so'm</p>
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Ishchining oyligi: <span id="totalAmount">{{ work_money_earn|spacecomma }}</span> so'm</p>
-            <p style="margin: 10px 0;font-size: 20px;color: green;">Qoldiq: <span id="totalAmount">{{ real_money|spacecomma }}</span> so'm</p>
-            <br>
+            
             <table id="myTable3">
                 <thead>
                 <tr>
                     <th><center>№</center></th>
                     <th><center>Nomi</center></th>
-                    <th><center>Narxi</center></th>
-                    <th><center>Qaysi oy uchun</center></th>
-                    <th><center>Qachon berildi</center></th>
+                    <th><center>Yuklab olish</center></th>
+                    <th><center>Tarif</center></th>
                 </tr>
                 </thead>
                 <tbody>
-                    {% for obyekt in month_given_amount %}
-                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
-                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
-                    <td id="{{ obyekt.id }}name">{{ obyekt.name }}</td>
-                    <td id="{{ obyekt.id }}given_amount">{{ obyekt.given_amount|spacecomma }} so'm</td>
-                    <td id="{{ obyekt.id }}month">{{ obyekt.month|define_cur_month }} - {{ obyekt.month|define_cur_year }}</td>
-                    <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
+                <tr>
+                    <td>1</td>
+                    <td>Ishchilar hisoboti</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:create_monthly_workers_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Hamma ishchilarni tanlangan oy bo'yicha oylik hisoboti</td>
                 </tr>
-                {% endfor %}
+                <tr>
+                    <td>2</td>
+                    <td>Oylik hujjat</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:generate_worker_pdf' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Tanlangan ishchini tanlangan oy bo'yicha qilgan ishlari, kunlik va oylik hisoboti</td>
+                </tr>
                 </tbody>
             </table>
             
-            {% endif %}
-        </div>
-        <div class="orders">
-            <div class="header">
-                <h3><i class='bx bx-receipt'></i> Ishchining bajargan ishlari</h3>
-            </div>
-
-            {% if worker_type == 'Admin' %}
-            <table id="myTable3">
-                <thead>
-                <tr>
-                    <th><center>№</center></th>
-                    <th><center>Obyekt nomi</center></th>
-                    <th><center>Ish haqqi</center></th>
-                    <!-- <th><center>Tasdiqlandi</center></th> -->
-                    <th><center>Kiritilgan vaqt</center></th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% for obyekt in workdaymoneys %}
-                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
-                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}" data-max-dept="{{ obyekt.max_dept }}">{{ forloop.counter }}</td>
-                    <td id="{{ obyekt.id }}obyekt">
-                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.obyekt_id }})">{{ obyekt.obyekt_name }}</a>
-                    </td>
-                    <td id="{{ obyekt.id }}earn_amount">
-                        <a href="{% url 'main_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.obyekt_id }}, {{ obyekt.id }})">{{ obyekt.earn_amount|spacecomma }} so'm</a>
-                    </td>
-                    <!-- <td id="{{ obyekt.id }}admin_accepted" {% if obyekt.admin_accepted %} style="color: green;" {% else %} style="color:red;" {% endif %}>{{ obyekt.admin_accepted|bool_to_word }}</td> -->
-                    <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
             {% endif %}
         </div>
     </div>

@@ -17,6 +17,7 @@ from .views import (
     create_user,
     edit_user,
     ishchilar_holati,
+    hisobotlar,
     start_job,
     end_job,
     set_cookie_for_all_types_of_filter_view,
@@ -36,6 +37,7 @@ urlpatterns = [
     path('edit_user/<int:user_id>/', edit_user, name="edit_user"),
 
     path('ishchilar_holati/', ishchilar_holati, name="ishchilar_holati"),
+    path('hisobotlar/', hisobotlar, name="hisobotlar"),
 
     path('start_job/', start_job, name="start_job"),
     path('end_job/', end_job, name="end_job"),
