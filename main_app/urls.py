@@ -28,6 +28,9 @@ from .views import (
     create_monthly_workers_report,
     elektrik_products_current_report,
     santexnika_products_current_report,
+    history_sold_out_products_current_report,
+    history_came_products_current_report,
+    history_sold_out_to_obyekt_products_current_report,
 )
 
 app_name = 'main_app'
@@ -56,5 +59,8 @@ urlpatterns = [
     path('create_monthly_workers_report/', create_monthly_workers_report, name='create_monthly_workers_report'),
     path('elektrik_products_current_report/', elektrik_products_current_report, name='elektrik_products_current_report'),
     path('santexnika_products_current_report/', santexnika_products_current_report, name='santexnika_products_current_report'),
+    path('history_sold_out_products_current_report/', history_sold_out_products_current_report, name='history_sold_out_products_current_report'),
+    path('history_came_products_current_report/', history_came_products_current_report, name='history_came_products_current_report'),
+    path('history_sold_out_to_obyekt_products_current_report/', history_sold_out_to_obyekt_products_current_report, name='history_sold_out_to_obyekt_products_current_report'),
 
 ]

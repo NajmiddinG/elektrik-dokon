@@ -83,10 +83,10 @@ class HistoryObject(models.Model):
     total_number_given = models.IntegerField(default=0)
     history_products = models.ManyToManyField(ProductHistoryObject)
     total_amount = models.IntegerField(default=0)
-    total_given_amount = models.IntegerField(default=0)
-    remain_amount = models.IntegerField(default=0)
+    total_given_amount = models.IntegerField(default=0) # no need this field
+    remain_amount = models.IntegerField(default=0)  # no need this field
     profit = models.IntegerField(default=0)
-    completed = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False) # no need this field
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
