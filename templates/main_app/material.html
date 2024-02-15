@@ -138,7 +138,9 @@ td {
                     <th><center>№</center></th>
                     <th><center>Obyekt nomi</center></th>
                     <th><center>Masul</center></th>
+                    {% if worker_type == 'Admin' %}
                     <th><center>Foyda</center></th>
+                    {% endif %}
                     <th><center>Umumiy savdo</center></th>
                     <th><center>Kiritilgan vaqt</center></th>
                 </tr>
@@ -153,6 +155,9 @@ td {
                         <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.history_object.id }})" {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %}>{{ obyekt.history_object.name }}</a>
                     </td>
                     <td {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %} id="{{ obyekt.id }}1">{{ obyekt.responsible }}</td>
+                    {% if worker_type == 'Admin' %}
+                    <td {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %} id="{{ obyekt.id }}2">{{ obyekt.profit|spacecomma }} so'm</td>
+                    {% endif %}
                     <td id="{{ obyekt.id }}total_amount">
                         <a href="{% url 'main_app:obyekt_material' %}" onclick="setObyektCookie2({{ obyekt.id }})" {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %}>{{ obyekt.total_amount|spacecomma }} so'm</a>
                     </td>
@@ -173,7 +178,9 @@ td {
                     <th><center>Product nomi</center></th>
                     <th><center>Soni</center></th>
                     <th><center>Qaytib keldi </center></th>
+                    {% if worker_type == 'Admin' %}
                     <th><center>Foyda</center></th>
+                    {% endif %}
                     <th><center>Umumiy savdo</center></th>
                     <th><center>Kiritilgan vaqt</center></th>
                 </tr>
@@ -185,6 +192,9 @@ td {
                     <td id="{{ obyekt.id }}obyekt">{{ obyekt.type.name }}</td>
                     <td id="{{ obyekt.id }}count">{{ obyekt.number }}</td>
                     <td id="{{ obyekt.id }}completed"><center><input type="number" class="button_cool" name="quantity;{{ obyekt.id }}" id="quantity;{{ obyekt.id }}" value="0" min="0" class="product_search"></center></td>
+                    {% if worker_type == 'Admin' %}
+                    <td id="{{ obyekt.id }}2">{{ obyekt.profit|spacecomma }} so'm</td>
+                    {% endif %}
                     <td id="{{ obyekt.id }}total_amount">{{ obyekt.total_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                 </tr>
