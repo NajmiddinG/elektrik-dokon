@@ -8,7 +8,7 @@ from django.db.models import Min, Max, Q
 
 from .models import User, Worker, WorkDay
 from ishchi_app.models import Work, WorkAmount, WorkDayMoney, Money
-from obyekt_app.models import Obyekt, WorkAmount
+from obyekt_app.models import Obyekt, WorkAmount, Given_money
 from dokon_app.models import Product, ProductType, HistoryCame, HistoryObject, HistorySoldOut, ProductHistoryCame, ProductHistoryObject, ProductHistorySoldOut
 
 from reportlab.lib.pagesizes import letter
@@ -18,7 +18,6 @@ from io import BytesIO
 from docx import Document
 from docx.shared import Inches
 from datetime import datetime
-
 
 
 def check_user(request):
@@ -32,6 +31,7 @@ def check_user(request):
     except Exception as e:
         print(2, e)
         return False
+
 
 def check_user_type(request):
     user = request.user
@@ -66,11 +66,13 @@ def check_user_type(request):
         print(1, e)
         return HttpResponse('Tizimda xatolik')
 
+
 def has_some_error(request):
     try:
         if request.user.workers.filter(name__iexact='admin').first(): return False
     except: pass
     return bool(not request.user.is_authenticated or not check_user(request))
+
 
 def user_login(request):
     if request.user.is_authenticated:
@@ -99,9 +101,11 @@ def user_login(request):
         }
     return render(request, 'registration/login.html', context)
 
+
 def logout_user(request):
     logout(request)
     return redirect('/login/')
+
 
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
@@ -176,6 +180,7 @@ def create_user(request):
             messages.error(request, 'Xatolik yuz berdi.')
     return redirect('main_app:dashboard')
 
+
 def edit_user(request, user_id):
     if has_some_error(request): return redirect('/login/')
     if request.method == 'POST':
@@ -207,6 +212,7 @@ def edit_user(request, user_id):
 
     return redirect('main_app:dashboard')
 
+
 def start_job(request):
     if has_some_error(request): return redirect('/login/')
     referer = request.META.get('HTTP_REFERER')
@@ -216,6 +222,7 @@ def start_job(request):
     else:
         return redirect('/')
 
+
 def end_job(request):
     if has_some_error(request): return redirect('/login/')
     referer = request.META.get('HTTP_REFERER')
@@ -224,6 +231,7 @@ def end_job(request):
         return redirect(referer)
     else:
         return redirect('/')
+
 
 def set_cookie_for_all_types_of_filter_view(request, name, value):
     if has_some_error(request): 
@@ -258,6 +266,7 @@ def create_obyekt_worker_months(request):
             messages.error(request, 'Xatolik yuz berdi.')
 
     return redirect('main_app:ishchilar_holati')
+
 
 def ishchilar_holati(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
@@ -333,6 +342,7 @@ def ishchilar_holati(request):
     except Exception as e:
         print(e)
     return response
+
 
 def edit_obyekt_worker_months(request, done_work_id):
     if has_some_error(request): return redirect('/login/')
@@ -439,6 +449,7 @@ def done_work_detail(request):
         print(e)
     return response
 
+
 def hisobotlar(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
 
@@ -447,12 +458,14 @@ def hisobotlar(request):
 
     months = [i for i in range(2024*12+1, year*12+month+1)]
     days = [i for i in range(1, 32)]
+    obyekts = Obyekt.objects.all()
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'main_4',
         'worker_type': worker_type,
         'months': months,
         'days': days,
+        'obyekts': obyekts,
         'all_workers': Worker.objects.get(name='Ishchi').user.all(),
     }
     response = render(request, 'main_app/hisobotlar.html', context=context)
@@ -500,12 +513,240 @@ def today_accurate_format():
 def day_format(date):
     return date.strftime('%d-%m-%Y')
 
+
 def day_format2(day, month):
     try:
         date = datetime(day=day, month=(month-1)%12+1, year=(month-1)//12)
         return date.strftime('%d-%m-%Y')
     except:
         return 'Xato oy raqami'
+
+
+def obyekt_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    obyekt_id = int(request.COOKIES.get('obyekt_id_report', 0))
+    obyekt = Obyekt.objects.get(id=obyekt_id)
+    day_id = int(request.COOKIES.get('seleted_day_id', 1))
+    
+    history_solt_out = HistoryObject.objects.filter(
+                history_object=obyekt
+            ).order_by('-date')
+    products = {}
+    for item in history_solt_out:
+        for item2 in item.history_products.all():
+            if item2.id in products:
+                products[item2.id]['number'] += item2.number
+                products[item2.id]['amount'] += item2.total_amount
+                products[item2.id]['profit'] += item2.profit
+            else:
+                products[item2.id] = {}
+                products[item2.id]['obyekt'] = item.history_object.name
+                products[item2.id]['category'] = item2.type.type.first_type
+                products[item2.id]['type'] = item2.type.type.name
+                products[item2.id]['name'] = item2.type.name
+                products[item2.id]['price'] = item2.type.price
+                products[item2.id]['number'] = item2.number
+                products[item2.id]['amount'] = item2.total_amount
+                products[item2.id]['profit'] = item2.profit
+
+    month_report = {'total_amount': 0, 'total_number_sold_out': 0, 'profit': 0}
+    for item in products.values():
+        month_report['total_amount'] += item['amount']
+        month_report['total_number_sold_out'] += item['number']
+        month_report['profit'] += item['profit']
+
+    given_money = Given_money.objects.filter(obyekt=obyekt)
+
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"{obyekt.name} obyekt {today_accurate_format()} hisoboti.", level=1)
+    doc.add_heading("Obyekt hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=8)
+    table.width = Inches(6.5)
+    widths = [1, 2, 2, 2, 2, 2, 2, 2]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Nomi'
+    hdr_cells[2].text = 'Masul'
+    hdr_cells[3].text = 'Ish turi'
+    hdr_cells[4].text = 'Kelishilgan summa'
+    hdr_cells[5].text = 'Olingan summa'
+    hdr_cells[6].text = 'Real qarzdorlik'
+    hdr_cells[7].text = 'Bajarilgan ish'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in range(1):
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = obyekt.name
+        row_cells[2].text = obyekt.responsible.first_name
+        row_cells[3].text = obyekt.job_type
+        row_cells[4].text = spacecomma(obyekt.deal_amount)
+        row_cells[5].text = spacecomma(obyekt.given_amount)
+        row_cells[6].text = spacecomma(obyekt.real_dept)
+        row_cells[7].text = spacecomma(obyekt.given_amount-obyekt.real_dept)
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+
+    doc.add_heading("Berilgan summa hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=5)
+    table.width = Inches(6.5)
+    widths = [2, 5, 3, 5, 5]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Masul'
+    hdr_cells[2].text = 'Olingan summa'
+    hdr_cells[3].text = 'Izoh'
+    hdr_cells[4].text = 'Sana'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in given_money:
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item.responsible.first_name
+        row_cells[2].text = spacecomma(item.amount)
+        row_cells[3].text = item.comment
+        row_cells[4].text = day_format(item.date)
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.add_heading("Qilingan ishlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=6)
+    table.width = Inches(6.5)
+    widths = [1.5, 5, 3, 3, 3, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Ish turi'
+    hdr_cells[2].text = 'Admin narx'
+    hdr_cells[3].text = 'Xizmat narx'
+    hdr_cells[4].text = 'Tugagan soni'
+    hdr_cells[5].text = 'Umumiy soni'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in obyekt.work_amount.all():
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item.job_type
+        row_cells[2].text = spacecomma(item.first_price)
+        row_cells[3].text = spacecomma(item.service_price)
+        row_cells[4].text = str(item.total_completed)
+        row_cells[5].text = str(item.total)
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.add_heading("Materiallar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
+    widths = [1.2, 5, 3, 5]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Umumiy savdo'
+    hdr_cells[2].text = 'Sotilgan mahsulotlar soni'
+    hdr_cells[3].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in range(1):
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = spacecomma(month_report['total_amount'])
+        row_cells[2].text = str(month_report['total_number_sold_out'])
+        row_cells[3].text = spacecomma(month_report['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.add_heading("Obyektga biriktirilgan mahsulotlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=9)
+    table.width = Inches(6.5)
+    widths = [2, 4, 4, 4, 3, 3, 3, 3, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Obyekt'
+    hdr_cells[2].text = 'Categoriya'
+    hdr_cells[3].text = 'Turi'
+    hdr_cells[4].text = 'Nomi'
+    hdr_cells[5].text = 'Narxi'
+    hdr_cells[6].text = 'Soni'
+    hdr_cells[7].text = 'Savdo'
+    hdr_cells[8].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for id, item in products.items():
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item['obyekt']
+        row_cells[2].text = item['category']
+        row_cells[3].text = item['type']
+        row_cells[4].text = item['name']
+        row_cells[5].text = spacecomma(item['price'])
+        row_cells[6].text = str(item['number'])
+        row_cells[7].text = spacecomma(item['amount'])
+        row_cells[8].text = spacecomma(item['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"Obyekt {today_accurate_format()} sana hisoboti.docx")
+
+
 def history_sold_out_day_report(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
 

@@ -81,7 +81,6 @@ def obyekt_status(value, arg):
         else:
             return 'green'
     except Exception as e:
-        print(e)
         return 'red'
 
 @register.filter(name='obyekt_subtract')

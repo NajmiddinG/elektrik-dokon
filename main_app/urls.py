@@ -34,6 +34,7 @@ from .views import (
     history_sold_out_day_report,
     history_sold_out_to_obyekt_day_report,
     history_came_day_report,
+    obyekt_report,
 )
 
 app_name = 'main_app'
@@ -68,5 +69,6 @@ urlpatterns = [
     path('history_sold_out_day_report/', history_sold_out_day_report, name='history_sold_out_day_report'),
     path('history_sold_out_to_obyekt_day_report/', history_sold_out_to_obyekt_day_report, name='history_sold_out_to_obyekt_day_report'),
     path('history_came_day_report/', history_came_day_report, name='history_came_day_report'),
+    path('obyekt_report/', obyekt_report, name='obyekt_report'),
 
 ]

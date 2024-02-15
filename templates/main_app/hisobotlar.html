@@ -124,7 +124,13 @@ td {
             <div class="header">
                 <h3><i class='bx bx-receipt'></i> Hisobotlar</h3>
                 
-                
+                <select id="productTypeSelect0" class="button_cool" title="Obyekt bo'yicha saralash" style="width: 210px;">
+                    <option value="0">Obyektni tanlang</option>
+                    {% for worker in obyekts %}
+                    <option value="{{ worker.id }}" {% if request.COOKIES.obyekt_id_report == worker.id|stringformat:"s" %}selected {% endif %}>{{ worker.name }}</option>
+                    {% endfor %}
+                </select>
+
                 <select id="productTypeSelect1" class="button_cool" title="Oy bo'yicha saralash" style="width: 210px;">
                     <option value="0">Ishchini tanlang</option>
                     {% for worker in all_workers %}
@@ -236,6 +242,14 @@ td {
                         <a style="color: #205fc5;" href="{% url 'main_app:history_came_day_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
                     </td>
                     <td>Dokondan obyektga berilgan mahsulotlarni tanlangan oy va tanlangan kun bo'yicha hisoboti</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Obyekt hisoboti</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:obyekt_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Obyektni tanlangan obyekt bo'yicha hisoboti</td>
                 </tr>
                 </tbody>
             </table>
@@ -370,6 +384,10 @@ td {
 </div>
 
 <script>
+    document.getElementById('productTypeSelect0').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'obyekt_id_report').replace('1', selectedValue);
+    });
     document.getElementById('productTypeSelect1').addEventListener('change', function() {
     var selectedValue = this.value;
     window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'worker_admin_id').replace('1', selectedValue);
