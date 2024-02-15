@@ -48,5 +48,6 @@ urlpatterns = [
     path('obyekt_report/', obyekt_report, name='obyekt_report'),
     path('obyekt_material/', obyekt_material, name='obyekt_material'),
     path('change_materials/', change_materials, name='change_materials'),
+    path('obyekt_material_obyekt/', obyekt_material_obyekt, name='obyekt_material_obyekt'),
 
 ]

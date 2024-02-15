@@ -345,14 +345,12 @@ def ishchilar_holati(request):
 
 
 def obyekt_material(request):
-    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+    if has_some_error(request): return redirect('/login/')
 
     cookies = request.COOKIES
     sold_history_id = int(cookies.get('sold_history_id', 0))
     obyekt_id_report = int(cookies.get('obyekt_id_report', 0))
-    selected_date = int(cookies.get('worker_date_admin_id', 0))
-    histoysoldouts = HistoryObject.objects.filter(history_object__id=obyekt_id_report, date__year=(selected_date-1) // 12,
-                date__month=(selected_date-1) % 12+1).order_by('-date')
+    histoysoldouts = HistoryObject.objects.filter(history_object__id=obyekt_id_report).order_by('-date')
     obyekts = Obyekt.objects.all().order_by('-date')
     try:
         products = HistoryObject.objects.get(id=sold_history_id).history_products.all()
@@ -370,7 +368,7 @@ def obyekt_material(request):
         'products': products,
         'worker_type': request.user.workers.values_list('name', flat=True).first()
     }
-
+    print(histoysoldouts)
     response = render(request, 'main_app/material.html', context=context)
     if sold_history_id == 0:
         response.set_cookie('sold_history_id', '0')
@@ -425,6 +423,39 @@ def change_materials(request):
         print(e, 2324234)
         messages.error(request, "Xatolik ro'y berdi!")
     return redirect('main_app:obyekt_material')
+
+
+def obyekt_material_obyekt(request):
+    if has_some_error(request): return redirect('/login/')
+
+    cookies = request.COOKIES
+    sold_history_id = int(cookies.get('sold_history_id', 0))
+    obyekt_id_report = int(cookies.get('obyekt_id_report', 0))
+    histoysoldouts = HistoryObject.objects.filter(history_object__id=obyekt_id_report).order_by('-date')
+    if bool(request.user.workers.filter(name__iexact='admin').first()):
+        obyekts = Obyekt.objects.all().order_by('-date')
+    else:
+        obyekts = Obyekt.objects.filter(responsible=request.user).order_by('-date')
+    try:
+        products = HistoryObject.objects.get(id=sold_history_id).history_products.all()
+    except:
+        products = []
+    cur_date = timezone.now()
+    year, month = cur_date.year, cur_date.month
+
+    months = [i for i in range(2024*12+1, year*12+month+1)]
+    context = {
+        'active': 'main_6',
+        'histoysoldouts': histoysoldouts,
+        'months': months,
+        'obyekts': obyekts,
+        'products': products,
+        'worker_type': request.user.workers.values_list('name', flat=True).first()
+    }
+    response = render(request, 'main_app/material2.html', context=context)
+    if sold_history_id == 0:
+        response.set_cookie('sold_history_id', '0')
+    return response
 
 
 def edit_obyekt_worker_months(request, done_work_id):

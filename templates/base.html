@@ -136,7 +136,6 @@
             <li class="{% if active == 'main_2' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:ishchilar_holati' %}"><i class='bx bx-user'></i>Ishchilar oyligi</a></li>
             <li class="{% if active == 'main_3' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:done_work_detail' %}"><i class='bx bx-circle-three-quarter'></i>Qilingan ishlar</a></li>
             <li class="{% if active == 'main_4' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:hisobotlar' %}"><i class='bx bxs-report'></i>Umumiy hisobotlar</a></li>
-            <li class="{% if active == 'main_5' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:obyekt_material' %}"><i class='bx bx-package'></i>Obyektni materiallari</a></li>
             {% endif %}
             {% if worker_type == 'Admin' or worker_type == 'Dokon' %}
             <li data-name="sotish"><a href="{% url 'dokon_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bxs-zap'></i>Elektr bo'limi</a></li>
@@ -152,6 +151,7 @@
             <li class="{% if active == 'dokon_6_santexnika' %}active{% endif %}" data-name="obyekt"><a href="{% url 'dokon_app:obyekt_dashboard_santexnika' %}"><i class='bx bx-car'></i>Obyektga berish</a></li>
             <li class="{% if active == 'dokon_2_santexnika' %}active{% endif %}" data-name="mahsulot"><a href="{% url 'dokon_app:mahsulot_santexnika' %}"><i class='bx bx-package'></i>Mahsulotlar</a></li>
             <li class="{% if active == 'dokon_5_santexnika' %}active{% endif %}" data-name="income"><a href="{% url 'dokon_app:newproduct_santexnika' %}"><i class='bx bx-cart-add'></i>Yangi tovarlar</a></li>
+            <li class="{% if active == 'main_5' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:obyekt_material' %}"><i class='bx bx-package'></i>Obyektni materiallari</a></li>
             <!-- <li class="{% if active == 'dokon_3_santexnika' %}active{% endif %}" data-name="zakazlar"><a href="#"><i class='bx bx-group'></i>Zakazlar</a></li>
             <li class="{% if active == 'dokon_4_santexnika' %}active{% endif %}" data-name="etirozlar"><a href="#"><i class='bx bx-message-square-dots'></i>Etiroz</a></li> -->
             {% endif %}
@@ -159,8 +159,10 @@
             <li data-name="sotish"><a href="{% url 'obyekt_app:dashboard' %}" style="font-weight: 600; color: blue;"><i class='bx bx-cube'></i>Obyektlar bo'limi</a></li>
             <li class="{% if active == 'obyekt_1' %}active{% endif %}" data-name="obyekt"><a href="{% url 'obyekt_app:dashboard' %}"><i class='bx bx-package'></i>Obyektlar</a></li>
             <li class="{% if active == 'obyekt_2' %}active{% endif %}" data-name="obyekt_ishi"><a href="{% url 'obyekt_app:obyekt_ishi' %}"><i class='bx bx-detail'></i>Obyekt ishlari</a></li>
+            <li class="{% if active == 'main_6' %}active{% endif %}" data-name="main"><a href="{% url 'main_app:obyekt_material_obyekt' %}"><i class='bx bx-package'></i>Obyektni materiallari</a></li>
             {% if worker_type == 'Admin' %}
             <li class="{% if active == 'obyekt_3' %}active{% endif %}" data-name="given_money"><a href="{% url 'obyekt_app:given_money_views' %}"><i class='bx bx-money'></i>Olingan summa</a></li>
+            
             {% endif %}
             {% endif %}
 
