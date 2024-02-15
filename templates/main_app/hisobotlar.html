@@ -137,6 +137,12 @@ td {
                         <option value="{{ month }}" {% if request.COOKIES.worker_date_admin_id == month|stringformat:"s" %}selected {% endif %}>{{ month|define_cur_month }} - {{ month|define_cur_year }}</option>
                     {% endfor %}
                 </select>
+                <select id="productTypeSelect3" class="button_cool" title="Kun bo'yicha saralash" style="width: 100px;">
+                    <option value="1">Kunni tanlang</option>
+                    {% for day in days %}
+                        <option value="{{ day }}" {% if request.COOKIES.seleted_day_id == day|stringformat:"s" %}selected {% endif %}>{{ day }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             {% if worker_type == 'Admin' %}
@@ -206,6 +212,30 @@ td {
                         <a style="color: #205fc5;" href="{% url 'main_app:history_sold_out_to_obyekt_products_current_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
                     </td>
                     <td>Dokondan obyektga berilgan mahsulotlarni tanlangan oy bo'yicha hisoboti</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Mahsulotlar kunlik sotuv hisoboti</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:history_sold_out_day_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Dokondagi barcha mahsulotlarni tanlangan oy va tanlangan kun bo'yicha hisoboti</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Do'kongan kunlik kelgan mahsulotlar hisoboti</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:history_sold_out_to_obyekt_day_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Dokondagi kelgan mahsulotlarni tanlangan oy va tanlangan kun bo'yicha hisoboti</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Do'kon-obyekt kunlik mahsulotlar hisoboti</td>
+                    <td>
+                        <a style="color: #205fc5;" href="{% url 'main_app:history_came_day_report' %}"><i class='bx bxs-file-doc' style="font-size: 50px;"></i></a>
+                    </td>
+                    <td>Dokondan obyektga berilgan mahsulotlarni tanlangan oy va tanlangan kun bo'yicha hisoboti</td>
                 </tr>
                 </tbody>
             </table>
@@ -347,6 +377,10 @@ td {
     document.getElementById('productTypeSelect2').addEventListener('change', function() {
     var selectedValue = this.value;
     window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'worker_date_admin_id').replace('1', selectedValue);
+    });
+    document.getElementById('productTypeSelect3').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'seleted_day_id').replace('1', selectedValue);
     });
     function toggleForm(formId) {
         var formContainer = document.getElementById(formId);

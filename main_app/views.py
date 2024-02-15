@@ -446,11 +446,13 @@ def hisobotlar(request):
     year, month = cur_date.year, cur_date.month
 
     months = [i for i in range(2024*12+1, year*12+month+1)]
+    days = [i for i in range(1, 32)]
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {
         'active': 'main_4',
         'worker_type': worker_type,
         'months': months,
+        'days': days,
         'all_workers': Worker.objects.get(name='Ishchi').user.all(),
     }
     response = render(request, 'main_app/hisobotlar.html', context=context)
@@ -476,6 +478,7 @@ def month_accurate_format(value):
     }
     return f'{months_table[value%12]} - {(value-1)//12}'
 
+
 def spacecomma(value):
     s_text = ''
     money = str(value)[::-1]
@@ -483,16 +486,367 @@ def spacecomma(value):
         s_text+=money[3*i:3*i+3]+' '
     return s_text.strip()[::-1] + " so'm"
 
+
 def bool_to_word(value):
     if value: return "Ha"
     return "Yo'q"
+
 
 def today_accurate_format():
     today = datetime.today()
     return today.strftime('%d-%m-%Y')
 
+
 def day_format(date):
-    return date .strftime('%d-%m-%Y')
+    return date.strftime('%d-%m-%Y')
+
+def day_format2(day, month):
+    try:
+        date = datetime(day=day, month=(month-1)%12+1, year=(month-1)//12)
+        return date.strftime('%d-%m-%Y')
+    except:
+        return 'Xato oy raqami'
+def history_sold_out_day_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    month = int(request.COOKIES.get('worker_date_admin_id', 24289))
+    day_id = int(request.COOKIES.get('seleted_day_id', 1))
+    
+    history_solt_out = HistorySoldOut.objects.filter(
+                date__year=(month-1) // 12,
+                date__month=(month-1) % 12+1,
+                date__day=day_id,
+            ).order_by('-date')
+    products = {}
+    for item in history_solt_out:
+        for item2 in item.history_products.all():
+            if item2.id in products:
+                products[item2.id]['number'] += item2.number
+                products[item2.id]['amount'] += item2.total_amount
+                products[item2.id]['profit'] += item2.profit
+            else:
+                products[item2.id] = {}
+                products[item2.id]['category'] = item2.type.type.first_type
+                products[item2.id]['type'] = item2.type.type.name
+                products[item2.id]['name'] = item2.type.name
+                products[item2.id]['price'] = item2.type.price
+                products[item2.id]['number'] = item2.number
+                products[item2.id]['amount'] = item2.total_amount
+                products[item2.id]['profit'] = item2.profit
+
+    month_report = {'total_amount': 0, 'total_number_sold_out': 0, 'profit': 0}
+    for item in products.values():
+        month_report['total_amount'] += item['amount']
+        month_report['total_number_sold_out'] += item['number']
+        month_report['profit'] += item['profit']
+
+
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"Do'kon {day_format2(day_id, month)} hisoboti.", level=1)
+    doc.add_heading("Kunlik hisobot", level=2)
+    table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
+    widths = [1.2, 5, 3, 5]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Umumiy savdo'
+    hdr_cells[2].text = 'Sotilgan mahsulotlar soni'
+    hdr_cells[3].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in range(1):
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = spacecomma(month_report['total_amount'])
+        row_cells[2].text = str(month_report['total_number_sold_out'])
+        row_cells[3].text = spacecomma(month_report['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.add_heading("Kunlik mahsulotlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=8)
+    table.width = Inches(6.5)
+    widths = [2, 4, 4, 4, 3, 3, 3, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Categoriya'
+    hdr_cells[2].text = 'Turi'
+    hdr_cells[3].text = 'Nomi'
+    hdr_cells[4].text = 'Narxi'
+    hdr_cells[5].text = 'Soni'
+    hdr_cells[6].text = 'Savdo'
+    hdr_cells[7].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for id, item in products.items():
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item['category']
+        row_cells[2].text = item['type']
+        row_cells[3].text = item['name']
+        row_cells[4].text = spacecomma(item['price'])
+        row_cells[5].text = str(item['number'])
+        row_cells[6].text = spacecomma(item['amount'])
+        row_cells[7].text = spacecomma(item['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"Savdo {day_format2(day_id, month)} hisobot.docx")
+
+
+def history_sold_out_to_obyekt_day_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    month = int(request.COOKIES.get('worker_date_admin_id', 24289))
+    day_id = int(request.COOKIES.get('seleted_day_id', 1))
+    
+    history_solt_out = HistoryObject.objects.filter(
+                date__year=(month-1) // 12,
+                date__month=(month-1) % 12+1,
+                date__day=day_id,
+            ).order_by('-date')
+    products = {}
+    for item in history_solt_out:
+        for item2 in item.history_products.all():
+            if item2.id in products:
+                products[item2.id]['number'] += item2.number
+                products[item2.id]['amount'] += item2.total_amount
+                products[item2.id]['profit'] += item2.profit
+            else:
+                products[item2.id] = {}
+                products[item2.id]['obyekt'] = item.history_object.name
+                products[item2.id]['category'] = item2.type.type.first_type
+                products[item2.id]['type'] = item2.type.type.name
+                products[item2.id]['name'] = item2.type.name
+                products[item2.id]['price'] = item2.type.price
+                products[item2.id]['number'] = item2.number
+                products[item2.id]['amount'] = item2.total_amount
+                products[item2.id]['profit'] = item2.profit
+
+    month_report = {'total_amount': 0, 'total_number_sold_out': 0, 'profit': 0}
+    for item in products.values():
+        month_report['total_amount'] += item['amount']
+        month_report['total_number_sold_out'] += item['number']
+        month_report['profit'] += item['profit']
+
+
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"Do'konni obyektga bergan mahsulotlar {day_format2(day_id, month)} hisoboti.", level=1)    
+    doc.add_heading("Kunlik hisobot", level=2)
+    table = doc.add_table(rows=1, cols=4)
+    table.width = Inches(6.5)
+    widths = [1.2, 5, 3, 5]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Umumiy savdo'
+    hdr_cells[2].text = 'Sotilgan mahsulotlar soni'
+    hdr_cells[3].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in range(1):
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = spacecomma(month_report['total_amount'])
+        row_cells[2].text = str(month_report['total_number_sold_out'])
+        row_cells[3].text = spacecomma(month_report['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    
+    doc.add_heading("Kunlik mahsulotlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=9)
+    table.width = Inches(6.5)
+    widths = [2, 4, 4, 4, 3, 3, 3, 3, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Obyekt'
+    hdr_cells[2].text = 'Categoriya'
+    hdr_cells[3].text = 'Turi'
+    hdr_cells[4].text = 'Nomi'
+    hdr_cells[5].text = 'Narxi'
+    hdr_cells[6].text = 'Soni'
+    hdr_cells[7].text = 'Savdo'
+    hdr_cells[8].text = 'Foyda'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for id, item in products.items():
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item['obyekt']
+        row_cells[2].text = item['category']
+        row_cells[3].text = item['type']
+        row_cells[4].text = item['name']
+        row_cells[5].text = spacecomma(item['price'])
+        row_cells[6].text = str(item['number'])
+        row_cells[7].text = spacecomma(item['amount'])
+        row_cells[8].text = spacecomma(item['profit'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+
+
+
+
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"Dokon-obyekt {day_format2(day_id, month)} sana hisoboti.docx")
+
+
+def history_came_day_report(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    month = int(request.COOKIES.get('worker_date_admin_id', 24289))
+    day_id = int(request.COOKIES.get('seleted_day_id', 1))
+    
+    history_solt_out = HistoryCame.objects.filter(
+                date__year=(month-1) // 12,
+                date__month=(month-1) % 12+1,
+                date__day=day_id,
+            ).order_by('-date')
+    products = {}
+    for item in history_solt_out:
+        for item2 in item.history_products.all():
+            if item2.id in products:
+                products[item2.id]['number'] += item2.number
+                products[item2.id]['amount'] += item2.total_amount
+            else:
+                products[item2.id] = {}
+                products[item2.id]['category'] = item2.type.type.first_type
+                products[item2.id]['type'] = item2.type.type.name
+                products[item2.id]['name'] = item2.type.name
+                products[item2.id]['price'] = item2.type.price
+                products[item2.id]['number'] = item2.number
+                products[item2.id]['amount'] = item2.total_amount
+
+    month_report = {'total_amount': 0, 'total_number_sold_out': 0}
+    for item in products.values():
+        month_report['total_amount'] += item['amount']
+        month_report['total_number_sold_out'] += item['number']
+
+
+    buffer = BytesIO()
+    doc = Document()
+    doc.add_heading(f"Do'konga kelgan mahsulotlar {day_format2(day_id, month)} hisoboti.", level=1)
+    doc.add_heading("Kunlik hisobot", level=2)
+    table = doc.add_table(rows=1, cols=3)
+    table.width = Inches(6.5)
+    widths = [1, 7, 7]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Umumiy kelgan tovar'
+    hdr_cells[2].text = 'Kelgan mahsulotlar soni'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for item in range(1):
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = spacecomma(month_report['total_amount'])
+        row_cells[2].text = str(month_report['total_number_sold_out'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+    
+    doc.add_heading("Kunlik mahsulotlar hisoboti", level=2)
+    table = doc.add_table(rows=1, cols=7)
+    table.width = Inches(6.5)
+    widths = [1.5, 4, 4, 4, 3, 3, 3]
+    total_widths = sum(widths)
+    for i, width in enumerate(widths):
+        table.columns[i].width = Inches(width / total_widths * 6.5)
+
+    table.style = 'Table Grid'
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = '№'
+    hdr_cells[1].text = 'Categoriya'
+    hdr_cells[2].text = 'Turi'
+    hdr_cells[3].text = 'Nomi'
+    hdr_cells[4].text = 'Narxi'
+    hdr_cells[5].text = 'Soni'
+    hdr_cells[6].text = 'Umumiy narx'
+
+    for cell in hdr_cells:
+        cell.paragraphs[0].runs[0].font.bold = True
+
+    index_t = 0
+    for id, item in products.items():
+        index_t+=1
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(index_t)
+        row_cells[1].text = item['category']
+        row_cells[2].text = item['type']
+        row_cells[3].text = item['name']
+        row_cells[4].text = spacecomma(item['price'])
+        row_cells[5].text = str(item['number'])
+        row_cells[6].text = spacecomma(item['amount'])
+
+    for row in table.rows:
+        for cell in row.cells:
+            cell.vertical_alignment = 1
+
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"Do'konga kelgan mahsulotlar {day_format2(day_id, month)} sana hisoboti.docx")
+
 
 def history_sold_out_products_current_report(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
