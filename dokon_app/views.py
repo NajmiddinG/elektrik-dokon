@@ -292,7 +292,11 @@ def set_product_type_cookie(request, product_type_id):
 def newproduct(request):
     if has_some_error(request): return redirect('/login/')
 
-    products = Product.objects.filter(type__first_type='elektr').order_by('-type__date')
+    cookies = request.COOKIES
+    try:     product_type = cookies.get('product_type', ProductType.objects.latest('id').id)
+    except: product_type = 0
+
+    products = Product.objects.filter(type__first_type='elektr', type__id=product_type).order_by('-type__date')
     product_types = ProductType.objects.filter(first_type='elektr').values('id', 'name')
     worker_type = request.user.workers.values_list('name', flat=True).first()
     context = {

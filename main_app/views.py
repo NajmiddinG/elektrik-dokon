@@ -344,6 +344,83 @@ def ishchilar_holati(request):
     return response
 
 
+def obyekt_material(request):
+    if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
+
+    cookies = request.COOKIES
+    obyekt_id_report = int(cookies.get('obyekt_id_report', 0))
+    worker_date_admin_id = int(cookies.get('worker_date_admin_id', 0))
+    if selected_obyekt1==0:
+        for user in User.objects.all():
+            if user.workers.filter(name__iexact='ishchi').first():
+                selected_obyekt1 = user.id
+                break
+    selected_obyekt2 = int(cookies.get('worker_date_admin_id', 24289))
+    try:
+        first_date = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).aggregate(Min('date'))['date__min']
+        last_date = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).aggregate(Max('date'))['date__max']
+        first_one = 12*first_date.year+first_date.month
+        last_one = 12*last_date.year+last_date.month
+        months = [i for i in range(first_one, last_one+1)]
+    except:
+        months = []
+    try:
+        histoysoldouts = WorkDayMoney.objects.filter(
+            responsible_id=selected_obyekt1,
+            date__year=(selected_obyekt2-1) // 12,
+            date__month=(selected_obyekt2-1) % 12+1
+        ).order_by('-date')
+        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1,  month=selected_obyekt2)
+        workdaymoneys2 = []
+        for detail1 in histoysoldouts:
+            workdaymoneys = {}
+            workdaymoneys['id']=detail1.id
+            workdaymoneys['responsible']=detail1.responsible
+            workdaymoneys['earn_amount']=detail1.earn_amount
+            workdaymoneys['work_amount']=detail1.work_amount
+            workdaymoneys['date']=detail1.date
+            work_amount2 = detail1.work_amount.first().job
+            obyekt_data = list(work_amount2.obyekt_set.values().first().values())
+            workdaymoneys['obyekt_id'] = obyekt_data[0]
+            workdaymoneys['obyekt_name'] = obyekt_data[2]
+            workdaymoneys2.append(workdaymoneys)
+        workdaymoneys = workdaymoneys2
+    except Exception as e:
+        print(e)
+        workdaymoneys = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).order_by('-date')
+        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1)
+    
+    work_money_earn = 0
+    for workdaymoney_item in workdaymoneys:
+        work_money_earn += workdaymoney_item['earn_amount']
+    
+    given_total = 0
+    for item in month_given_amount:
+        given_total+=item.given_amount
+    
+    obyekt_workers = User.objects.filter(workers__name='Obyekt')
+    worker_type = request.user.workers.values_list('name', flat=True).first()
+    context = {
+        'active': 'main_2',
+        'month_given_amount': month_given_amount,
+        'obyekt_workers': obyekt_workers,
+        'worker_type': worker_type,
+        'work_money_earn': work_money_earn,
+        'workdaymoneys': workdaymoneys,
+        'given_total': given_total,
+        'all_workers': Worker.objects.get(name='Ishchi').user.all(),
+        'months': months,
+        'real_money': given_total-work_money_earn
+    }
+    response = render(request, 'main_app/ishchilar_holati.html', context=context)
+    try:
+        response.set_cookie('worker_admin_id', str(selected_obyekt1))
+        response.set_cookie('worker_date_admin_id', str(selected_obyekt2))
+    except Exception as e:
+        print(e)
+    return response
+
+
 def edit_obyekt_worker_months(request, done_work_id):
     if has_some_error(request): return redirect('/login/')
     if request.method=='POST':
