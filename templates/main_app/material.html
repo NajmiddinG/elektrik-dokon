@@ -151,148 +151,67 @@ td {
                 </thead>
                 <tbody>
                     {% for obyekt in histoysoldouts %}
-                <tr class="edit-obyekt" data-id="{{ obyekt.id }}">
-                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}">{{ forloop.counter }}</td>
+                <tr class="edit-obyekt" data-id="{{ obyekt.id }}" {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %}>
+                    <td id="{{ obyekt.id }}" class="obyekt-id" data-id="{{ obyekt.id }}" data-worker="{{ obyekt.responsible.id }}">
+                        <a href="{% url 'main_app:obyekt_material' %}" onclick="setObyektCookie2({{ obyekt.id }})" style="color: green !important;">{{ forloop.counter }}</a>
+                    </td>
                     <td id="{{ obyekt.id }}obyekt">
-                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.history_object.id }})">{{ obyekt.history_object.name }}</a>
+                        <a href="{% url 'obyekt_app:obyekt_ishi' %}" onclick="setObyektCookie1({{ obyekt.history_object.id }})" {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %}>{{ obyekt.history_object.name }}</a>
                     </td>
-                    <td id="{{ obyekt.id }}1">{{ obyekt.responsible }}</td>
-                    <td id="{{ obyekt.id }}2">{{ obyekt.profit }}</td>
+                    <td {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %} id="{{ obyekt.id }}1">{{ obyekt.responsible }}</td>
+                    <td {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %} id="{{ obyekt.id }}2">{{ obyekt.profit|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}total_amount">
-                        <a href="{% url 'main_app:done_work_detail' %}" onclick="setObyektCookie2({{ obyekt.id }})">{{ obyekt.total_amount|spacecomma }} so'm</a>
+                        <a href="{% url 'main_app:obyekt_material' %}" onclick="setObyektCookie2({{ obyekt.id }})" {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %}>{{ obyekt.total_amount|spacecomma }} so'm</a>
                     </td>
+                    <td {% if request.COOKIES.sold_history_id == obyekt.id|stringformat:"s" %} style="color: green !important;" {% endif %} id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <h3><i class='bx bx-receipt'></i> Materialar</h3>
+            <br>
+            <form action="{% url 'main_app:change_materials' %}" method="post">
+                {% csrf_token %}
+            <table id="myTable4">
+                <thead>
+                <tr>
+                    <th><center>№</center></th>
+                    <th><center>Product nomi</center></th>
+                    <th><center>Soni</center></th>
+                    <th><center>Qaytib keldi </center></th>
+                    <th><center>Foyda</center></th>
+                    <th><center>Umumiy savdo</center></th>
+                    <th><center>Kiritilgan vaqt</center></th>
+                </tr>
+                </thead>
+                <tbody id="myDropdown2">
+                    {% for obyekt in products %}
+                <tr class="edit-work_amount" data-id="{{ obyekt.id }}">
+                    <td id="{{ obyekt.id }}" class="work_amount-id" data-id="{{ obyekt.id }}">{{ forloop.counter }}</td>
+                    <td id="{{ obyekt.id }}obyekt">{{ obyekt.type.name }}</td>
+                    <td id="{{ obyekt.id }}count">{{ obyekt.number }}</td>
+                    <td id="{{ obyekt.id }}completed"><center><input type="number" class="button_cool" name="quantity;{{ obyekt.id }}" id="quantity;{{ obyekt.id }}" value="0" min="0" class="product_search"></center></td>
+                    <td id="{{ obyekt.id }}2">{{ obyekt.profit|spacecomma }} so'm</td>
+                    <td id="{{ obyekt.id }}total_amount">{{ obyekt.total_amount|spacecomma }} so'm</td>
                     <td id="{{ obyekt.id }}date">{{ obyekt.date|date:"d-m-Y" }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            <div class="footer">
+                <button type="submit" class="dropbtn add-button add-btn" style="padding: 10px 30px; margin: 20px 20px;">Saqlash</button>
+            </div>
+        </form>
             {% endif %}
         </div>
     </div>
 
 </main>
 
-<!-- create -->
-<div id="productFormContainer" class="add-form-container">
-    <div class="title">
-        <i class='bx bx-package'></i>
-        <h2>Obyekt qo'shish</h2>
-    </div>
-    <form action="{% url 'obyekt_app:create_obyekt' %}" class="info" method="post">{% csrf_token %}
-        <div class="box-wrapper">
-            <div class="input-box">
-                <label for="obyekt_worker">Javobgar:</label>
-                <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
-                    {% for obyekt_worker in obyekt_workers %}
-                        <option value="{{ obyekt_worker.id }}">{{ obyekt_worker.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="name">Nomi:</label>
-                <input type="text" id="name" name="name">
-            </div>
-            <div class="input-box">
-                <label for="address">Manzil:</label>
-                <input type="text" id="address" name="address">
-            </div>
-            <div class="input-box">
-                <label for="job_type">Ish turi:</label>
-                <select id="job_type" name="job_type" style="width: 250px;">
-                    {% for obyektjobtype in obyektjobtypes %}
-                    <option value="{{ obyektjobtype.name }}">{{ obyektjobtype.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="deal_amount">Kelishilgan summa:</label>
-                <input type="number" value="0" min="0" id="deal_amount" name="deal_amount">
-            </div>
-            <div class="input-box">
-                <label for="given_amount">Olingan summa:</label>
-                <input type="number" value="0" min="0" id="given_amount" name="given_amount">
-            </div>
-            <div class="input-box">
-                <label for="max_dept">Max qarzdorlik:</label>
-                <input type="number" value="0" min="0" id="max_dept" name="max_dept">
-            </div>
-        </div>
-        <button type="submit" class="save">Saqlash</button>
-    </form>
-</div>
-
-<div id="oylikFormContainer" class="add-form-container">
-    <div class="title">
-        <i class='bx bx-money'></i>
-        <h2>Pull berish</h2>
-    </div>
-    <form action="{% url 'main_app:create_obyekt_worker_months' %}" class="info" method="post">{% csrf_token %}
-        <div class="box-wrapper">
-            <div class="input-box">
-                <label for="name">Nomi:</label>
-                <input type="text" id="name" name="name" value="Oylik uchun" required>
-            </div>
-            <div class="input-box">
-                <label for="money">Pul miqdori:</label>
-                <input type="number" id="money" name="money" value="1000000" required>
-            </div>
-        </div>
-        <button type="submit" class="save">Saqlash</button>
-    </form>
-</div>
 
 <!-- edit -->
-<div id="editObyektFormContainer" class="add-form-container">
-    <div class="title">
-        <i class='bx bx-package'></i>
-        <h2>Obyektni o'zgartirish</h2>
-    </div>
-    <form action="{% url 'obyekt_app:edit_obyekt' 0 %}" class="info" method="post" id="editObyektForm">{% csrf_token %}
-        <div class="box-wrapper">
-            <div class="input-box">
-                <label for="obyekt_worker">Javobgar:</label>
-                <select id="obyekt_worker" name="obyekt_worker" style="width: 250px;">
-                    {% for obyekt_worker in obyekt_workers %}
-                        <option value="{{ obyekt_worker.id }}">{{ obyekt_worker.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="name">Nomi:</label>
-                <input type="text" id="name" name="name">
-            </div>
-            {% if worker_type == 'Admin' %}
-            <div class="input-box">
-                <label for="address">Manzil:</label>
-                <input type="text" id="address" name="address">
-            </div>
-            <div class="input-box">
-                <label for="job_type">Ish turi:</label>
-                <select id="job_type" name="job_type" style="width: 250px;">
-                    {% for obyektjobtype in obyektjobtypes %}
-                    <option value="{{ obyektjobtype.name }}">{{ obyektjobtype.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="input-box">
-                <label for="deal_amount">Kelishilgan summa:</label>
-                <input type="number" value="0" min="0" id="deal_amount" name="deal_amount">
-            </div>
-            <div class="input-box">
-                <label for="given_amount">Olingan summa:</label>
-                <input type="number" value="0" min="0" id="given_amount" name="given_amount">
-            </div>
-            <div class="input-box">
-                <label for="max_dept">Max qarzdorlik:</label>
-                <input type="number" value="0" min="0" id="max_dept" name="max_dept">
-            </div>
-            {% else %}
-            <label for="">Admin obyektni o'zgartira oladi xolos</label>
-            {% endif %}
-        </div>
-        <button type="submit" class="save">Saqlash</button>
-    </form>
-</div>
+
 
 <script>
     document.getElementById('productTypeSelect0').addEventListener('change', function() {
@@ -378,6 +297,7 @@ td {
     function setObyektCookie2(obyektId) {
         // Set the cookie with the obyekt_id
         document.cookie = 'sold_history_id=' + obyektId + '; path=/';
-    }
+    };
+ 
 </script>
 {% endblock %}

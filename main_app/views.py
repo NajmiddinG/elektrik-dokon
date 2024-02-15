@@ -348,77 +348,80 @@ def obyekt_material(request):
     if has_some_error(request) or not bool(request.user.workers.filter(name__iexact='admin').first()): return redirect('/login/')
 
     cookies = request.COOKIES
+    sold_history_id = int(cookies.get('sold_history_id', 0))
     obyekt_id_report = int(cookies.get('obyekt_id_report', 0))
-    worker_date_admin_id = int(cookies.get('worker_date_admin_id', 0))
-    if selected_obyekt1==0:
-        for user in User.objects.all():
-            if user.workers.filter(name__iexact='ishchi').first():
-                selected_obyekt1 = user.id
-                break
-    selected_obyekt2 = int(cookies.get('worker_date_admin_id', 24289))
-    try:
-        first_date = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).aggregate(Min('date'))['date__min']
-        last_date = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).aggregate(Max('date'))['date__max']
-        first_one = 12*first_date.year+first_date.month
-        last_one = 12*last_date.year+last_date.month
-        months = [i for i in range(first_one, last_one+1)]
-    except:
-        months = []
-    try:
-        histoysoldouts = WorkDayMoney.objects.filter(
-            responsible_id=selected_obyekt1,
-            date__year=(selected_obyekt2-1) // 12,
-            date__month=(selected_obyekt2-1) % 12+1
-        ).order_by('-date')
-        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1,  month=selected_obyekt2)
-        workdaymoneys2 = []
-        for detail1 in histoysoldouts:
-            workdaymoneys = {}
-            workdaymoneys['id']=detail1.id
-            workdaymoneys['responsible']=detail1.responsible
-            workdaymoneys['earn_amount']=detail1.earn_amount
-            workdaymoneys['work_amount']=detail1.work_amount
-            workdaymoneys['date']=detail1.date
-            work_amount2 = detail1.work_amount.first().job
-            obyekt_data = list(work_amount2.obyekt_set.values().first().values())
-            workdaymoneys['obyekt_id'] = obyekt_data[0]
-            workdaymoneys['obyekt_name'] = obyekt_data[2]
-            workdaymoneys2.append(workdaymoneys)
-        workdaymoneys = workdaymoneys2
-    except Exception as e:
-        print(e)
-        workdaymoneys = WorkDayMoney.objects.filter(responsible_id=selected_obyekt1).order_by('-date')
-        month_given_amount = Money.objects.filter(responsible_id=selected_obyekt1)
-    
-    work_money_earn = 0
-    for workdaymoney_item in workdaymoneys:
-        work_money_earn += workdaymoney_item['earn_amount']
-    
-    given_total = 0
-    for item in month_given_amount:
-        given_total+=item.given_amount
-    
-    obyekt_workers = User.objects.filter(workers__name='Obyekt')
-    worker_type = request.user.workers.values_list('name', flat=True).first()
+    selected_date = int(cookies.get('worker_date_admin_id', 0))
+    histoysoldouts = HistoryObject.objects.filter(history_object__id=obyekt_id_report, date__year=(selected_date-1) // 12,
+                date__month=(selected_date-1) % 12+1).order_by('-date')
+    obyekts = Obyekt.objects.all().order_by('-date')
+    products = HistoryObject.objects.get(id=sold_history_id).history_products.all()
+    cur_date = timezone.now()
+    year, month = cur_date.year, cur_date.month
+
+    months = [i for i in range(2024*12+1, year*12+month+1)]
     context = {
-        'active': 'main_2',
-        'month_given_amount': month_given_amount,
-        'obyekt_workers': obyekt_workers,
-        'worker_type': worker_type,
-        'work_money_earn': work_money_earn,
-        'workdaymoneys': workdaymoneys,
-        'given_total': given_total,
-        'all_workers': Worker.objects.get(name='Ishchi').user.all(),
+        'active': 'main_5',
+        'histoysoldouts': histoysoldouts,
         'months': months,
-        'real_money': given_total-work_money_earn
+        'obyekts': obyekts,
+        'products': products,
+        'worker_type': request.user.workers.values_list('name', flat=True).first()
     }
-    response = render(request, 'main_app/ishchilar_holati.html', context=context)
-    try:
-        response.set_cookie('worker_admin_id', str(selected_obyekt1))
-        response.set_cookie('worker_date_admin_id', str(selected_obyekt2))
-    except Exception as e:
-        print(e)
+
+    response = render(request, 'main_app/material.html', context=context)
+    if sold_history_id == 0:
+        response.set_cookie('sold_history_id', '0')
     return response
+
+
+def change_materials(request):
+    if has_some_error(request): return redirect('/login/')
+    
+    cookies = request.COOKIES
+    sold_history_id = int(cookies.get('sold_history_id', 0))
+    history_obj = HistoryObject.objects.get(id=sold_history_id)
+    try:
+        total_money = 0
+        sold_out_products = []
+        history_sold_outs = [request.user, 0, 0, 0]
+        conflict_number = 0
+        conflict_money = 0
+        conflict_profit = 0
+        for key, number in request.POST.items():
+            if key.startswith('quantity;') and number!='0':
+                pro_id = int(key.split(';')[1])
+                pro_obj = ProductHistoryObject.objects.get(id=pro_id)
+                old = pro_obj.number
+                qaytib_keldi = int(number)
+                if qaytib_keldi==0: continue
+                new = old-qaytib_keldi
+                pro_obj.number = new
+                conflict_number += qaytib_keldi
+                conflict_money += pro_obj.total_amount
+                pro_obj.total_amount = (pro_obj.total_amount//old)*new
+                conflict_money -= pro_obj.total_amount
+                conflict_profit += pro_obj.profit
+                pro_obj.profit = (pro_obj.profit//old)*new
+                conflict_profit -= pro_obj.profit
+                pro_obj.save()
+
+        # Create a HistorySoldOut object
+        history_obj.total_amount -= conflict_money
+        history_obj.total_number_given -= conflict_number
+        history_obj.profit -= conflict_profit
+        obyekt = history_obj.history_object.id
+        obyekt = Obyekt.objects.get(id=obyekt)
+        obyekt.real_dept += conflict_money
+        obyekt.save()
+        history_obj.save()
+
+
+        messages.success(request, f" Obyektdan material qaytarish muvaffaqiyatli amalga oshirildi!")
+
+    except Exception as e:
+        print(e, 2324234)
+        messages.error(request, "Xatolik ro'y berdi!")
+    return redirect('main_app:obyekt_material')
 
 
 def edit_obyekt_worker_months(request, done_work_id):

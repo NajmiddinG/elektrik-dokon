@@ -11,31 +11,7 @@
 
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import (
-    user_login,
-    dashboard,
-    create_user,
-    edit_user,
-    ishchilar_holati,
-    hisobotlar,
-    start_job,
-    end_job,
-    set_cookie_for_all_types_of_filter_view,
-    create_obyekt_worker_months,
-    done_work_detail,
-    edit_obyekt_worker_months,
-    generate_worker_pdf,
-    create_monthly_workers_report,
-    elektrik_products_current_report,
-    santexnika_products_current_report,
-    history_sold_out_products_current_report,
-    history_came_products_current_report,
-    history_sold_out_to_obyekt_products_current_report,
-    history_sold_out_day_report,
-    history_sold_out_to_obyekt_day_report,
-    history_came_day_report,
-    obyekt_report,
-)
+from .views import *
 
 app_name = 'main_app'
 
@@ -70,5 +46,7 @@ urlpatterns = [
     path('history_sold_out_to_obyekt_day_report/', history_sold_out_to_obyekt_day_report, name='history_sold_out_to_obyekt_day_report'),
     path('history_came_day_report/', history_came_day_report, name='history_came_day_report'),
     path('obyekt_report/', obyekt_report, name='obyekt_report'),
+    path('obyekt_material/', obyekt_material, name='obyekt_material'),
+    path('change_materials/', change_materials, name='change_materials'),
 
 ]
