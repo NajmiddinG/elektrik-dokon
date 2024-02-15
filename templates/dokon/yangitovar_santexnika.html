@@ -252,6 +252,10 @@ td {
 </main>
 
 <script>
+    document.getElementById('myselect2').addEventListener('change', function() {
+    var selectedValue = this.value;
+    window.location.href = "{% url 'main_app:set_cookie_for_all_types_of_filter_view' 0 1 %}".replace('0', 'product_type').replace('1', selectedValue);
+    });
   function myFunction() {
     if(document.getElementById("myDropdown").style.display=='block') {
       document.getElementById("myDropdown").style.display='none';
