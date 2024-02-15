@@ -354,7 +354,10 @@ def obyekt_material(request):
     histoysoldouts = HistoryObject.objects.filter(history_object__id=obyekt_id_report, date__year=(selected_date-1) // 12,
                 date__month=(selected_date-1) % 12+1).order_by('-date')
     obyekts = Obyekt.objects.all().order_by('-date')
-    products = HistoryObject.objects.get(id=sold_history_id).history_products.all()
+    try:
+        products = HistoryObject.objects.get(id=sold_history_id).history_products.all()
+    except:
+        products = []
     cur_date = timezone.now()
     year, month = cur_date.year, cur_date.month
 
