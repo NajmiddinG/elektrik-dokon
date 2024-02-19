@@ -145,6 +145,7 @@ td {
             <h3><i class='bx bx-receipt'></i> Obyekt ishlari</h3>
             <label for="ObyektSelect">Obyektlar</label>
             <select id="ObyektSelect" title="Obyektlarni nomlari" style="width: 210px;">
+                <option value="0"> Obyektni tanlang</option>
                 {% for obyekt in obyekts %}
                     <option value="{{ obyekt.id }}" {% if request.COOKIES.obyekt_id == obyekt.id|stringformat:"s" %}selected {% endif %}>{{ obyekt.name }}</option>
                 {% endfor %}
