@@ -141,12 +141,6 @@ def obyekt_ishi(request):
         'obyekt_doc': obyekt_doc,
     }
     response = render(request, 'obyekt/obyekt_ishi.html', context=context)
-    if selected_obyekt==0:
-        try:
-            latest_obyekt = Obyekt.objects.latest('date').id
-            response.set_cookie('obyekt_id', str(latest_obyekt))
-        except:
-            response.set_cookie('obyekt_id', '0')
     return response
 
 
