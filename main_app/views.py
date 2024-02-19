@@ -61,7 +61,10 @@ def check_user_type(request):
             response.set_cookie('worker', str(ishchi_worker.id))
             return response
         logout(request)
-        return redirect(user_login)
+        response = redirect(user_login)
+        for cookie in request.COOKIES:
+            response.delete_cookie(cookie)
+        return response
     except Exception as e:
         print(1, e)
         return HttpResponse('Tizimda xatolik')
@@ -104,8 +107,10 @@ def user_login(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('/login/')
-
+    response = redirect('/login/')
+    for cookie in request.COOKIES:
+        response.delete_cookie(cookie)
+    return response
 
 def dashboard(request):
     if has_some_error(request): return redirect('/login/')
