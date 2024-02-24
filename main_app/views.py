@@ -67,7 +67,9 @@ def check_user_type(request):
         return response
     except Exception as e:
         print(1, e)
-        return HttpResponse('Tizimda xatolik')
+        messages.error(request, 'Tizimda xatolik')
+        response = redirect('/login/')
+        return response
 
 
 def has_some_error(request):
@@ -94,9 +96,13 @@ def user_login(request):
                     login(request, user)
                     return check_user_type(request)
                 else:
-                    return HttpResponse('Kirmadingiz')
+                    messages.error(request, 'Kirmadingiz')
+                    response = redirect('/login/')
+                    return response
             else:
-                return HttpResponse('Login yoki parolda xatolik bor')
+                messages.error(request, 'Login yoki parolda xatolik bor')
+                response = redirect('/login/')
+                return response
     else:
         form = LoginForm()
         context = {

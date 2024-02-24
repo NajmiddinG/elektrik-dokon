@@ -1,5 +1,6 @@
 from ishchi_app.models import WorkDayMoney
 from obyekt_app.models import Obyekt, WorkAmount
+from dokon_app.models import HistoryObject
 
 
 def calculate_worker_to_obyekt(workdaymoney_id):
@@ -44,4 +45,11 @@ def calculate_all_from_zero():
                 setattr(first_obyekt, key, value)
 
             first_obyekt.save()
+        except: pass
+    for obj in HistoryObject.objects.all():
+        try:
+            obyekt = obj.history_object.id
+            obyekt = Obyekt.objects.get(id=obyekt)
+            obyekt.real_dept -= obj.total_amount
+            obyekt.save()
         except: pass

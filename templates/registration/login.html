@@ -10,11 +10,47 @@
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        #messages-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%);
+            max-width: 300px;
+            z-index: 1000;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .message.success {
+            background-color: #2ecc71; /* Green color for success messages */
+            color: #fff;
+        }
+
+        .message.error {
+            background-color: #e74c3c; /* Red color for error messages */
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
+    
     <div class="login_container">
         <div class="login_form">
             <h2>Kirish</h2>
+            {% if messages %}
+            <div id="messages-container">
+                {% for message in messages %}
+                    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
             <form method="post">{% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit">Kirish</button>
